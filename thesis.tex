@@ -5,6 +5,22 @@
 %
 \usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig}
 
+\newcommand{\bb}{\mathbb}
+\newcommand{\mb}{\mathbf}
+\newcommand{\mc}{\mathcal}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem*{corollary}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem*{example}{Example}
+\newtheorem{algorithm}{Algorithm}
+
+
 \begin{document}
 
 \begin{titlepage}
@@ -116,7 +132,7 @@ $\;$ & \\
 $\;$ & \\
 \large{\textbf{Other thesis committee members\qquad}} & \phantom{niets} \\
 $\;$ & \\
-\large{Drs. J.M.~de~Bruin } & \large{\dots} \\
+\large{Drs.~F.~.I.Ctief } & \large{\dots} \\
 $\;$ & \\
 \large{\dots} & \large{\dots} \\
 $\;$ & \\
@@ -142,7 +158,40 @@ In this thesis, the problem of estimating trust in a distributed network is cons
 \tableofcontents
 \pagenumbering{arabic}
 \chapter{Introduction}
+    
+%Insert general gewauwel here
 
+The internet is more distributed than ever [citation needed].
+
+Distributed systems suffer from a tragedy of the commons.
+
+\section{Base model}
+
+In this thesis, the following model is studied.
+\begin{definition}[Ordered Interaction Model]
+        The Ordered Interaction Model consists of two sets:  
+        
+        \begin{itemize}
+            \item $P$, a set of participants
+            \item $I$, a set of interactions
+        \end{itemize}
+
+        Participants are entities that can interact with each other.
+        An interaction consists of two participants, one or both performing
+        work for each other. 
+        
+        An interaction is defined by 3 pairs of properties:
+        \begin{enumerate}
+            \item $p, q \in P$, two participants involved in the interaction.
+            \item $n_p, n_q \in \bb{N}$, sequence numbers indicating that this is the $n_{\{p,q\}}$th
+                interaction of $p$, $q$ respectively.
+            \item $v_p, v_q \in \bb{R}_{\geq0}$, representing the value of $p$'s, respectively $q$'s work for the other.
+
+        \end{enumerate}
+
+
+
+\end{definition}
    
    
     

@@ -3,3 +3,6 @@ thesis.d
 thesis.dvi
 thesis.log
 thesis.pdf
+thesis.toc
+texput.log
+

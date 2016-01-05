@@ -165,35 +165,56 @@ The internet is more distributed than ever [citation needed].
 
 Distributed systems suffer from a tragedy of the commons.
 
+Defending against sybils is interesting in the sense
+that it will also imply that there is no gross unfairness in the system.
+
+
 \section{Base model}
 
-In this thesis, the following model is studied.
+Traditionally, sybil defense mechanisms are built to exploit some graph,
+either based in external trust or interactions. In the case of interactions,
+information over time is summarized in a single number. However, this loses
+a lot of relevant information.
+
+In order to incorporate temporal information in sybil defense mechanisms,
+there will be some assumptions needed about the information is available.
+Hence, applications which fit the following model will be explored.
+
 \begin{definition}[Ordered Interaction Model]
-        The Ordered Interaction Model consists of two sets:  
-        
-        \begin{itemize}
-            \item $P$, a set of participants
-            \item $I$, a set of interactions
-        \end{itemize}
+    An Ordered Interaction Model $M$ consists of two sets:  
+    
+    \begin{itemize}
+        \item $P$, a set of participants
+        \item $I$, a set of interactions
+    \end{itemize}
 
-        Participants are entities that can interact with each other.
-        An interaction consists of two participants, one or both performing
-        work for each other. 
-        
-        An interaction is defined by 3 pairs of properties:
-        \begin{enumerate}
-            \item $p, q \in P$, two participants involved in the interaction.
-            \item $n_p, n_q \in \bb{N}$, sequence numbers indicating that this is the $n_{\{p,q\}}$th
-                interaction of $p$, $q$ respectively.
-            \item $v_p, v_q \in \bb{R}_{\geq0}$, representing the value of $p$'s, respectively $q$'s work for the other.
-
-        \end{enumerate}
-
-
-
+    Participants represent entities that can interact with each other.
+    An interaction consists of two participants, one or both performing
+    work for each other. 
+    
+    An interaction is defined by 3 pairs of properties:
+    \begin{enumerate}
+        \item $p, q \in P$, two participants involved in the interaction.
+        \item $n_p, n_q \in \bb{N}$, sequence numbers indicating that this is the $n_{\{p,q\}}$th
+            interaction of $p$, $q$ respectively.
+        \item $v_p, v_q \in \bb{R}_{\geq0}$, representing the value of $p$'s, respectively $q$'s work for the other.
+    \end{enumerate}
 \end{definition}
-   
-   
+
+  
+This model induces a graph that resembles traditional interaction graphs, but preservers the knowledge
+of the order of transactions.
+
+\begin{definition}[Ordered Interaction Graph]
+    A graph $G_M = (V, E)$ is defined as the Ordered Interaction Graph derived from an Ordered Interaction Model $M = (P,I)$,
+    its structure is as follows:
+
+    \begin{itemize}
+        \item $V := \{ v_{(p, n_p)} : \exists i \in I$, such that $i$ is the $n_p$th interaction for participant $p\}$\\
+        \item $E := \{ (v_{(p, n_q)}, v_{(q, n_q)} : \exists i \in I$, such that $i$ is the $n_p$th interaction
+        for $p$ and the $n_q$th interaction for $q$. $\} \cup \{ (v_{(p, n)}, v_{(p, n+1)}) : n \geq 2, v_{(p, n+1)} \in V\}$
+    \end{itemize}
+\end{definition}
     
 
 

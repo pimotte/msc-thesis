@@ -185,24 +185,26 @@ Hence, applications which fit the following model will be explored.
     
     \begin{itemize}
         \item $P$, a set of participants
-        \item $I$, a set of interactions
+        \item $I$, a partially ordered set of interactions
     \end{itemize}
 
     Participants represent entities that can interact with each other.
     An interaction consists of two participants, one or both performing
     work for each other. 
     
-    An interaction is defined by 3 pairs of properties:
+    An interaction is defined by two pairs of properties:
     \begin{enumerate}
         \item $p, q \in P$, two participants involved in the interaction.
-        \item $n_p, n_q \in \bb{N}$, sequence numbers indicating that this is the $n_{\{p,q\}}$th
             interaction of $p$, $q$ respectively.
-        \item $v_p, v_q \in \bb{R}_{\geq0}$, representing the value of $p$'s, respectively $q$'s work for the other.
+        \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
     \end{enumerate}
+
+    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on $\{i \in I : p$ is a participant in $i\}$
 \end{definition}
 
+
   
-This model induces a graph that resembles traditional interaction graphs, but preservers the knowledge
+This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
 of the order of transactions.
 
 \begin{definition}[Ordered Interaction Graph]
@@ -216,6 +218,8 @@ of the order of transactions.
     \end{itemize}
 \end{definition}
     
+Note that this definition does not explicitly include weights, but natural weights of an edge that corresponds
+to a transaction can be either of $w_p$ or $w_q$, depending on what application is under consideration.
 
 
 \end{document}

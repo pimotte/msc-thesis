@@ -9,6 +9,7 @@
 \newcommand{\mb}{\mathbf}
 \newcommand{\mc}{\mathcal}
 \newcommand{\pred}{\mathrm{Pred}}
+\newcommand{\ov}{\overline}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -252,6 +253,8 @@ this point, we introduce the concept of timeline inference.
         \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
     \end{itemize}
     
+    In addition, we define $\ov{T_f} : I \to \bb{R}$ by $\ov{T_f}(i)$ being the average of the
+    two values $T_f(i)$.
 \end{definition}
 
 
@@ -259,8 +262,22 @@ If $f$ represents some sort of temporal information about the interactions in $J
 then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
 $f$ beyond elements in $J$. In adddition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
 
+\section{Time-discounted interaction effort}
 
+In order to model the effort needed to interact, we consider the fact that commitment to
+a system takes some effort. To this end, we introduce the concept of time-discounted effort.
 
+\begin{definition}[Time-discounted effort]
+    Let $M = (P, I)$ be an ordered interaction model, let $f$ be a timeline information function.
+    Let $d: \bb{R} \to \bb{R}^+$ be a decreasing function. The time-discounted interaction
+    effort is defined as:
+    \begin{align*}
+        e: & P \times I \to \bb{R} \\
+        e(p, i) &= w_p(i)*d(\ov{T_f}(i)) \\
+    \end{align*}
+\end{definition}
+
+This definition implies that an interaction in the past is regarded as having taken more effort.
 
 \section{Base model applied to Tribler}
 

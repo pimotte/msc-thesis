@@ -181,8 +181,8 @@ In order to incorporate temporal information in sybil defense mechanisms,
 there will be some assumptions needed about the information which is available.
 Hence, applications which fit the following model will be explored.
 
-\begin{definition}[Ordered Interaction Model]
-    An Ordered Interaction Model $M$ consists of two sets:  
+\begin{definition}[Ordered interaction model]
+    An \emph{ordered interaction model} $M$ consists of two sets:  
     
     \begin{itemize}
         \item $P$, a finite set of participants
@@ -213,10 +213,9 @@ of interaction $i$ for participant $p$.
 
   
 This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
-of the order of transactions.
-
-\begin{definition}[Ordered Interaction Graph]
-    The directed graph $G_M = (V, A)$ is defined as the Ordered Interaction Graph derived from an Ordered Interaction Model $M = (P,I)$.
+of the order of interactions.
+\begin{definition}[Ordered interaction graph]
+    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
     Its structure is as follows:
 
     \begin{itemize}
@@ -225,11 +224,69 @@ of the order of transactions.
     \end{itemize}
 
     In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
-    transaction $i$. 
+    interaction $i$. 
+\end{definition}
+
+\subsection{Timeline inference for the base model}
+
+With OIMs, the ordering information of interactions is largely preserved. However, for some
+applications it will be useful to be able to associate timestamps with interactions. To
+this point, we introduce the concept of timeline inference.
+
+\begin{definition}[Timeline inference for ordered interaction models]
+    Let $M = (P, I)$ be an ordered interaction model. 
+
+    $f$ is a \emph{timeline information function} if:
+    \begin{itemize}
+        \item $J \subseteq I$ 
+        \item $f : J \to \bb{R}$
+        \item $f$ is increasing with respect to the partial ordering on $I$. That is:
+            for $i,j \in J$, if $i \leq j$, then $f(i) \leq f(j)$. 
+    \end{itemize}
+
+    By $f[J]$ we denote the range of $f$.
+    This allows to define the timeline inference function $T_f$:
+
+    \begin{itemize}
+        \item $T_f : I \to f[J] \times f[J]$
+        \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
+    \end{itemize}
+    
 \end{definition}
 
 
-    
+If $f$ represents some sort of temporal information about the interactions in $J$, 
+then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
+$f$ beyond elements in $J$. In adddition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
+
+
+
+
+\section{Base model applied to Tribler}
+
+To obtain more insight into the ordered interaction model, consider the following application:
+
+Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
+the set of participants consists of Tribler clients. Each Tribler client is uniquely identifiable,
+but a single real world entity could have multiple participants. In Tribler an interaction
+consists of two participants uploading data to each other. The amount of work $w_p$ performed
+by a participant $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
+
+In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
+Every client saves and signs their interactions, marked with a sequence number. They will then request
+a digital signature from their peer, who will mark the interaction with their own sequence number.
+These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
+a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, i_{k+1})$ has
+a common participant, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
+This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
+$i$ occurred before $j$ and both involve participant $p$.
+
+In Tribler, timeline information inference can be done by each participant $p$, if they
+keep a local record of the time at which they participated in interaction $i$. In this
+case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
+the timestamp of interaction $i$.
+
+
 
 
 \end{document}

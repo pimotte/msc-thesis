@@ -8,6 +8,7 @@
 \newcommand{\bb}{\mathbb}
 \newcommand{\mb}{\mathbf}
 \newcommand{\mc}{\mathcal}
+\newcommand{\pred}{\mathrm{Pred}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -177,15 +178,15 @@ information over time is summarized in a single number. However, this loses
 a lot of relevant information.
 
 In order to incorporate temporal information in sybil defense mechanisms,
-there will be some assumptions needed about the information is available.
+there will be some assumptions needed about the information which is available.
 Hence, applications which fit the following model will be explored.
 
 \begin{definition}[Ordered Interaction Model]
     An Ordered Interaction Model $M$ consists of two sets:  
     
     \begin{itemize}
-        \item $P$, a set of participants
-        \item $I$, a partially ordered set of interactions
+        \item $P$, a finite set of participants
+        \item $I$, a finite partially ordered set of interactions
     \end{itemize}
 
     Participants represent entities that can interact with each other.
@@ -195,31 +196,40 @@ Hence, applications which fit the following model will be explored.
     An interaction is defined by two pairs of properties:
     \begin{enumerate}
         \item $p, q \in P$, two participants involved in the interaction.
-            interaction of $p$, $q$ respectively.
         \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
     \end{enumerate}
 
-    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on $\{i \in I : p$ is a participant in $i\}$
+    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
+    \begin{equation*}
+        I_p = \{i \in I : p \mbox{ is a participant in } i\}
+    \end{equation*}
 \end{definition}
 
+Note that because of the total order on the finite set $I_p$, the following holds:
+For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
+a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
+$i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
+of interaction $i$ for participant $p$.
 
   
 This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
 of the order of transactions.
 
 \begin{definition}[Ordered Interaction Graph]
-    A graph $G_M = (V, E)$ is defined as the Ordered Interaction Graph derived from an Ordered Interaction Model $M = (P,I)$,
-    its structure is as follows:
+    The directed graph $G_M = (V, A)$ is defined as the Ordered Interaction Graph derived from an Ordered Interaction Model $M = (P,I)$.
+    Its structure is as follows:
 
     \begin{itemize}
-        \item $V := \{ v_{(p, n_p)} : \exists i \in I$, such that $i$ is the $n_p$th interaction for participant $p\}$\\
-        \item $E := \{ (v_{(p, n_q)}, v_{(q, n_q)} : \exists i \in I$, such that $i$ is the $n_p$th interaction
-        for $p$ and the $n_q$th interaction for $q$. $\} \cup \{ (v_{(p, n)}, v_{(p, n+1)}) : n \geq 2, v_{(p, n+1)} \in V\}$
+        \item $V := \{ v_{i} : i \in I\}$\\
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } \exists p \in P, \mbox{ where } i = \pred(p, j)\}$
     \end{itemize}
+
+    In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
+    transaction $i$. 
 \end{definition}
+
+
     
-Note that this definition does not explicitly include weights, but natural weights of an edge that corresponds
-to a transaction can be either of $w_p$ or $w_q$, depending on what application is under consideration.
 
 
 \end{document}

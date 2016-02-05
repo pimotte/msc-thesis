@@ -279,6 +279,8 @@ a system takes some effort. To this end, we introduce the concept of time-discou
 
 This definition implies that an interaction in the past is regarded as having taken more effort.
 
+
+
 \section{Base model applied to Tribler}
 
 To obtain more insight into the ordered interaction model, consider the following application:
@@ -305,5 +307,135 @@ the timestamp of interaction $i$.
 
 
 
+\section{The resource distribution problem}
+
+Consider an ordered interaction model $M$. At a specific moment in time, a participant
+$p$ has a certain set of other participants suitable for interaction. The problem
+at hand is: How should $p$ choose distribute their resources to do work for other participants?
+
+
+To answer this question, there are several aspects to consider. Firstly, is the issue of
+what $p$ intends to achieve. Does $p$ want to distribute their resources in a way that
+best helps the collective of all participants? Or maybe he intends to do it such that
+he performs work for the people who are most likely to return the favour. Another possibility
+is that he wants to compensate others for work they performed for him previously.
+Some of these possibilities touch on the game theoretic and sociopsychological angles to this problem.
+
+The second aspect is the availibility of information. In some ordered interaction models, $p$ may
+have complete information considering all interactions. In other settings, in particular distributed
+systems, it may be expensive or time consuming to obtain all information. It could be that $p$ has only
+information concerning their own interactions, or they can just obtain a limited number of transactions.
+
+The third aspect is that there could be additional issues that are not captured in the ordered interaction
+model. In particular, the truthfulness of interactions, behavior of participants outside of
+events in this framework 
+
+
+\chapter{Possibility of sybil-proofness}
+
+We consider the model of accounting mechanisms as presented by Seuken et al. \cite{seuken2014sybil}.
+
+In this model, it has been shown that no mechanism exists that is independent of the number of disconnected
+agents, is symmetric (or: anonymous) that satisfies long-term misreport-proofness, 
+satisfies weak transitive trust and is robust against weakly benificial sybil attacks. 
+
+Of these five properties, any system built on top of the multichain would not need to satisfy misreport-proofness.
+Reports in the multichain can only be made with consent of both parties and reports between sybils are part
+of the model of a sybil attack. This fact shifts the problem of misreporting to obtaining consent during
+the interaction. This method has several practical issues, but these are much easier to resolve than
+the problems that arise when this needs to be sorted out in hindsight, in particular because
+it results in mechanisms like Drop-Edge, where the most relevant information has to be disregarded,
+because it's not feasible to disseminate conflicting reports that ultimately result in a ``he-said-she-said''
+situation.
+
+The original BarterCast mechanism computed the trust participant $i$ has in participant $j$ by considering
+the graph of all participants, with directed edges from one participant to another, where the capacities
+are determined by the magnitude of the uploads. The trust $i$ has in $j$ is then a monotonic function
+of the difference of the flow from $i$ to $j$ and the flow from $j$ to $i$. 
+
+This mechanism suffers from 2 problems:
+
+\begin{enumerate}
+    \item It is extremely vulnerable to misreporting attacks
+    \item Trusting someone if they have transitively uploaded more makes sense. In the download direction, not so much.
+\end{enumerate}
+
+
+The multichain solves the first problem. The second problem seems philosophical at first, but there is an actual sybil
+attack that exploits this property:
+
+Let $i, j$ be participants. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow
+from $i$ to $j$ is 0. Let $j$ create a sybil, $s_1$ and claim that $s_1$ uploaded 1MB to $j$.
+Now the flow from $i$ to $s_1$ is $0$, the flow from $s_1$ to $i$ is 1. Now $s_1$ asks
+for data from $i$, and $i$ obliges and uploads 1MB. Now the flow between $i$ and the others is
+1 in either direction. Now let $j$ create another sybil $s_2$ and claim it uploaded 1MB
+to $j$. Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. So when
+$s_2$ asks for data, $i$ is likely to oblige.
+
+This leads to the search for a better mechanism. We propose the following mechanism:
+
+\begin{definition}[Net-flow limited contribution]
+    The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
+    Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
+    $i$ computes the the following for each agent $j$: 
+    $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$.
+    Let $G_i^N$ be the graph $G_i$ modified with $c_j$ as node capacities for each node,
+    except for $c_i$ which should be unbounded.
+
+    Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
+\end{definition}
+
+\begin{theorem}[Properties and robustness of Net-flow]
+    Net-flow satisfies IDA, ANON, weak transitive trust and is robust against
+    weakly-benificial sybil attacks.
+
+    \label{thm:prop-rob-net-flow}
+\end{theorem}
+
+\begin{proof}
+    IDA follows from the fact that flow to and from agents does not change if independent agents
+    are added or removed. ANON follows from the fact that relabelling nodes will not change the flows.
+
+    Let $k$ be the node added and let 
+    $M := \max_{j \in C_i}\{S^M_j(G_i, C_i)\}$ be the largest amount of reputation in the system.
+    Then using $W_j = M+1$ and $W_k = M+1$ satisfies the requirements of weak transitive trust.
+
+    Since sybils only have connections to $j$, they cannot be involved in the flow to $j$, hence
+    $M$ is resistant to sybil attacks of type $(1)$. For the same reason this scheme is resiliant
+    to attack of type (2). For case (3), $s$ can only consume at most the net-flow of $j$ ($c_j$)
+    units of work, at which point the net-flow and the reputation of $j$ will be $0$. The net-flow
+    is bounded by the contribution of $j$ to the network, so it is impossible to turn a profit of this.
+\end{proof}
+
+
+Couple of notes:
+\begin{enumerate}
+    \item This mechanism is choice-set independent, which means that computation can be cached.
+    \item The definition of weak sybil attacks doesn't actually include information about the leverage factor.
+    \item Scaling the net-flow can actually give more trust at the cost of less sybil-resistance.
+\end{enumerate}
+
+Weak spots in the attack model:
+\begin{enumerate}
+    \item The only sybil structures considered are ``simple'' sybil structures (1 main guy, with sybils only connected
+        to him)
+    \item The sybil attacks just consider increase and decrease of scores and don't specify the utility of an attack
+\end{enumerate}
+
+
+\chapter{Research questions}
+
+The focus of this thesis is the following question:
+
+\begin{center}
+    Can information about the order of interactions in a distributed network be used to improve 
+    the 
+\end{center}
+
+
+\bibliography{thesis}{}
+\bibliographystyle{plain}
+
 
 \end{document}
+

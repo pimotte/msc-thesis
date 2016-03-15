@@ -372,7 +372,47 @@ for data from $i$, and $i$ obliges and uploads 1MB. Now the flow between $i$ and
 to $j$. Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. So when
 $s_2$ asks for data, $i$ is likely to oblige.
 
-This leads to the search for a better mechanism. We propose the following mechanism:
+This leads to the search for a better mechanism. Before moving on to an actual mechanism, the model
+by Seuken and Parkes will be considered and expanded upon. 
+
+\begin{definition}[Colluding sybil attack]
+    Given a subjective work graph $G_i = (V_i, E_i, w_i)$.
+    A sybil atttack by agents $J \subseteq V_i$ is a tuple $\sigma_J = (V_s, E_s, w_s)$
+    where $V_s = \{ s_{J_1}, s_{J_2}, \ldots\}$ is a set of sybils, 
+    $E_s = \{(x, y) : x, y \in S \cup J\}$, and $w_s$ are the edge weights for
+    the edges in $E_s$. Applying the sybil attack to agent $i$'s subjective work graph
+    is done in the same way as for normal sybil attacks.
+    \label{def:collsybil}
+\end{definition}
+
+On the face, Definition \ref{def:collsybil} doesn't seem to add much to the definition of a sybil attack.
+After all, an attacker can already create an arbitrary amount of identities. However, the definition of a
+sybil attack only allows a single point where sybils can interact with the rest network, which is a pretty limited
+view of possible attacks. 
+
+\begin{definition}[Sybil attack profit]
+    Let $G_i$ be a subjective work graph. For all $j \in \bb{N}$, let $(\sigma_J)_j$ be a sybil attack
+    on $(G_i)_j$, where $(G_i)_0 := G_i$ and $(G_i)_j$ for $j > 0$ is defined by the subjective
+    work graph that consists of $(G_i)_{j-1}$ and the assignment of one unit of work to 
+    $A(S^M( (G_i)_{j-1}, C_i))$.
+
+    Let $\omega^n_-$ be the amount of work that any of the participants in $J$ have performed for
+    the network after $n$ steps. Let $\omega^n_+$ be the amount of work that $J$ of any of their
+    sybils obtain from the network.
+
+    The profit of this sequence of sybil attacks is:
+    \begin{equation*}
+        \sup \{\frac{\omega^n_+}{\omega^n_-}\ : n \in \bb{N}, \omega^n_- \neq 0\}
+    \end{equation*}
+
+    If this supremum is unbounded, the sybil attack is strongly beneficial.
+
+    If the supremum exists and is strictly larger than 1, the sybil attack is 
+    profitably weakly benificial.
+
+    If the supremum exists and is smaller than or equal to 1, the sybil attack
+    is unprofitably weakly benificial. This case is also known as ``contributing to the network''.
+\end{definition}
 
 \begin{definition}[Net-flow limited contribution]
     The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
@@ -422,20 +462,98 @@ Weak spots in the attack model:
     \item The sybil attacks just consider increase and decrease of scores and don't specify the utility of an attack
 \end{enumerate}
 
+\subsection{Unbounded accounting mechanisms are never sybil-proof}
+
+\begin{definition}[Unbounded accounting mechanism]
+    An accounting mechanism $M$ is unbounded, if for any sequence of
+\end{definition}
+
 
 \chapter{Research questions}
+
+For various reasons, distributed systems can have advantages over traditional centralized
+systems. However, distributing a system comes with several challenges, in particular that
+the participants in this system will need to contribute in order for the system to
+function. This can easily lead to a tragedy of the commons, where everyone is slacking,
+but the result would be better if everyone pitched in a small amount of effort.
 
 The focus of this thesis is the following question:
 
 \begin{center}
-    Can information about the order of interactions in a distributed network be used to improve 
-    the 
+    Can participants in a distributed network use information about the order of
+    interactions to fairly distribute resources?
 \end{center}
+
+To determine how to distribute resources, we consider accounting mechanisms. Accounting
+mechanisms can be used to assign a score to participants. These scores can then
+be used to determine priority in resource distribution.
+
+To restrict the scope of this research, only accounting mechanism are considered as a method
+of using the information about the order of interactions. This reduces the main research question
+to the following:
+
+Does information about the order of interactions allow the design of an accounting mechanism
+that satisfies the following three properties?
+
+\begin{itemize}
+    \item The accounting mechanism is fair. That is, the accounting mechanism result in
+        similar priorities to some objective measure of contribution.
+    \item The accounting mechanism is manipulation-resistant. That is, participants 
+        cannot profit by methods other than actual contributions.
+    \item The accounting mechanism is efficiently computable, either by the system as a whole,
+        or by each participant.
+\end{itemize}
+
+
 
 
 \bibliography{thesis}{}
 \bibliographystyle{plain}
 
+
+
+\chapter{A short history of reputation systems in Tribler}
+
+The first reputation system that was introduced in Tribler was BarterCast \cite{meulpolder2009bartercast}.
+BarterCast is a system designed to deter what is described as ``lazy freeriders''.
+In this paper, Meulpolder et al. suggest that for most practical applications, a reputation system does not
+need to account for malicious users, just for lazy users. This assertion is based in the observation
+that users classified as ``die-hard freeriders'', people who resort to using non-standard software to
+cheat the system, are relatively uncommon in real-world systems. 
+
+BarterCast is built on voluntary reporting. All participants in the system can report to other participants
+about their interactions with third parties. These reports contain information about how much data
+was exchanged between the two participants. These reports are then used in a max-flow based algorithm.
+The graph that is constructed has all participants as nodes. Edges are directed and and the capacity
+of an edge from participant $i$ to participant $j$ is equal to the magnitude of all data that $i$ has
+uploaded to $j$ in bytes. Using this graph, the subjective reputation of $j$ from the perspective
+of $i$ is the result of a monotonous function applied to the difference of the max-flow from $j$ to $i$
+minus the max-flow from $i$ to $j$.
+
+BarterCast has various desirable properties. Firstly, participants contributing more resources, or consuming
+less resources, have a higher reputation. Secondly, it captures the concept of transitive trust. If participant
+$j$ uploads a lot of data to participant $i$, $i$ will consider participants who help $j$ reputable. Thirdly,
+it is more resistant to cheaters than systems that are based on participants self-reporting their own uploads and
+downloads. Finally, this is a system that does not require the presence of any centrality. 
+
+However, BarterCast also has some flaws. In particular, there is a disincentive for participants to report
+interactions in which they had a net negative contribution to the network. Even worse, there is no mechanism
+to verify who is lying in the case of conflicting reports. This means there exists a strictly optimal 
+reporting strategy: Claiming that you uploaded a lot of data to one or more people, even if that is not
+the case. This is a major weakness in the protocol and a solution has been suggested by Seuken and 
+Parkes~\cite{seuken2010accounting}.
+
+In this paper, Seuken and Parkes introduce the concept of an accounting mechanism. This formalization gives
+a little bit more structure to the problem at hand. It is here that the notions of subjective work graphs
+and choice sets are also formalized. Subjective work graphs allow for a framework in which participants
+do not have a full view of the network, but only have information about participants that they have interacted
+with and their peers. Choice sets provide a mechanism to describe which set of participants are requesting
+service from another participant at a fixed point in time. This concept is relevant, because the way
+Seuken and Parkes suggest to patch the problem with BarterCast is to simply ignore all reports of participants
+in the choice set and then compute the BarterCast score from the resultant graph.
+This solves a large part of the reporting problem. Since there is no longer a disincentive
+to report correctly, the assumption is that participants will cooperate and provide reports. It also provides
+the 
 
 \end{document}
 

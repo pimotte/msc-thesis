@@ -6,8 +6,7 @@
 \usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig}
 
 \newcommand{\bb}{\mathbb}
-\newcommand{\mb}{\mathbf}
-\newcommand{\mc}{\mathcal}
+\newcommand{\mb}{\mathbf} \newcommand{\mc}{\mathcal}
 \newcommand{\pred}{\mathrm{Pred}}
 \newcommand{\ov}{\overline}
 
@@ -186,23 +185,23 @@ Hence, applications which fit the following model will be explored.
     An \emph{ordered interaction model} $M$ consists of two sets:  
     
     \begin{itemize}
-        \item $P$, a finite set of participants
+        \item $P$, a finite set of agents
         \item $I$, a finite partially ordered set of interactions
     \end{itemize}
 
-    Participants represent entities that can interact with each other.
-    An interaction consists of two participants, one or both performing
+    agents represent entities that can interact with each other.
+    An interaction consists of two agents, one or both performing
     work for each other. 
     
     An interaction is defined by two pairs of properties:
     \begin{enumerate}
-        \item $p, q \in P$, two participants involved in the interaction.
+        \item $p, q \in P$, two agents involved in the interaction.
         \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
     \end{enumerate}
 
     Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
     \begin{equation*}
-        I_p = \{i \in I : p \mbox{ is a participant in } i\}
+        I_p = \{i \in I : p \mbox{ is an agent in } i\}
     \end{equation*}
 \end{definition}
 
@@ -210,7 +209,7 @@ Note that because of the total order on the finite set $I_p$, the following hold
 For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
 a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
 $i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
-of interaction $i$ for participant $p$.
+of interaction $i$ for agent $p$.
 
   
 This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
@@ -286,21 +285,21 @@ This definition implies that an interaction in the past is regarded as having ta
 To obtain more insight into the ordered interaction model, consider the following application:
 
 Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
-the set of participants consists of Tribler clients. Each Tribler client is uniquely identifiable,
-but a single real world entity could have multiple participants. In Tribler an interaction
-consists of two participants uploading data to each other. The amount of work $w_p$ performed
-by a participant $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
+the set of agents consists of Tribler clients. Each Tribler client is uniquely identifiable,
+but a single real world entity could have multiple agents. In Tribler an interaction
+consists of two agents uploading data to each other. The amount of work $w_p$ performed
+by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
 
 In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
 Every client saves and signs their interactions, marked with a sequence number. They will then request
 a digital signature from their peer, who will mark the interaction with their own sequence number.
 These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
 a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, i_{k+1})$ has
-a common participant, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
+a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
 This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
-$i$ occurred before $j$ and both involve participant $p$.
+$i$ occurred before $j$ and both involve agent $p$.
 
-In Tribler, timeline information inference can be done by each participant $p$, if they
+In Tribler, timeline information inference can be done by each agent $p$, if they
 keep a local record of the time at which they participated in interaction $i$. In this
 case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
 the timestamp of interaction $i$.
@@ -309,14 +308,14 @@ the timestamp of interaction $i$.
 
 \section{The resource distribution problem}
 
-Consider an ordered interaction model $M$. At a specific moment in time, a participant
-$p$ has a certain set of other participants suitable for interaction. The problem
-at hand is: How should $p$ choose distribute their resources to do work for other participants?
+Consider an ordered interaction model $M$. At a specific moment in time, an agent
+$p$ has a certain set of other agents suitable for interaction. The problem
+at hand is: How should $p$ choose distribute their resources to do work for other agents?
 
 
 To answer this question, there are several aspects to consider. Firstly, is the issue of
 what $p$ intends to achieve. Does $p$ want to distribute their resources in a way that
-best helps the collective of all participants? Or maybe he intends to do it such that
+best helps the collective of all agents? Or maybe he intends to do it such that
 he performs work for the people who are most likely to return the favour. Another possibility
 is that he wants to compensate others for work they performed for him previously.
 Some of these possibilities touch on the game theoretic and sociopsychological angles to this problem.
@@ -327,7 +326,7 @@ systems, it may be expensive or time consuming to obtain all information. It cou
 information concerning their own interactions, or they can just obtain a limited number of transactions.
 
 The third aspect is that there could be additional issues that are not captured in the ordered interaction
-model. In particular, the truthfulness of interactions, behavior of participants outside of
+model. In particular, the truthfulness of interactions, behavior of agents outside of
 events in this framework 
 
 
@@ -348,8 +347,8 @@ it results in mechanisms like Drop-Edge, where the most relevant information has
 because it's not feasible to disseminate conflicting reports that ultimately result in a ``he-said-she-said''
 situation.
 
-The original BarterCast mechanism computed the trust participant $i$ has in participant $j$ by considering
-the graph of all participants, with directed edges from one participant to another, where the capacities
+The original BarterCast mechanism computed the trust agent $i$ has in agent $j$ by considering
+the graph of all agents, with directed edges from one agent to another, where the capacities
 are determined by the magnitude of the uploads. The trust $i$ has in $j$ is then a monotonic function
 of the difference of the flow from $i$ to $j$ and the flow from $j$ to $i$. 
 
@@ -364,7 +363,7 @@ This mechanism suffers from 2 problems:
 The multichain solves the first problem. The second problem seems philosophical at first, but there is an actual sybil
 attack that exploits this property:
 
-Let $i, j$ be participants. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow
+Let $i, j$ be agents. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow
 from $i$ to $j$ is 0. Let $j$ create a sybil, $s_1$ and claim that $s_1$ uploaded 1MB to $j$.
 Now the flow from $i$ to $s_1$ is $0$, the flow from $s_1$ to $i$ is 1. Now $s_1$ asks
 for data from $i$, and $i$ obliges and uploads 1MB. Now the flow between $i$ and the others is
@@ -374,46 +373,6 @@ $s_2$ asks for data, $i$ is likely to oblige.
 
 This leads to the search for a better mechanism. Before moving on to an actual mechanism, the model
 by Seuken and Parkes will be considered and expanded upon. 
-
-\begin{definition}[Colluding sybil attack]
-    Given a subjective work graph $G_i = (V_i, E_i, w_i)$.
-    A sybil atttack by agents $J \subseteq V_i$ is a tuple $\sigma_J = (V_s, E_s, w_s)$
-    where $V_s = \{ s_{J_1}, s_{J_2}, \ldots\}$ is a set of sybils, 
-    $E_s = \{(x, y) : x, y \in S \cup J\}$, and $w_s$ are the edge weights for
-    the edges in $E_s$. Applying the sybil attack to agent $i$'s subjective work graph
-    is done in the same way as for normal sybil attacks.
-    \label{def:collsybil}
-\end{definition}
-
-On the face, Definition \ref{def:collsybil} doesn't seem to add much to the definition of a sybil attack.
-After all, an attacker can already create an arbitrary amount of identities. However, the definition of a
-sybil attack only allows a single point where sybils can interact with the rest network, which is a pretty limited
-view of possible attacks. 
-
-\begin{definition}[Sybil attack profit]
-    Let $G_i$ be a subjective work graph. For all $j \in \bb{N}$, let $(\sigma_J)_j$ be a sybil attack
-    on $(G_i)_j$, where $(G_i)_0 := G_i$ and $(G_i)_j$ for $j > 0$ is defined by the subjective
-    work graph that consists of $(G_i)_{j-1}$ and the assignment of one unit of work to 
-    $A(S^M( (G_i)_{j-1}, C_i))$.
-
-    Let $\omega^n_-$ be the amount of work that any of the participants in $J$ have performed for
-    the network after $n$ steps. Let $\omega^n_+$ be the amount of work that $J$ of any of their
-    sybils obtain from the network.
-
-    The profit of this sequence of sybil attacks is:
-    \begin{equation*}
-        \sup \{\frac{\omega^n_+}{\omega^n_-}\ : n \in \bb{N}, \omega^n_- \neq 0\}
-    \end{equation*}
-
-    If this supremum is unbounded, the sybil attack is strongly beneficial.
-
-    If the supremum exists and is strictly larger than 1, the sybil attack is 
-    profitably weakly benificial.
-
-    If the supremum exists and is smaller than or equal to 1, the sybil attack
-    is unprofitably weakly benificial. This case is also known as ``contributing to the network''.
-\end{definition}
-
 \begin{definition}[Net-flow limited contribution]
     The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
     Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
@@ -473,19 +432,19 @@ Weak spots in the attack model:
 
 For various reasons, distributed systems can have advantages over traditional centralized
 systems. However, distributing a system comes with several challenges, in particular that
-the participants in this system will need to contribute in order for the system to
+the agents in this system will need to contribute in order for the system to
 function. This can easily lead to a tragedy of the commons, where everyone is slacking,
 but the result would be better if everyone pitched in a small amount of effort.
 
 The focus of this thesis is the following question:
 
 \begin{center}
-    Can participants in a distributed network use information about the order of
+    Can agents in a distributed network use information about the order of
     interactions to fairly distribute resources?
 \end{center}
 
 To determine how to distribute resources, we consider accounting mechanisms. Accounting
-mechanisms can be used to assign a score to participants. These scores can then
+mechanisms can be used to assign a score to agents. These scores can then
 be used to determine priority in resource distribution.
 
 To restrict the scope of this research, only accounting mechanism are considered as a method
@@ -498,17 +457,12 @@ that satisfies the following three properties?
 \begin{itemize}
     \item The accounting mechanism is fair. That is, the accounting mechanism result in
         similar priorities to some objective measure of contribution.
-    \item The accounting mechanism is manipulation-resistant. That is, participants 
+    \item The accounting mechanism is manipulation-resistant. That is, agents 
         cannot profit by methods other than actual contributions.
     \item The accounting mechanism is efficiently computable, either by the system as a whole,
-        or by each participant.
+        or by each agent.
 \end{itemize}
 
-
-
-
-\bibliography{thesis}{}
-\bibliographystyle{plain}
 
 
 
@@ -521,39 +475,245 @@ need to account for malicious users, just for lazy users. This assertion is base
 that users classified as ``die-hard freeriders'', people who resort to using non-standard software to
 cheat the system, are relatively uncommon in real-world systems. 
 
-BarterCast is built on voluntary reporting. All participants in the system can report to other participants
+BarterCast is built on voluntary reporting. All agents in the system can report to other agents
 about their interactions with third parties. These reports contain information about how much data
-was exchanged between the two participants. These reports are then used in a max-flow based algorithm.
-The graph that is constructed has all participants as nodes. Edges are directed and and the capacity
-of an edge from participant $i$ to participant $j$ is equal to the magnitude of all data that $i$ has
+was exchanged between the two agents. These reports are then used in a max-flow based algorithm.
+The graph that is constructed has all agents as nodes. Edges are directed and and the capacity
+of an edge from agent $i$ to agent $j$ is equal to the magnitude of all data that $i$ has
 uploaded to $j$ in bytes. Using this graph, the subjective reputation of $j$ from the perspective
 of $i$ is the result of a monotonous function applied to the difference of the max-flow from $j$ to $i$
 minus the max-flow from $i$ to $j$.
 
-BarterCast has various desirable properties. Firstly, participants contributing more resources, or consuming
-less resources, have a higher reputation. Secondly, it captures the concept of transitive trust. If participant
-$j$ uploads a lot of data to participant $i$, $i$ will consider participants who help $j$ reputable. Thirdly,
-it is more resistant to cheaters than systems that are based on participants self-reporting their own uploads and
+BarterCast has various desirable properties. Firstly, agents contributing more resources, or consuming
+less resources, have a higher reputation. Secondly, it captures the concept of transitive trust. If agent
+$j$ uploads a lot of data to agent $i$, $i$ will consider agents who help $j$ reputable. Thirdly,
+it is more resistant to cheaters than systems that are based on agents self-reporting their own uploads and
 downloads. Finally, this is a system that does not require the presence of any centrality. 
 
-However, BarterCast also has some flaws. In particular, there is a disincentive for participants to report
+However, BarterCast also has some flaws. In particular, there is a disincentive for agents to report
 interactions in which they had a net negative contribution to the network. Even worse, there is no mechanism
 to verify who is lying in the case of conflicting reports. This means there exists a strictly optimal 
 reporting strategy: Claiming that you uploaded a lot of data to one or more people, even if that is not
 the case. This is a major weakness in the protocol and a solution has been suggested by Seuken and 
 Parkes~\cite{seuken2010accounting}.
 
+\section{Accounting mechanisms and DropEdge}
+
 In this paper, Seuken and Parkes introduce the concept of an accounting mechanism. This formalization gives
 a little bit more structure to the problem at hand. It is here that the notions of subjective work graphs
-and choice sets are also formalized. Subjective work graphs allow for a framework in which participants
-do not have a full view of the network, but only have information about participants that they have interacted
-with and their peers. Choice sets provide a mechanism to describe which set of participants are requesting
-service from another participant at a fixed point in time. This concept is relevant, because the way
-Seuken and Parkes suggest to patch the problem with BarterCast is to simply ignore all reports of participants
+and choice sets are also formalized. Subjective work graphs allow for a framework in which agents
+do not have a full view of the network, but only have information about agents that they have interacted
+with and their peers. Choice sets provide a mechanism to describe which set of agents are requesting
+service from another agent at a fixed point in time. 
+This concept is relevant, because the way
+Seuken and Parkes suggest to patch the problem with BarterCast is to simply ignore all reports of agents
 in the choice set and then compute the BarterCast score from the resultant graph.
 This solves a large part of the reporting problem. Since there is no longer a disincentive
-to report correctly, the assumption is that participants will cooperate and provide reports. It also provides
-the 
+to report correctly, the assumption is that agents will cooperate and provide reports.
+This mechanism is called ``DropEdge''. Seuken and Parkes show that this mechanism satisfies the property
+of being ``misreport-proof''. This property states that if an agent is in the choice set, 
+any misreport of this agent will not lead to their own score being increased, or the score of
+any other agent in the choice set being decreased.
+
+Furthermore, it has been suggested that DropEdge does not get rid of too much valuable information.
+This is supported by theorems bounding the resulting scores and the amount of work in the subjective
+work graph after dropping the reports from the choice set members. While these results seem to imply
+not too much information is lost, the theorems surrounding this information loss all concern statistical
+claims assuming a uniform distirbution over the choice sets. This particular choice of distribution is
+defensible, but in real situations the distribution over choice sets will be much less uniform, at least
+when monitoring over a period of time. The reason for this is that whenever an agents requests or
+stops requesting work, the choice set just changes with this one agent.
+
+\section{Defining accounting mechanisms}
+
+Following this work, Seuken and Parkes \cite{seuken2014sybil} formulated a framework that considers sybil attacks as well. 
+A sybil attack is defined as constructing a set of identities and interactions between that set and the sybils real identity.
+Benificial sybil attacks are then defined as sybil attacks that increase the sybils score, either their real or one of
+their false identities, or decrease the score of another  agent, such that one of the sybils identities
+is given priority over other agents. Because of the relevance of the results in this paper, a brief summary
+and commentary will be provided below. All definitions are due to Seuken and Parkes~\cite{seuken2014sybil}.
+
+\begin{definition}[Work Graph]
+    A work graph $G = (V, E, w)$ has vertices $V = \{1, \ldots, n\}$, one for each agent, and directed
+    edges $(i, j) \in E$, for $i, j \in V$, corresponding to work performed by $i$ for $j$, with weight
+    $w(i,j) \in \bb{R}_{\geq0}$ denoting the number of units of work.
+    \label{def:work_graph}
+\end{definition}
+
+The work graph is a model of the objective truth about what happened. However, in a distributed system,
+not everyone may have knowledge of all interactions, and there may be disagreement. To this end, agent
+information and subjective work are considered.
+
+\begin{definition}[Agent Information]
+   Each agent $i \in V$ keeps a private history $(w_i(i,j), w_i(j, i))$ of its interactions with
+   other agents $j \in V$, where $w_i(i,j)$ and $w_i(j,i)$ are the work performed for $j$ and
+   received from $j$ respectively.
+\end{definition}
+
+\begin{definition}[Subjective Work Graph]
+   A subjective work graph from agent i's perspective, $G_i = (V_i, E_i, w_i)$, is a set of vertices
+   $V_i \subseteq V$ and directed edges $E_i$. Each edge $(j, k) \in E_i$ for which $i \notin \{j, k\}$,
+   is labeled with one, or both, of weights $w^j_i(j, k), w_i^k(j, k)$ as known to $i$. For edges $(i,j)$
+   and $(j,i)$ the associated weight is $w_i^i(i,j) = w(i,j)$ and $w_i^i(j, i) = w(j,i)$ respectively.
+\end{definition}
+
+The definition of a subjective work graph contains a lot of machinery to deal with conflicting information
+and already resolves some of the conflicts. In particular, if reports of others conflict with the observations
+of the agent itself, those reports are not considered. This model does not assume anything about the truthfulness
+of the reports used to constructed the subjective work graph, but it is implied that all information concerning
+interactions involving agent $i$ themselves is correct.
+
+\begin{definition}[Choice Set]
+    We let $C_i \subseteq V \setminus \{i\}$ denote the choice set for agent $i$, i.e., the set of agents that
+    are currently interested in receiving some work from $i$.
+    \label{def:choice_set}
+\end{definition}
+
+\begin{definition}[Accounting Mechanism]
+   An accounting mechanism $M$ takes as input a subjective work graph $G_i$, a choice set $C_i$, and
+   determines the score $S_j^M(G_i, C_i) \in \bb{R}$, for any agent $j \in C_i$, as viewed by agent
+   $i$.
+   \label{def:acc_mech}
+\end{definition}
+
+Note that definitions \ref{def:choice_set} and \ref{def:acc_mech} consider highly decentralized mechanisms.
+Both are centered around a single agent, who will then compute possibly subjective scores. Because each
+agent should be able to do this, accounting mechanisms that are to be deployed in real world systems need
+to be efficiently computable. 
+
+\begin{definition}[Allocation Policy]
+    Given $G_i$, choice set $C_i$ and an accounting mechanism $M$, an allocation policy $A$
+    is a function that maps these to an agent $j \in C_i$. This choice is denoted
+    by $A(S^M(G_i, C_i))$. This agent is chosen to recieve a unit of work from $i$.
+    \label{def:all_pol}
+\end{definition}
+
+Note that in definition \ref{def:all_pol} the term function is to be taken in a flexible sense,
+in that this function may include randomization. This definition is also not part of the original work,
+where only the following example is given.
+
+\begin{example}[Winner-Take-All]
+   The winner-take-all allocation policy (WTA) selects the agent with the highest score,
+   breaking any ties randomly:
+   \begin{equation*}
+       A(S^M(G_i, C_i)) = \arg \max_{k\in C_i} S_k^M(G_i, C_i) 
+   \end{equation*}
+\end{example}
+
+This is one the simplest allocation policies possible. Other options could involve  
+splitting the resources or more randomization.
+
+Definitions \ref{def:work_graph} through \ref{def:all_pol} supply the framework for accounting
+mechanisms. Accounting mechanisms are closely related to reputation systems. The difference
+between the two lies in that reputation systems are more about trust, whereas accounting mechanisms,
+as the name suggests, account something. Often this is work, or service, quantified in some way.
+Accounting systems are applicable in cases where we are less concerned with the actual identity
+of users, and more concerned with the resource consumption of each agent relative to their contributions.
+
+\subsection{Properties of accounting mechanisms}
+
+Now that the basis for accounting mechanisms has been provided, it is possible to consider different
+properties that accounting mechanisms can possess. To start off with, two properties that might have
+been included in the definition, but are not quite so generic that one would want to do this.
+
+\begin{property}[Independence of Disconnected Agents (IDA)]
+    Let $M$ be an accounting mechanism, let $G_i = (V_i, E_i, w_i)$ be a subjective work graph, let 
+    $C_i$ be a choice set. $k \in V_i$ is a disconnected agent, if for this agent there are no edges
+    in $E_i$, or for this agent all edges in $E_i$ have zero weight. By $G_i'$ we denote the subjective
+    work graph with a disconnected agent $k$ removed.
+
+    $M$ satisfies ``Independence of Disconnected Agents'' if for any disconnected agent $k$, the following
+    holds:
+
+    \begin{equation*}
+        \forall j \in V_i' : S_{ij}^M(G_i, C_i) = S_{ij}^M(G'_i, C'_i)
+    \end{equation*}
+    \label{prop:ida}
+\end{property}
+
+\begin{property}[Anonimity (ANON)]
+    Let $M$ be an accounting mechanism, let $G_i = (V_i, E_i, w_i)$ be a subjective work graph, let 
+    $C_i$ be a choice set and let $f$ be a graph isomorphism such that $G'_i = f(G_i)$, $C'_i = f(C_i)$
+    and $f(i) = i$. $M$ satisfies anonymity if the following condition holds:
+
+    \begin{equation*}
+        \forall j \in V_i \setminus \{i\} : S_{ij}^M(G_i, C_i) = S_{if(j)}^M(G'_i, C'_i)
+    \end{equation*}
+    \label{prop:anon}
+\end{property}
+
+Property \ref{prop:ida} simply states that scores are not affected by adding or removing agents
+that are not connected to the rest of the network. On the one hand, this is a fairly reasonable property.
+In particular, it provides possible routes for proofs. On the other hand, it is possible to imagine systems
+in which this property does not hold. In particular, mechanisms that do assign score to independent agents,
+but limit the sum of these scores might not possess this property.
+
+Property \ref{prop:anon} is also a common property of accounting mechanisms. It essentially states that
+scores can only be based on the structure of the subjective work graph. If two agents seem exactly the
+same with respect to the subjective work graph, they must get the same score. Again, it is possible
+to imagine accounting mechanisms without this property, but they will likely need more information
+about agents than present in the work graph to assign sensible differing scores.
+
+\subsection{Defining sybil attacks}
+
+At this point, this work will slightly diverge from the model used by Seuken and Parkes. 
+Seuken and Parkes define a sybil attack from a single point. Only one identiy is allowed
+to interact with the rest of the network, and all sybil identities can only interact with
+each other and the single agent that interacts with the network. This approach is quite
+limiting in the sense that it is generally easy for an attacker to interact with the 
+real network through several identities. Hence, the definition presented here
+includes the ability to perform a sybil attack with multiple identities. This defintion
+collapses to the one used by Seuken and Parkes if $|J|=1$.
+
+\begin{definition}[Sybil attack]
+    Given a subjective work graph $G_i = (V_i, E_i, w_i)$.
+    A sybil atttack by agents $J \subseteq V_i$ is a tuple $\sigma_J = (V_s, E_s, w_s)$
+    where $V_s = \{ s_{J_1}, s_{J_2}, \ldots\}$ is a set of sybils, 
+    $E_s = \{(x, y) : x, y \in S \cup J\}$, and $w_s$ are the edge weights for
+    the edges in $E_s$. Applying the sybil attack to agent $i$'s subjective work graph
+    is done in the same way as for normal sybil attacks.
+    \label{def:collsybil}
+\end{definition}
+
+On the face, Definition \ref{def:collsybil} doesn't seem to add much to the definition of a sybil attack.
+After all, an attacker can already create an arbitrary amount of identities. However, the definition of a
+sybil attack only allows a single point where sybils can interact with the rest network, which is a pretty limited
+view of possible attacks. 
+
+\begin{definition}[Sybil attack profit]
+    Let $G_i$ be a subjective work graph. For all $j \in \bb{N}$, let $(\sigma_J)_j$ be a sybil attack
+    on $(G_i)_j$, where $(G_i)_0 := G_i$ and $(G_i)_j$ for $j > 0$ is defined by the subjective
+    work graph that consists of $(G_i)_{j-1}$ and the assignment of one unit of work to 
+    $A(S^M( (G_i)_{j-1}, C_i))$.
+
+    Let $\omega^n_-$ be the amount of work that any of the agents in $J$ have performed for
+    the network after $n$ steps. Let $\omega^n_+$ be the amount of work that $J$ of any of their
+    sybils obtain from the network.
+
+    The profit of this sequence of sybil attacks is:
+    \begin{equation*}
+        \sup \{\frac{\omega^n_+}{\omega^n_-}\ : n \in \bb{N}, \omega^n_- \neq 0\}
+    \end{equation*}
+
+    If this supremum is unbounded, the sybil attack is strongly beneficial.
+
+    If the supremum exists and is strictly larger than 1, the sybil attack is 
+    profitably weakly benificial.
+
+    If the supremum exists and is smaller than or equal to 1, the sybil attack
+    is unprofitably weakly benificial. This case is also known as ``contributing to the network''.
+\end{definition}
+
+
+
+
+
+
+\bibliography{thesis}{}
+\bibliographystyle{plain}
+
+
 
 \end{document}
+
 

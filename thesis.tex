@@ -12,6 +12,7 @@
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
+\newtheorem{property}{Property}
 \newtheorem{lemma}{Lemma}
 \newtheorem*{corollary}{Corollary}
 
@@ -168,266 +169,6 @@ Distributed systems suffer from a tragedy of the commons.
 
 Defending against sybils is interesting in the sense
 that it will also imply that there is no gross unfairness in the system.
-
-
-\section{Base model}
-
-Traditionally, sybil defense mechanisms are built to exploit some graph,
-either based in external trust or interactions. In the case of interactions,
-information over time is summarized in a single number. However, this loses
-a lot of relevant information.
-
-In order to incorporate temporal information in sybil defense mechanisms,
-there will be some assumptions needed about the information which is available.
-Hence, applications which fit the following model will be explored.
-
-\begin{definition}[Ordered interaction model]
-    An \emph{ordered interaction model} $M$ consists of two sets:  
-    
-    \begin{itemize}
-        \item $P$, a finite set of agents
-        \item $I$, a finite partially ordered set of interactions
-    \end{itemize}
-
-    agents represent entities that can interact with each other.
-    An interaction consists of two agents, one or both performing
-    work for each other. 
-    
-    An interaction is defined by two pairs of properties:
-    \begin{enumerate}
-        \item $p, q \in P$, two agents involved in the interaction.
-        \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
-    \end{enumerate}
-
-    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
-    \begin{equation*}
-        I_p = \{i \in I : p \mbox{ is an agent in } i\}
-    \end{equation*}
-\end{definition}
-
-Note that because of the total order on the finite set $I_p$, the following holds:
-For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
-a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
-$i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
-of interaction $i$ for agent $p$.
-
-  
-This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
-of the order of interactions.
-\begin{definition}[Ordered interaction graph]
-    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
-    Its structure is as follows:
-
-    \begin{itemize}
-        \item $V := \{ v_{i} : i \in I\}$\\
-        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } \exists p \in P, \mbox{ where } i = \pred(p, j)\}$
-    \end{itemize}
-
-    In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
-    interaction $i$. 
-\end{definition}
-
-\subsection{Timeline inference for the base model}
-
-With OIMs, the ordering information of interactions is largely preserved. However, for some
-applications it will be useful to be able to associate timestamps with interactions. To
-this point, we introduce the concept of timeline inference.
-
-\begin{definition}[Timeline inference for ordered interaction models]
-    Let $M = (P, I)$ be an ordered interaction model. 
-
-    $f$ is a \emph{timeline information function} if:
-    \begin{itemize}
-        \item $J \subseteq I$ 
-        \item $f : J \to \bb{R}$
-        \item $f$ is increasing with respect to the partial ordering on $I$. That is:
-            for $i,j \in J$, if $i \leq j$, then $f(i) \leq f(j)$. 
-    \end{itemize}
-
-    By $f[J]$ we denote the range of $f$.
-    This allows to define the timeline inference function $T_f$:
-
-    \begin{itemize}
-        \item $T_f : I \to f[J] \times f[J]$
-        \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
-    \end{itemize}
-    
-    In addition, we define $\ov{T_f} : I \to \bb{R}$ by $\ov{T_f}(i)$ being the average of the
-    two values $T_f(i)$.
-\end{definition}
-
-
-If $f$ represents some sort of temporal information about the interactions in $J$, 
-then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
-$f$ beyond elements in $J$. In adddition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
-
-\section{Time-discounted interaction effort}
-
-In order to model the effort needed to interact, we consider the fact that commitment to
-a system takes some effort. To this end, we introduce the concept of time-discounted effort.
-
-\begin{definition}[Time-discounted effort]
-    Let $M = (P, I)$ be an ordered interaction model, let $f$ be a timeline information function.
-    Let $d: \bb{R} \to \bb{R}^+$ be a decreasing function. The time-discounted interaction
-    effort is defined as:
-    \begin{align*}
-        e: & P \times I \to \bb{R} \\
-        e(p, i) &= w_p(i)*d(\ov{T_f}(i)) \\
-    \end{align*}
-\end{definition}
-
-This definition implies that an interaction in the past is regarded as having taken more effort.
-
-
-
-\section{Base model applied to Tribler}
-
-To obtain more insight into the ordered interaction model, consider the following application:
-
-Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
-the set of agents consists of Tribler clients. Each Tribler client is uniquely identifiable,
-but a single real world entity could have multiple agents. In Tribler an interaction
-consists of two agents uploading data to each other. The amount of work $w_p$ performed
-by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
-
-In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
-Every client saves and signs their interactions, marked with a sequence number. They will then request
-a digital signature from their peer, who will mark the interaction with their own sequence number.
-These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
-a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, i_{k+1})$ has
-a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
-This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
-$i$ occurred before $j$ and both involve agent $p$.
-
-In Tribler, timeline information inference can be done by each agent $p$, if they
-keep a local record of the time at which they participated in interaction $i$. In this
-case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
-the timestamp of interaction $i$.
-
-
-
-\section{The resource distribution problem}
-
-Consider an ordered interaction model $M$. At a specific moment in time, an agent
-$p$ has a certain set of other agents suitable for interaction. The problem
-at hand is: How should $p$ choose distribute their resources to do work for other agents?
-
-
-To answer this question, there are several aspects to consider. Firstly, is the issue of
-what $p$ intends to achieve. Does $p$ want to distribute their resources in a way that
-best helps the collective of all agents? Or maybe he intends to do it such that
-he performs work for the people who are most likely to return the favour. Another possibility
-is that he wants to compensate others for work they performed for him previously.
-Some of these possibilities touch on the game theoretic and sociopsychological angles to this problem.
-
-The second aspect is the availibility of information. In some ordered interaction models, $p$ may
-have complete information considering all interactions. In other settings, in particular distributed
-systems, it may be expensive or time consuming to obtain all information. It could be that $p$ has only
-information concerning their own interactions, or they can just obtain a limited number of transactions.
-
-The third aspect is that there could be additional issues that are not captured in the ordered interaction
-model. In particular, the truthfulness of interactions, behavior of agents outside of
-events in this framework 
-
-
-\chapter{Possibility of sybil-proofness}
-
-We consider the model of accounting mechanisms as presented by Seuken et al. \cite{seuken2014sybil}.
-
-In this model, it has been shown that no mechanism exists that is independent of the number of disconnected
-agents, is symmetric (or: anonymous) that satisfies long-term misreport-proofness, 
-satisfies weak transitive trust and is robust against weakly benificial sybil attacks. 
-
-Of these five properties, any system built on top of the multichain would not need to satisfy misreport-proofness.
-Reports in the multichain can only be made with consent of both parties and reports between sybils are part
-of the model of a sybil attack. This fact shifts the problem of misreporting to obtaining consent during
-the interaction. This method has several practical issues, but these are much easier to resolve than
-the problems that arise when this needs to be sorted out in hindsight, in particular because
-it results in mechanisms like Drop-Edge, where the most relevant information has to be disregarded,
-because it's not feasible to disseminate conflicting reports that ultimately result in a ``he-said-she-said''
-situation.
-
-The original BarterCast mechanism computed the trust agent $i$ has in agent $j$ by considering
-the graph of all agents, with directed edges from one agent to another, where the capacities
-are determined by the magnitude of the uploads. The trust $i$ has in $j$ is then a monotonic function
-of the difference of the flow from $i$ to $j$ and the flow from $j$ to $i$. 
-
-This mechanism suffers from 2 problems:
-
-\begin{enumerate}
-    \item It is extremely vulnerable to misreporting attacks
-    \item Trusting someone if they have transitively uploaded more makes sense. In the download direction, not so much.
-\end{enumerate}
-
-
-The multichain solves the first problem. The second problem seems philosophical at first, but there is an actual sybil
-attack that exploits this property:
-
-Let $i, j$ be agents. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow
-from $i$ to $j$ is 0. Let $j$ create a sybil, $s_1$ and claim that $s_1$ uploaded 1MB to $j$.
-Now the flow from $i$ to $s_1$ is $0$, the flow from $s_1$ to $i$ is 1. Now $s_1$ asks
-for data from $i$, and $i$ obliges and uploads 1MB. Now the flow between $i$ and the others is
-1 in either direction. Now let $j$ create another sybil $s_2$ and claim it uploaded 1MB
-to $j$. Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. So when
-$s_2$ asks for data, $i$ is likely to oblige.
-
-This leads to the search for a better mechanism. Before moving on to an actual mechanism, the model
-by Seuken and Parkes will be considered and expanded upon. 
-\begin{definition}[Net-flow limited contribution]
-    The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
-    Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
-    $i$ computes the the following for each agent $j$: 
-    $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$.
-    Let $G_i^N$ be the graph $G_i$ modified with $c_j$ as node capacities for each node,
-    except for $c_i$ which should be unbounded.
-
-    Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
-\end{definition}
-
-\begin{theorem}[Properties and robustness of Net-flow]
-    Net-flow satisfies IDA, ANON, weak transitive trust and is robust against
-    weakly-benificial sybil attacks.
-
-    \label{thm:prop-rob-net-flow}
-\end{theorem}
-
-\begin{proof}
-    IDA follows from the fact that flow to and from agents does not change if independent agents
-    are added or removed. ANON follows from the fact that relabelling nodes will not change the flows.
-
-    Let $k$ be the node added and let 
-    $M := \max_{j \in C_i}\{S^M_j(G_i, C_i)\}$ be the largest amount of reputation in the system.
-    Then using $W_j = M+1$ and $W_k = M+1$ satisfies the requirements of weak transitive trust.
-
-    Since sybils only have connections to $j$, they cannot be involved in the flow to $j$, hence
-    $M$ is resistant to sybil attacks of type $(1)$. For the same reason this scheme is resiliant
-    to attack of type (2). For case (3), $s$ can only consume at most the net-flow of $j$ ($c_j$)
-    units of work, at which point the net-flow and the reputation of $j$ will be $0$. The net-flow
-    is bounded by the contribution of $j$ to the network, so it is impossible to turn a profit of this.
-\end{proof}
-
-
-Couple of notes:
-\begin{enumerate}
-    \item This mechanism is choice-set independent, which means that computation can be cached.
-    \item The definition of weak sybil attacks doesn't actually include information about the leverage factor.
-    \item Scaling the net-flow can actually give more trust at the cost of less sybil-resistance.
-\end{enumerate}
-
-Weak spots in the attack model:
-\begin{enumerate}
-    \item The only sybil structures considered are ``simple'' sybil structures (1 main guy, with sybils only connected
-        to him)
-    \item The sybil attacks just consider increase and decrease of scores and don't specify the utility of an attack
-\end{enumerate}
-
-\subsection{Unbounded accounting mechanisms are never sybil-proof}
-
-\begin{definition}[Unbounded accounting mechanism]
-    An accounting mechanism $M$ is unbounded, if for any sequence of
-\end{definition}
-
-
 \chapter{Research questions}
 
 For various reasons, distributed systems can have advantages over traditional centralized
@@ -466,7 +207,7 @@ that satisfies the following three properties?
 
 
 
-\chapter{A short history of reputation systems in Tribler}
+\chapter{Accounting mechanisms and sybil-proofness}
 
 The first reputation system that was introduced in Tribler was BarterCast \cite{meulpolder2009bartercast}.
 BarterCast is a system designed to deter what is described as ``lazy freeriders''.
@@ -495,7 +236,25 @@ interactions in which they had a net negative contribution to the network. Even 
 to verify who is lying in the case of conflicting reports. This means there exists a strictly optimal 
 reporting strategy: Claiming that you uploaded a lot of data to one or more people, even if that is not
 the case. This is a major weakness in the protocol and a solution has been suggested by Seuken and 
-Parkes~\cite{seuken2010accounting}.
+Parkes~\cite{seuken2010accounting}. 
+
+In addition to the reporting disincentive, there is a more fundamental problem. Bartercast is built
+to transitively propagate uploads to you. In some sense, agents are more trusted if they uploaded
+more to you. This is a perfectly valid construction. However, the reverse also holds. If an agent
+has downloaded a lot, all agents that downloaded from them are transitively punished. While
+this seems philosophical at first, but there is an actual sybil
+attack that exploits this property:
+
+\begin{example}[Sybil attack on BarterCast]
+     Let $i, j$ be agents. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow
+    from $i$ to $j$ is 0. Let $j$ create a sybil, $s_1$ and claim that $s_1$ uploaded 1MB to $j$.
+    Now the flow from $i$ to $s_1$ is $0$, the flow from $s_1$ to $i$ is 1. Now $s_1$ asks
+    for data from $i$, and $i$ obliges and uploads 1MB. Now the flow between $i$ and the others is
+    1 in either direction. Now let $j$ create another sybil $s_2$ and claim it uploaded 1MB to $j$. 
+    Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. 
+    So when $s_2$ asks for data, $i$ is likely to oblige. This process can be repeated for an unbounded
+    number of sybils, obtaining an unbounded amount of work from $i$.
+\end{example}
 
 \section{Accounting mechanisms and DropEdge}
 
@@ -662,7 +421,7 @@ to interact with the rest of the network, and all sybil identities can only inte
 each other and the single agent that interacts with the network. This approach is quite
 limiting in the sense that it is generally easy for an attacker to interact with the 
 real network through several identities. Hence, the definition presented here
-includes the ability to perform a sybil attack with multiple identities. This defintion
+includes the ability to perform a sybil attack with multiple identities. This definition
 collapses to the one used by Seuken and Parkes if $|J|=1$.
 
 \begin{definition}[Sybil attack]
@@ -702,7 +461,300 @@ view of possible attacks.
 
     If the supremum exists and is smaller than or equal to 1, the sybil attack
     is unprofitably weakly benificial. This case is also known as ``contributing to the network''.
+    \label{def:sybil_profit}
 \end{definition}
+
+Definition \ref{def:sybil_profit} provides a certain amount of backwards compatibility with the work
+of Seuken and Parkes, while still being more distinctive with respect to the different impacts
+sybil attacks can have on the network. In addition, note that the gap between profitably weakly
+benificial and strongly beneficial is quite small. In particular, profitibly weakly beneficial
+attacks can be repeated by new identities for infinite profit. The difference lies in that
+this infinite profit then requires infinte contribution as well.
+
+\section{Bounding sybil attack profit}
+
+The following section describes how an accounting mechanism can be constructed which is partially
+resistant to sybil attacks, in the sense that they can be profitably weakly benificial, with bounded
+profit.
+
+\begin{definition}[Strict Winner-Takes-All]
+   The strict winner-take-all allocation policy (SWTA) selects the agent with the highest score,
+   breaking ties randomly. However, the strict winner-take-all will not select any agent
+   when all agents have the same score.
+    
+\end{definition}
+
+\begin{definition}[Net-flow limited contribution]
+    The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
+    Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
+    $i$ computes the the following for each agent $j$: 
+    $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$.
+    Let $G_i^N$ be the graph $G_i$ modified with $c_j$ as node capacities for each node,
+    except for $c_i$ which should be unbounded.
+
+    Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
+\end{definition}
+
+\begin{theorem}[Properties and robustness of Net-flow]
+    Net-flow as accounting mechanism, with SWTA as allocation policy
+    satisfies IDA, ANON, weak transitive trust and is robust against
+    profitably weakly benificial sybil attacks.
+
+    \label{thm:prop-rob-net-flow}
+\end{theorem}
+
+\begin{proof}
+    IDA follows from the fact that flow to and from agents does not change if independent agents
+    are added or removed. ANON follows from the fact that relabelling nodes will not change the flows.
+
+    Let $k$ be the node added and let 
+    $M := \max_{j \in C_i}\{S^M_j(G_i, C_i)\}$ be the largest amount of reputation in the system.
+    Then using $W_j = M+1$ and $W_k = M+1$ satisfies the requirements of weak transitive trust.
+
+    Since sybils only have connections to $j$, they cannot be involved in the flow to $j$, hence
+    $M$ is resistant to sybil attacks of type $(1)$. For the same reason this scheme is resiliant
+    to attack of type (2). For case (3), $s$ can only consume at most the net-flow of $j$ ($c_j$)
+    units of work, at which point the net-flow and the reputation of $j$ will be $0$. The net-flow
+    is bounded by the contribution of $j$ to the network, so it is impossible to turn a profit of this.
+\end{proof}
+
+Note that this result does not contradict those of Seuken and Parkes. The net-flow mechanism is
+still vulnerable to weakly-benificial sybil attacks, since those are defined quite widely and
+a weakly-benificial sybil attack does not necessarily have to be detrimental to the network,
+in particular if a network only cares about work contribution and consumption, and
+not about possible other external factors. Furthermore, in contrast to Drop-Edge, net-flow
+is choice set independent, which implies there is less computation for varying choice sets.
+
+On the other hand, this algorithm computes two max-flows for every node and then one max-flow for
+every nodes that needs to be assigned a score. This means that any algorithm that simply compute
+these flows will run for up to $O(n^4)$ time, which is quite harsh. 
+Furthermore, this mechanism is quite strict. There is the SWTA policy involved. However,
+this is mainly for the benefit of the proof. One could quite easily enable the WTA policy instead.
+In this case implication of the theorem is that sybil attack cannot yield a profit, with the exception
+of those built on receiving resources by identities with a $0$ score. This is an inconvience,
+but not a particularly big problem. 
+
+A much larger problem is the informativeness. In this mechanism,
+only peers that have a strict positive contribution in terms of flow will induce network effects.
+In existing networks, this subset of the population tends to be fairly small. Hence, a large
+number of agents will have a zero score, which means that SWTA would not allocate any resources
+to these agents.
+
+\subsection{Improving informativeness by scaling}
+An idea to improve the informativeness would be to weight the work performed by the other
+agent higher than their work consumed. The idea behind this scheme is that it agents
+that perform less work than they consume are tolerated to some degree. This is a trade-off
+in the sense that this will allow weakly profitable sybil attacks in exchange for increased
+informativeness of the mechanism. In particular, a scaling would need to guarantee
+that the leverage the scaling to a strongly profitable sybil attack. 
+
+\begin{definition}[$\alpha$-Net-Flow limited contribution]
+    Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, the $\alpha$-scaled
+    weights $w_{i,\alpha}$ are defined as follows:
+
+    \begin{equation*}
+        w_{i,\alpha}(e) = 
+        \begin{cases}
+            \frac{w_i(e)}{\alpha} &\mbox{ if } e = (j, i) \mbox{ with } j \in V_i \\
+            w_i(e) &\mbox{ otherwise}
+        \end{cases}
+    \end{equation*}
+    
+    The $\alpha$-net-flow accounting mechanism is computed as the net-flow accounting
+    mechanism, but on the graph $G_i' = (V_i, E_i, w_{i,\alpha})$.
+
+    As a shorthand, this mechanism is denoted by $\alpha$-NF.
+\end{definition}
+
+\begin{theorem}[Robustness of $\alpha$-NF]
+    $\alpha$-NF with SWTA is robust against weakly benificial sybil attacks with
+    profit more than $\alpha$.
+    \label{thm:sybil-anf}
+\end{theorem}
+
+\begin{proof}
+    Since net flow is robust against weakly benificial sybil attacks with profit at most
+    1 and the only difference between the two systems is that the contributions of
+    agent $i$ are decreased by a factor $\alpha$, it must be the case that the profit
+    of a sybil attack can be at most $\alpha$. After all, all altered interactions
+    are with $i$ and are therefore known to have actually happened. Therefore, the
+    resource consumption of any party can be at most a factor $\alpha$ more than allowed
+    by net flow, which implies an upper bound on the sybil attack profit.
+\end{proof}
+
+Theorem \ref{thm:sybil-anf} provides an interesting tradeoff. For $\alpha=1$, it reduces
+to one of the properties in theorem \ref{thm:prop-rob-net-flow}. For larger $\alpha$,
+the mechanism becomes more vulnerable to sybil attacks, but more agents will have
+a positive net flow in the first computation step, meaning that more agents will
+have a non-zero score, increasing the informativeness of the system.
+
+\chapter{Considering Time}
+
+
+\section{Base model}
+
+Traditionally, sybil defense mechanisms are built to exploit some graph,
+either based in external trust or interactions. In the case of interactions,
+information over time is summarized in a single number. However, this loses
+a lot of relevant information.
+
+In order to incorporate temporal information in sybil defense mechanisms,
+there will be some assumptions needed about the information which is available.
+Hence, applications which fit the following model will be explored.
+
+\begin{definition}[Ordered interaction model]
+    An \emph{ordered interaction model} $M$ consists of two sets:  
+    
+    \begin{itemize}
+        \item $P$, a finite set of agents
+        \item $I$, a finite partially ordered set of interactions
+    \end{itemize}
+
+    agents represent entities that can interact with each other.
+    An interaction consists of two agents, one or both performing
+    work for each other. 
+    
+    An interaction is defined by two pairs of properties:
+    \begin{enumerate}
+        \item $p, q \in P$, two agents involved in the interaction.
+        \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
+    \end{enumerate}
+
+    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
+    \begin{equation*}
+        I_p = \{i \in I : p \mbox{ is an agent in } i\}
+    \end{equation*}
+\end{definition}
+
+Note that because of the total order on the finite set $I_p$, the following holds:
+For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
+a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
+$i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
+of interaction $i$ for agent $p$.
+
+  
+This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
+of the order of interactions.
+\begin{definition}[Ordered interaction graph]
+    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
+    Its structure is as follows:
+
+    \begin{itemize}
+        \item $V := \{ v_{i} : i \in I\}$\\
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } \exists p \in P, \mbox{ where } i = \pred(p, j)\}$
+    \end{itemize}
+
+    In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
+    interaction $i$. 
+\end{definition}
+
+\subsection{Timeline inference for the base model}
+
+With OIMs, the ordering information of interactions is largely preserved. However, for some
+applications it will be useful to be able to associate timestamps with interactions. To
+this point, we introduce the concept of timeline inference.
+
+\begin{definition}[Timeline inference for ordered interaction models]
+    Let $M = (P, I)$ be an ordered interaction model. 
+
+    $f$ is a \emph{timeline information function} if:
+    \begin{itemize}
+        \item $J \subseteq I$ 
+        \item $f : J \to \bb{R}$
+        \item $f$ is increasing with respect to the partial ordering on $I$. That is:
+            for $i,j \in J$, if $i \leq j$, then $f(i) \leq f(j)$. 
+    \end{itemize}
+
+    By $f[J]$ we denote the range of $f$.
+    This allows to define the timeline inference function $T_f$:
+
+    \begin{itemize}
+        \item $T_f : I \to f[J] \times f[J]$
+        \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
+    \end{itemize}
+    
+    In addition, we define $\ov{T_f} : I \to \bb{R}$ by $\ov{T_f}(i)$ being the average of the
+    two values $T_f(i)$.
+\end{definition}
+
+
+If $f$ represents some sort of temporal information about the interactions in $J$, 
+then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
+$f$ beyond elements in $J$. In adddition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
+
+\section{Time-discounted interaction effort}
+
+In order to model the effort needed to interact, we consider the fact that commitment to
+a system takes some effort. To this end, we introduce the concept of time-discounted effort.
+
+\begin{definition}[Time-discounted effort]
+    Let $M = (P, I)$ be an ordered interaction model, let $f$ be a timeline information function.
+    Let $d: \bb{R} \to \bb{R}^+$ be a decreasing function. The time-discounted interaction
+    effort is defined as:
+    \begin{align*}
+        e: & P \times I \to \bb{R} \\
+        e(p, i) &= w_p(i)*d(\ov{T_f}(i)) \\
+    \end{align*}
+\end{definition}
+
+This definition implies that an interaction in the past is regarded as having taken more effort.
+
+
+
+\section{Base model applied to Tribler}
+
+To obtain more insight into the ordered interaction model, consider the following application:
+
+Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
+the set of agents consists of Tribler clients. Each Tribler client is uniquely identifiable,
+but a single real world entity could have multiple agents. In Tribler an interaction
+consists of two agents uploading data to each other. The amount of work $w_p$ performed
+by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
+
+In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
+Every client saves and signs their interactions, marked with a sequence number. They will then request
+a digital signature from their peer, who will mark the interaction with their own sequence number.
+These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
+a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, i_{k+1})$ has
+a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
+This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
+$i$ occurred before $j$ and both involve agent $p$.
+
+In Tribler, timeline information inference can be done by each agent $p$, if they
+keep a local record of the time at which they participated in interaction $i$. In this
+case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
+the timestamp of interaction $i$.
+
+
+
+\section{The resource distribution problem}
+
+Consider an ordered interaction model $M$. At a specific moment in time, an agent
+$p$ has a certain set of other agents suitable for interaction. The problem
+at hand is: How should $p$ choose distribute their resources to do work for other agents?
+
+
+To answer this question, there are several aspects to consider. Firstly, is the issue of
+what $p$ intends to achieve. Does $p$ want to distribute their resources in a way that
+best helps the collective of all agents? Or maybe he intends to do it such that
+he performs work for the people who are most likely to return the favour. Another possibility
+is that he wants to compensate others for work they performed for him previously.
+Some of these possibilities touch on the game theoretic and sociopsychological angles to this problem.
+
+The second aspect is the availibility of information. In some ordered interaction models, $p$ may
+have complete information considering all interactions. In other settings, in particular distributed
+systems, it may be expensive or time consuming to obtain all information. It could be that $p$ has only
+information concerning their own interactions, or they can just obtain a limited number of transactions.
+
+The third aspect is that there could be additional issues that are not captured in the ordered interaction
+model. In particular, the truthfulness of interactions, behavior of agents outside of
+events in this framework 
+
+
+
+
+
+
 
 
 

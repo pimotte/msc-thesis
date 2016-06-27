@@ -207,6 +207,94 @@ that satisfies the following three properties?
 
 
 
+
+\chapter{Multi-chain}
+
+In order to exploit time-based information, this information will need to be
+available in the first place. In order to allow general applicability of the
+techniques, first the general model is considered, which is then shown to be
+relevant in the particular case of the software known as ``Tribler''.
+
+
+\section{Base model}
+
+In order to incorporate temporal information in sybil defense mechanisms,
+there will be some assumptions needed about the information which is available.
+Hence, applications which fit the following model will be explored.
+
+\begin{definition}[Ordered interaction model]
+    An \emph{ordered interaction model} $M$ consists of two sets:  
+    
+    \begin{itemize}
+        \item $P$, a finite set of agents
+        \item $I$, a finite partially ordered set of interactions
+    \end{itemize}
+
+    agents represent entities that can interact with each other.
+    An interaction consists of two agents, one or both performing
+    work for each other. 
+    
+    An interaction is defined by two pairs of properties:
+    \begin{enumerate}
+        \item $p, q \in P$, two agents involved in the interaction.
+        \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
+    \end{enumerate}
+
+    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
+    \begin{equation*}
+        I_p = \{i \in I : p \mbox{ is an agent in } i\}
+    \end{equation*}
+\end{definition}
+
+Note that because of the total order on the finite set $I_p$, the following holds:
+For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
+a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
+$i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
+of interaction $i$ for agent $p$.
+
+  
+This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
+of the order of interactions.
+\begin{definition}[Ordered interaction graph]
+    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
+    Its structure is as follows:
+
+    \begin{itemize}
+        \item $V := \{ v_{i} : i \in I\}$\\
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } \exists p \in P, \mbox{ where } i = \pred(p, j)\}$
+    \end{itemize}
+
+    In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
+    interaction $i$. 
+\end{definition}
+
+\begin{definition}[Interaction graph]
+    The (directed) interaction graph $G_M$ 
+    %TODO fix shorthand
+
+\end{definition}
+
+\section{Base model applied to Tribler}
+
+To obtain more insight into the ordered interaction model, consider the following application:
+
+Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
+the set of agents consists of Tribler clients. Each Tribler client is uniquely identifiable,
+but a single real world entity could have multiple agents. In Tribler an interaction
+consists of two agents uploading data to each other. The amount of work $w_p$ performed
+by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
+
+In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
+Every client saves and signs their interactions, marked with a sequence number. They will then request
+a digital signature from their peer, who will mark the interaction with their own sequence number.
+These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
+a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, i_{k+1})$ has
+a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
+This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
+$i$ occurred before $j$ and both involve agent $p$.
+
+
+
 \chapter{Accounting mechanisms and sybil-proofness}
 
 The first reputation system that was introduced in Tribler was BarterCast \cite{meulpolder2009bartercast}.
@@ -413,6 +501,11 @@ same with respect to the subjective work graph, they must get the same score. Ag
 to imagine accounting mechanisms without this property, but they will likely need more information
 about agents than present in the work graph to assign sensible differing scores.
 
+Seuken and Parkes also consider a property called ``misreport-proofness''. This property
+states that no advantage can be obtained by reporting interactions that did not happen,
+or wrongly reporting transactions that did. This property is not relevant because
+the multichain externalizes this problem. 
+
 \subsection{Defining sybil attacks}
 
 At this point, this work will slightly diverge from the model used by Seuken and Parkes. 
@@ -586,67 +679,35 @@ Theorem \ref{thm:sybil-anf} provides an interesting tradeoff. For $\alpha=1$, it
 to one of the properties in theorem \ref{thm:prop-rob-net-flow}. For larger $\alpha$,
 the mechanism becomes more vulnerable to sybil attacks, but more agents will have
 a positive net flow in the first computation step, meaning that more agents will
-have a non-zero score, increasing the informativeness of the system.
+have a non-zero score, increasing the informativeness of the system. Note
+that considering the accounting mechanism on a fixed graph as a function in $\alpha$ to
+a vector of scores results in a continuous function. Furthermore, if we let $\alpha$
+tend to infinity, this results in an accounting mechanism where every score is the
+max-flow from that node to $i$. 
+
+There are more desirable properties of $\alpha$-NF. While on the surface, it seems to
+be about ratio's and relative usage, there actually is a subtle way in which
+this accounting mechanism cares about absolute amounts of work performed. 
+In particular, consider three agents. The first has performed and received
+100MB worth of work, the second 70MB and the third 1MB. The second and third
+agent have only interacted with the first. If the first computes scores
+in 1-NF, then both the second and third agent are assigned a 0 score.
+However, in the case of 2-NF, the second agent will have a score of 20MB,
+whereas the third will have a score of 0 still. This is because the scaling
+of the upload of the first agent could only have an effect on agents which
+have downloaded more than the total upload of the first agent, divided
+by $\alpha$. 
+
+In a broad sense, this means that choosing a higher $\alpha$ will increase the score 
+of agents which have been around longer than yourself, or slightly shorter. This
+scheme creates a sort of trickle down system, in which the levels consist of people
+who have had a similar total contribution over time. Each level will prioritize
+contributing to agents around their level or above it. Any surplus will trickle down
+to the lower levels. If a huge influx of users results in an increase in the lower
+levels, the higher levels will not be impacted that much, and it will be mainly the
+lower levels helping each other.
 
 \chapter{Considering Time}
-
-
-\section{Base model}
-
-Traditionally, sybil defense mechanisms are built to exploit some graph,
-either based in external trust or interactions. In the case of interactions,
-information over time is summarized in a single number. However, this loses
-a lot of relevant information.
-
-In order to incorporate temporal information in sybil defense mechanisms,
-there will be some assumptions needed about the information which is available.
-Hence, applications which fit the following model will be explored.
-
-\begin{definition}[Ordered interaction model]
-    An \emph{ordered interaction model} $M$ consists of two sets:  
-    
-    \begin{itemize}
-        \item $P$, a finite set of agents
-        \item $I$, a finite partially ordered set of interactions
-    \end{itemize}
-
-    agents represent entities that can interact with each other.
-    An interaction consists of two agents, one or both performing
-    work for each other. 
-    
-    An interaction is defined by two pairs of properties:
-    \begin{enumerate}
-        \item $p, q \in P$, two agents involved in the interaction.
-        \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
-    \end{enumerate}
-
-    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
-    \begin{equation*}
-        I_p = \{i \in I : p \mbox{ is an agent in } i\}
-    \end{equation*}
-\end{definition}
-
-Note that because of the total order on the finite set $I_p$, the following holds:
-For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
-a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
-$i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
-of interaction $i$ for agent $p$.
-
-  
-This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
-of the order of interactions.
-\begin{definition}[Ordered interaction graph]
-    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
-    Its structure is as follows:
-
-    \begin{itemize}
-        \item $V := \{ v_{i} : i \in I\}$\\
-        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } \exists p \in P, \mbox{ where } i = \pred(p, j)\}$
-    \end{itemize}
-
-    In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
-    interaction $i$. 
-\end{definition}
 
 \subsection{Timeline inference for the base model}
 
@@ -700,26 +761,6 @@ a system takes some effort. To this end, we introduce the concept of time-discou
 This definition implies that an interaction in the past is regarded as having taken more effort.
 
 
-
-\section{Base model applied to Tribler}
-
-To obtain more insight into the ordered interaction model, consider the following application:
-
-Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
-the set of agents consists of Tribler clients. Each Tribler client is uniquely identifiable,
-but a single real world entity could have multiple agents. In Tribler an interaction
-consists of two agents uploading data to each other. The amount of work $w_p$ performed
-by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
-
-In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
-Every client saves and signs their interactions, marked with a sequence number. They will then request
-a digital signature from their peer, who will mark the interaction with their own sequence number.
-These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
-a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, i_{k+1})$ has
-a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
-This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
-$i$ occurred before $j$ and both involve agent $p$.
-
 In Tribler, timeline information inference can be done by each agent $p$, if they
 keep a local record of the time at which they participated in interaction $i$. In this
 case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
@@ -753,6 +794,26 @@ events in this framework
 
 
 
+\section{Random walks in the Ordered Interaction Graph}
+
+Random walks have been used in various strategies that combat sybil attacks
+in one way or another. In \cite{gkorou2015trust}, random walks are used
+in a pure form, more for the purposes of limiting exploration in
+a smart way than trying to detect sybils. This paper includes several types
+of random walks and considers both the exploratory effect and the
+load on important nodes in a random walk.
+
+In \cite{kamvar2003eigentrust}, Kamvar, Schlosser and Garcia-Molina introduce
+the EigenTrust algorithm, which is a distributed way to contribute PageRank.
+PageRank is the stationary distribution of a random walk \cite{page1999pagerank},
+where the random walk is uniform over links, with a probability to jump to a
+random node, specified by a distribution on those nodes. The trick in this context
+is to distribute the computation over untrusted nodes. 
+
+Yu, Gibbions, Kaminsky and Xiao \cite{yu2008sybillimit} present SybilLimit, which
+is a method that is specifically designed for sybil detection. Again, the basis
+lies in random walks and this work specifies how to compute the desired
+algorithm in a distributed way.
 
 
 

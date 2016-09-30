@@ -3,7 +3,9 @@
 % The current document is based on a document by Marten Wortel
 % who is greatly acknowledged for making his document available
 %
-\usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig}
+\usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
+
+\usepackage[section]{placeins}
 
 \newcommand{\bb}{\mathbb}
 \newcommand{\mb}{\mathbf} \newcommand{\mc}{\mathcal}
@@ -21,6 +23,8 @@
 \newtheorem{conjecture}{Conjecture}
 \newtheorem*{example}{Example}
 \newtheorem{algorithm}{Algorithm}
+
+\graphicspath{ {plots_all/} }
 
 
 \begin{document}
@@ -50,6 +54,7 @@
    \begin{minipage}{13cm}\Large
    \begin{center}
        Considering temporal factors in distributed trust.
+       %TODO goede titel
    \end{center}
    \end{minipage}}}}
 
@@ -132,11 +137,11 @@ $\;$ & \\
 \large{Dr.~J.~Pouwelse} & \phantom{niets} \\
 \phantom{niets} & \phantom{niets} \\
 $\;$ & \\
-\large{\textbf{Other thesis committee members\qquad}} & \phantom{niets} \\
+\phantom{niets} & \phantom{niets} \\
 $\;$ & \\
-\large{Drs.~F.~.I.Ctief } & \large{\dots} \\
+\phantom{niets} & \phantom{niets} \\
 $\;$ & \\
-\large{\dots} & \large{\dots} \\
+\phantom{niets} & \phantom{niets} \\
 $\;$ & \\
 \phantom{niets} & \phantom{niets} \\
 $\;$ & \\
@@ -151,7 +156,7 @@ $\;$ & \\
 
 \newpage
 
-
+%TODO make figures black-white compatible 
 \chapter*{\centering \begin{normalsize}Abstract\end{normalsize}}
 
 In this thesis, the problem of estimating trust in a distributed network is considered.
@@ -161,7 +166,9 @@ In this thesis, the problem of estimating trust in a distributed network is cons
 \pagenumbering{arabic}
 \chapter{Introduction}
     
-%Insert general gewauwel here
+%TODO Insert general gewauwel here
+
+%tragedy of the commons
 
 The internet is more distributed than ever [citation needed].
 
@@ -177,7 +184,7 @@ the agents in this system will need to contribute in order for the system to
 function. This can easily lead to a tragedy of the commons, where everyone is slacking,
 but the result would be better if everyone pitched in a small amount of effort.
 
-The focus of this thesis is the following question:
+The focus of this thesis is the following research question:
 
 \begin{center}
     Can agents in a distributed network use information about the order of
@@ -208,7 +215,7 @@ that satisfies the following three properties?
 
 
 
-\chapter{Multi-chain}
+\chapter{Base Model of Accounting System}
 
 In order to exploit time-based information, this information will need to be
 available in the first place. In order to allow general applicability of the
@@ -268,11 +275,16 @@ of the order of interactions.
     interaction $i$. 
 \end{definition}
 
+%TODO examples
+
 \begin{definition}[Interaction graph]
-    The (directed) interaction graph $G_M$ 
-    %TODO fix shorthand
+    The (directed) interaction graph $G_M$ is created by %TODO finish
 
 \end{definition}
+
+%TODO example
+
+%TODO definition block graph
 
 \section{Base model applied to Tribler}
 
@@ -296,10 +308,12 @@ $i$ occurred before $j$ and both involve agent $p$.
 
 
 \chapter{Accounting mechanisms and sybil-proofness}
+\label{chap:netflow}
 
-The first reputation system that was introduced in Tribler was BarterCast \cite{meulpolder2009bartercast}.
+The first reputation system that was introduced in Tribler was BarterCast~\cite{meulpolder2009bartercast}.
 BarterCast is a system designed to deter what is described as ``lazy freeriders''.
-In this paper, Meulpolder et al. suggest that for most practical applications, a reputation system does not
+In the paper introducing this mechanism, Meulpolder et al. suggest that for most practical applications, 
+a reputation system does not
 need to account for malicious users, just for lazy users. This assertion is based in the observation
 that users classified as ``die-hard freeriders'', people who resort to using non-standard software to
 cheat the system, are relatively uncommon in real-world systems. 
@@ -366,7 +380,7 @@ Furthermore, it has been suggested that DropEdge does not get rid of too much va
 This is supported by theorems bounding the resulting scores and the amount of work in the subjective
 work graph after dropping the reports from the choice set members. While these results seem to imply
 not too much information is lost, the theorems surrounding this information loss all concern statistical
-claims assuming a uniform distirbution over the choice sets. This particular choice of distribution is
+claims assuming a uniform distribution over the choice sets. This particular choice of distribution is
 defensible, but in real situations the distribution over choice sets will be much less uniform, at least
 when monitoring over a period of time. The reason for this is that whenever an agents requests or
 stops requesting work, the choice set just changes with this one agent.
@@ -478,6 +492,13 @@ been included in the definition, but are not quite so generic that one would wan
     \label{prop:ida}
 \end{property}
 
+Property \ref{prop:ida} simply states that scores are not affected by adding or removing agents
+that are not connected to the rest of the network. On the one hand, this is a fairly reasonable property.
+In particular, it provides possible routes for proofs. On the other hand, it is possible to imagine systems
+in which this property does not hold. In particular, mechanisms that do assign score to independent agents,
+but limit the sum of these scores might not possess this property.
+
+
 \begin{property}[Anonimity (ANON)]
     Let $M$ be an accounting mechanism, let $G_i = (V_i, E_i, w_i)$ be a subjective work graph, let 
     $C_i$ be a choice set and let $f$ be a graph isomorphism such that $G'_i = f(G_i)$, $C'_i = f(C_i)$
@@ -489,17 +510,27 @@ been included in the definition, but are not quite so generic that one would wan
     \label{prop:anon}
 \end{property}
 
-Property \ref{prop:ida} simply states that scores are not affected by adding or removing agents
-that are not connected to the rest of the network. On the one hand, this is a fairly reasonable property.
-In particular, it provides possible routes for proofs. On the other hand, it is possible to imagine systems
-in which this property does not hold. In particular, mechanisms that do assign score to independent agents,
-but limit the sum of these scores might not possess this property.
-
 Property \ref{prop:anon} is also a common property of accounting mechanisms. It essentially states that
 scores can only be based on the structure of the subjective work graph. If two agents seem exactly the
 same with respect to the subjective work graph, they must get the same score. Again, it is possible
 to imagine accounting mechanisms without this property, but they will likely need more information
 about agents than present in the work graph to assign sensible differing scores.
+
+
+\begin{property}[Weak Transitive Trust]
+    Accounting Mechanism $M$ satisfies weak transitive trust if, for every subjective work graph 
+    $G_i = (V_i, E_i, w_i)$, there exists a $j \in V_i$, after adding node $k$ to $G_i = (V_i, E_i, w_i)$,
+    this leads to $G_i' = (V_i', E_i, w_i)$ with $V_i' = V_i \cup \{k\}$, and there exists an amount 
+    of work $W_j$ and $W_k$ such that if $j$ performs $W_j$ units of work for $i$, and $k$ performs
+    $W_k$ units of work for $j$, a report of which leads to a work graph $G_i''$ representing this,
+    then for every choice set $C_k$ that contains $k$, but not $j$, it holds that $A(S^M(G_i'', C_k)) = k$.
+    \label{prop:wtt}
+\end{property}
+
+Property \ref{prop:wtt} is a way of prescribing a way in which the accounting mechanism provides transitivity.
+It is a desirable property since it ensures that some sort of network effects are a possibility.
+In simple terms, it specifies that if agent A is helped significantly by agent B, and agent B in turn
+was helped by agent C, then A will value C's contribution.
 
 Seuken and Parkes also consider a property called ``misreport-proofness''. This property
 states that no advantage can be obtained by reporting interactions that did not happen,
@@ -509,7 +540,7 @@ the multichain externalizes this problem.
 \subsection{Defining sybil attacks}
 
 At this point, this work will slightly diverge from the model used by Seuken and Parkes. 
-Seuken and Parkes define a sybil attack from a single point. Only one identiy is allowed
+Seuken and Parkes define a sybil attack from a single point. Only one identity is allowed
 to interact with the rest of the network, and all sybil identities can only interact with
 each other and the single agent that interacts with the network. This approach is quite
 limiting in the sense that it is generally easy for an attacker to interact with the 
@@ -529,7 +560,7 @@ collapses to the one used by Seuken and Parkes if $|J|=1$.
 
 On the face, Definition \ref{def:collsybil} doesn't seem to add much to the definition of a sybil attack.
 After all, an attacker can already create an arbitrary amount of identities. However, the definition of a
-sybil attack only allows a single point where sybils can interact with the rest network, which is a pretty limited
+sybil attack only allows a single point where sybils can interact with the rest of the network, which is a pretty limited
 view of possible attacks. 
 
 \begin{definition}[Sybil attack profit]
@@ -574,8 +605,9 @@ profit.
    The strict winner-take-all allocation policy (SWTA) selects the agent with the highest score,
    breaking ties randomly. However, the strict winner-take-all will not select any agent
    when all agents have the same score.
-    
 \end{definition}
+
+%TODO def MF somewhere
 
 \begin{definition}[Net-flow limited contribution]
     The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
@@ -618,6 +650,9 @@ in particular if a network only cares about work contribution and consumption, a
 not about possible other external factors. Furthermore, in contrast to Drop-Edge, net-flow
 is choice set independent, which implies there is less computation for varying choice sets.
 
+
+%TODO be specifc about flow times
+
 On the other hand, this algorithm computes two max-flows for every node and then one max-flow for
 every nodes that needs to be assigned a score. This means that any algorithm that simply compute
 these flows will run for up to $O(n^4)$ time, which is quite harsh. 
@@ -627,7 +662,7 @@ In this case implication of the theorem is that sybil attack cannot yield a prof
 of those built on receiving resources by identities with a $0$ score. This is an inconvience,
 but not a particularly big problem. 
 
-A much larger problem is the informativeness. In this mechanism,
+Another problem is informativeness. In this mechanism,
 only peers that have a strict positive contribution in terms of flow will induce network effects.
 In existing networks, this subset of the population tends to be fairly small. Hence, a large
 number of agents will have a zero score, which means that SWTA would not allocate any resources
@@ -685,6 +720,8 @@ a vector of scores results in a continuous function. Furthermore, if we let $\al
 tend to infinity, this results in an accounting mechanism where every score is the
 max-flow from that node to $i$. 
 
+%TODO picture
+
 There are more desirable properties of $\alpha$-NF. While on the surface, it seems to
 be about ratio's and relative usage, there actually is a subtle way in which
 this accounting mechanism cares about absolute amounts of work performed. 
@@ -707,8 +744,97 @@ to the lower levels. If a huge influx of users results in an increase in the low
 levels, the higher levels will not be impacted that much, and it will be mainly the
 lower levels helping each other.
 
-\chapter{Considering Time}
 
+\section{Attacks on Net-Flow}
+
+Theorem \ref{thm:sybil-anf} suggests an almost absolute defense against sybil attacks. However,
+due to the formulation of the model, and the properties of the underlying multi-chain data structure,
+there are possible angles of attack.
+
+\subsection{Propagation slowness}
+
+One of the properties of the multi-chain includes that any interaction is signed by two parties and
+then is valid immediately. There is no concept of network-wide confirmation. This means that an attacker
+could approach several nodes in the network simultaneously and extract more data from the multiple parties
+than they would have allowed if each party had known about the ongoing interactions with the other peers.
+
+The impact of this kind of attack is limited by several factors. Firstly, there's the upload capacity of the
+victims. The time it takes for interactions to propagate determines the length of the attack, which means that
+the total amount of resources gained ``unfairly'' is at most this time times the average upload capacity of
+the victims over this period. Secondly, there is the score of the attacker. If the score of the attacker is
+not high enough to keep getting resources from a victim before other interactions have propagated, then this
+is the limiting factor in the attack. 
+
+In particular the first limiting factor is important, since this means the profit of an attack can be bounded
+by a constant times the number of parallel connections an attacker can make. This means it is possible
+to choose a lower $\alpha$ to account for this attack. 
+
+\subsection{Partial network visibility}
+
+Tangentially related to the above attack is another attack that exploits the fact that if the multi-chain
+network grows very large, is not expected for every agent to have a full view of the network. This
+is a desirable paradigm, as otherwise it would be trivial to spam the network by creating and broadcasting
+multi-chain blocks. However, this also implies that different agents have a different view of the network.
+In particular, if an attacker $s$ participates in an interaction $I_1$ in which he contributes a lot
+of resources, and victims $v_1, v_2$ both know about $I_1$, but are not even aware of the existence of
+the other victim, then the attacker could exploit this and request resources from both. 
+
+This is a more difficult attack to prevent. The main hurdles for actually executing it appear to be
+the fact that it requires a very specific network topology. Furthermore, the attacker would need to
+know the view of the network that potential victims have. A possible defense against this attack is
+to incorporate randomness in which interactions to keep, or which agents to keep track of.
+
+
+
+
+\section{Theoretical Performance of Net-flow}
+
+In order to computer the score of one other node with net-flow, up to $2n+1$ max-flow
+computations are necessary, where $n$ is the number of nodes. In case one would compute
+the scores of all other nodes, $3n$ max-flow computations are needed. Hence, the
+performance of net-flow will depend on the max-flow algorithm used and then incur
+another factor $n$ of computational complexity. This could be mitigated by finding
+a way to compute multiple flows at the same time. In this section, possibilities
+to improve the performance of net-flow will be explored. With $n$ we denote
+the number of nodes, with $m$ the number of edges.
+
+Well known algorithms for max-flow include Ford-Fulkerson~\cite{ford1956maximal},
+with complexity $O(m|f|)$, where $|f|$ is the magnitude of the maximum flow. This
+is a pseudo-polynomial algorithm, since it depends on the magnitude of numbers
+in the instance.
+The Edmonds-Karp~\cite{edmonds1972theoretical} algorithm specifies the order in which 
+augmenting paths are considered, namely by doing a breath-first search. This allows
+the complexity to be pinned to $O(nm^2)$.
+
+Dinitz' algorithm~\cite{dinitz2006dinitz}, (also known as Dinic's algorithm) functions
+in $O(n^2m)$ or $O(nm\log(n))$ if implemented with dynamic trees. Goldberg and Tarjan
+introduced the preflow-push algorithm~\cite{goldberg1988new}. This algorithm
+has a worst-case complexity of $O(n^2m)$. Again, this can be reduced to
+$O(nm\log\frac{n^2}{m})$ by using dynamic trees.
+
+Work by King, Rao and Tarjan~\cite{king1992faster} has resulted in an algorithm of
+order $O(nm\log_{\frac{m}{n\log(n)}n})$. In combination with work by Orlin~\cite{orlin2013max},
+this results in an $O(nm)$ algorithm for max-flow. This is the current state-of-the-art
+when considering single source-sink max-flow.
+
+When we consider all-pairs max-flow, one might think a speedup is possible. 
+Building a Gomory-Hu tree~\cite{gomory1961multi} yields a method
+for which $n-1$ max-flow computations suffice. However, this method only works for undirected graphs.
+According to Ahuja, Magnati and Orlin~\cite{ahuja1993network}, no method is known for all-pairs max-flow
+on directed graphs that uses less than $\omega(n^2)$ max-flow computations. This work is from
+1993, and to our knowledge this has not changed since. Note that for the application of
+net-flow, it would be necessary to compute all flows with one fixed sink or one fixed source,
+which is not quite the same as the all-pairs max-flow problem.
+
+The above research implies that using state of the art algorithms, a net-flow algorithm
+implemented with current state-of-the-art algorithms would be at least $O(n^2m)$ in the
+worst case. 
+
+
+
+
+\chapter{Considering Time}
+\label{chap:temporal_pr}
 \subsection{Timeline inference for the base model}
 
 With OIMs, the ordering information of interactions is largely preserved. However, for some
@@ -741,7 +867,7 @@ this point, we introduce the concept of timeline inference.
 
 If $f$ represents some sort of temporal information about the interactions in $J$, 
 then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
-$f$ beyond elements in $J$. In adddition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
+$f$ beyond elements in $J$. In addition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
 
 \section{Time-discounted interaction effort}
 
@@ -797,23 +923,363 @@ events in this framework
 \section{Random walks in the Ordered Interaction Graph}
 
 Random walks have been used in various strategies that combat sybil attacks
-in one way or another. In \cite{gkorou2015trust}, random walks are used
+in one way or another. Gkorou,~Pouwelse~and~Epema~\cite{gkorou2015trust} use random walks
 in a pure form, more for the purposes of limiting exploration in
 a smart way than trying to detect sybils. This paper includes several types
 of random walks and considers both the exploratory effect and the
 load on important nodes in a random walk.
 
-In \cite{kamvar2003eigentrust}, Kamvar, Schlosser and Garcia-Molina introduce
+Kamvar, Schlosser and Garcia-Molina~\cite{kamvar2003eigentrust} introduce
 the EigenTrust algorithm, which is a distributed way to contribute PageRank.
-PageRank is the stationary distribution of a random walk \cite{page1999pagerank},
+PageRank is the stationary distribution of a random walk~\cite{page1999pagerank},
 where the random walk is uniform over links, with a probability to jump to a
 random node, specified by a distribution on those nodes. The trick in this context
 is to distribute the computation over untrusted nodes. 
 
-Yu, Gibbions, Kaminsky and Xiao \cite{yu2008sybillimit} present SybilLimit, which
+Yu, Gibbions, Kaminsky and Xiao~\cite{yu2008sybillimit} present SybilLimit, which
 is a method that is specifically designed for sybil detection. Again, the basis
 lies in random walks and this work specifies how to compute the desired
 algorithm in a distributed way.
+
+Random walks are interesting for the the purpose of sybil detection for several reasons.
+Firstly, it matches certain models of behavior, as in the case of PageRank. Secondly, it 
+is a relatively cheap technique from a computational perspective, which is especially
+interesting sine the main
+drawback of the Net-Flow technique presented in Chapter~\ref{chap:netflow} 
+are the computing expenses.
+
+We take the concept of PageRank and apply it to the Ordered Interaction Graph to
+yield a technique that will be referred to as temporal PageRank
+
+\begin{definition}[Temporal PageRank]
+    Let $M$ be an Ordered Interaction Model, with corresponding Ordered Interaction Graph $G$.
+    Consider a random walk in $G$, where the transition probabilities are the normalized
+    weights of the arcs. Let this random walk have a chance of $\beta$ to jump to a random node.
+    This random node is determined by a distribution $X$ on nodes that represent interactions of
+    a single agent $i$. By default, this distribution is the agent's first interaction with probability 1.
+
+    The score of an interaction is it's probability in the stationary distribution of this random walk.
+    Then Temporal PageRank is an accounting mechanism, which assigns as a score to agent $j$, the
+    sum of all nodes representing interaction which $j$ was a part of.
+\end{definition}
+
+
+Before considering the functionality of this mechanism, let us visit the well-definedness.
+
+\begin{theorem}[Well-definedness of Temporal PageRank]
+    Consider a random walk as described in the definition of Temporal PageRank.
+
+    This random walk has a unique stationary distribution, so the score of an interaction is well-defined.
+    \label{thm:well_defined}
+\end{theorem}
+\begin{proof}
+    This random walk can be associated with a Markov chain, where the set of states is the set of
+    interactions. Let $W$ be the set of nodes/states with non-zero probability in the distribution
+    that determines the node jumped to with chance $\beta$.
+
+    Let $\ov{W}$ be the set of nodes that can be reached by following a path in $G$ from a node
+    in $W$. Restrict the random walk to states in $\ov{W}$. Since every node in $\ov{W}$ is reachable
+    from $W$ and the random jump means that every node can reach all nodes in $W$, the Markov chain
+    induced by this random walk, is irreducible. Furthermore, nodes in $W$ have a self-loop, so every
+    state is aperiodic, so this Markov chain is aperiodic. This means that the Markov chain of the
+    random walk restricted to nodes in $\ov{W}$, has a unique stationary distribution.
+
+    $\ov{W}$ is closed, the unique stationary distribution with $0$ probability for states outside
+    $\ov{W}$ yields a stationary distribution for the full random walk. Since states
+    outside $\ov{W}$ are transient. In fact, there is a $0$ probability of returning to that
+    state. This means that all states outside $\ov{W}$ must have a $0$ probability in a stationary
+    distribution, hence the stationary distribution is unique.
+\end{proof}
+
+Generally, random walks are generally computed by the power method. This involves repeatedly
+multiplying an initial probability vector with the matrix of transition probabilities until
+the result converges. It is a desirable property to have quick convergence of this method.
+
+\begin{theorem}[Convergence of Temporal PageRank]
+    The error after $t$ iterations of the power method, for Temporal PageRank with
+    jump probability $\beta$, is $O(|1-\beta|^t)$
+    \label{}
+\end{theorem}
+
+\begin{proof}
+    This follows from a result of Haveliwala and Kamvar \cite{haveliwala2003second}. This
+    result is that for a matrix $A = [cP + (1-c)E]^T$, with $P$ $n \times n$ row-stochastic
+    and $E$ a non-negative rank-one row-stocahstic matrix, and $0 \leq c \leq 1$, the
+    second eigenvalue of $A$ satisfies $|\lambda_2| \leq c$. 
+
+    If we take $c=1-\beta$, $P$ the transition probabilities without the jump, and $E$ the
+    matrix representation of the distribution of the random jump, the constraints are satisfied.
+    This means that for the matrix used in the power method, $|\lambda_2| \leq 1-\beta$.
+    Furthermore, since this matrix is row-stochastic, its largest eigenvalue must be $\lambda_1=1$.
+
+    Furthermore, the error of the power method is at most $O\left(\left|\frac{\lambda_2}{\lambda_1}\right|^t\right)$,
+    the proof of which follows by decomposing the matrix into Jordan Normal Form.
+
+    Combining these facts yields that the error of the power method for this particular matrix
+    after $t$ iterations is at most $O(|1-\beta|^t)$. 
+\end{proof}
+
+This result implies that the convergence is exponential, but perhaps more importantly, that it is bounded
+by a term independent of the size of the matrix. 
+
+\begin{proposition}[Properties of Temporal PageRank]
+    Temporal PageRank satisfies IDA and ANON  
+    \label{prop:prop_temp_pr}
+\end{proposition}
+
+\begin{proof}
+    Recall that these properties mean that scores are independent of disconnected agents, and that
+    the scores are invariant under permutations of other agents. Both of these follow directly
+    from the definition of pagerank, noting that in order for this to match the original definitions,
+    we would need to consider IDA and ANON as defined on the ordered interaction graph, which can
+    be done by considering the projection from the ordered interaction graph to the interaction graph.
+\end{proof}
+
+The two properties proven in Proposition~\ref{prop:prop_temp_pr} are quite trivial. What follows
+is slightly less so, and one of the motivations for considering Temporal PageRank as an accounting
+mechanism in the first place.
+
+\begin{theorem}[Impossibility of Historical Attacks]
+    Consider Temporal PageRank, with $W$ the set of nodes to which a random jump is made. Let
+    $I$ be an interaction.
+
+    If there is no $J \in W$ such that $J \leq I$, then removing $I$ with all
+    interactions $I'$ such that $I' \leq I$ does not change the Temporal PageRank
+    score of any agent.
+    \label{}
+\end{theorem}
+
+\begin{proof}
+    In the proof of Theorem~\ref{thm:well_defined}, it is shown that nodes that are not in the closure
+    of $W$ have $0$ probability in the stationary distribution. Since all interactions before $I$ therefore
+    cannot be in the closure either, removing all of them will not affect the stationary distribution, and
+    hence will not affect the scores.
+\end{proof}
+
+This begs the question how vulnerable Temporal PageRank is to attacks in general. In particular, is
+it vulnerable to the style of attack that Seuken~and~Parkes~\cite{seuken2014sybil} employ? The
+answer is no. Not because it is particularly robust, but because it simply lacks the property
+known as Transitive Trust.
+
+\begin{theorem}[Lack of Transitive Trust]
+    Temporal PageRank with a uniform distribution for the jump and WTA does not satisfy Weak Transitive Trust.
+    \label{thm:no_trans_trust}
+\end{theorem}
+
+\begin{proof}
+    Consider a OIM with agents $i, j, l$, where agent $i$ has had some number $N$ interactions,
+    alternatingly with $j$ and $l$, where $i$ consumes one unit of work and provides
+    one unit of work. Since the probability in the stationary distribution will
+    be spread over all interactions, for large enough $N$ the probability on the most recent
+    interactions will be too small to be able to surpass $l$ by helping $j$ or vice versa.
+\end{proof}
+
+Theorem~\ref{thm:no_trans_trust} seems to be a bad sign for Temporal PageRank. However, 
+
+
+
+
+
+
+
+\chapter{Experimental Evaluation}
+
+In Chapters \ref{chap:netflow} and \ref{chap:temporal_pr} accounting mechanisms have been presented.
+In addition, theoretical properties have been proven. This chapter contains experiments on a real-world
+data set, showing advantages and disadvantages of each of these mechanisms.
+
+In particular, the matter under consideration will be the properties of these mechanisms that are
+harder to prove theoretically. Furthermore, this experiment can be used to get a feel of the behavior
+of these accounting mechanisms.
+
+\section{Data collection}
+
+Prior work %TODO citation
+has implemented the multi-chain data structure into Tribler. In collaboration with Bongers and Veldhuisen,
+this system has been brought up to production level and released in an experimental release of Tribler,
+version 6.6.0 \footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
+release was ran by people with a close interest in Tribler. It was announced on the forums and could
+also be found through above GitHub page. A crawler was deployed to request multi-chain blocks from throughout
+the network. A database dump from this crawler has been acquired on the 31th of August. The software
+was released on the 26th of July. This means that the data has been generated by users during a period
+that lasted a little over a month. During this period 917 identities have been observed in the network.
+These identities are not necessarily unique users, since technically savvy users may purposefully 
+delete their identity or users may have installed the software on multiple machines.
+
+\section{Net-flow evaluation}
+
+Firstly, let us consider the Net-flow mechanism. One of the first considerations will be what the influence
+of the parameter $\alpha$ is and how informative the mechanism is.
+
+
+In Figure \ref{fig:nf_alpha_comparison} shows the Net-flow scoring mechanism for four peers, for three
+different values of $\alpha$. These peers have been selected by sorting the list of peers by their total
+amount of uploaded data, and taking the peers at the 70th, 80th, 90th and 100th percentile.
+The peer whose point of view is taken for the computation is marked red. Each bubble is a peer whose
+score is computed. Note that the scale of the bubbles is different between the different pictures. 
+This is due to the fact that absolute sizing would result in indiscernable bubbles for computations
+from the perspective of peers with lower absolute upload and download amounts. 
+
+Upon inspection of these figures, several macro level observations come to light. The first
+is that increasing $\alpha$ does indeed increase the informativeness of the mechanism.
+Higher $\alpha$ results in non-zero scores for more peers. In particular, note that
+for $\alpha=1$ a lot of the peers with higher upload/download have a zero score. This is
+likely due to the fact that scores of peers are not high if their contributions are limited
+by the consumption and contribution of the calculating peer. This effect decreases
+significantly. For $\alpha=2$ and $\alpha=4$, peers with absolute higher amounts of upload
+and download will often be assigned a positive score. 
+
+Increasing $\alpha$ does come at a cost. It can be observed that for $\alpha=1$ no peers
+that have a ratio of upload/download significantly below $1$, have a positive score. 
+On the contrary, for higher $\alpha$, peers that contribute less than the calculating
+peer might still have a non-zero score if they have contribute about the same or more
+in absolute terms.
+
+\begin{figure}[ht]
+    \begin{tabular}[ht]{ccc}
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_7} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_7} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_7} \\
+
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_8} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_8} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_8} \\
+
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_9} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_9} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_9} \\
+        
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_10} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_10} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_10} \\
+    \end{tabular}
+    \caption{Net-flow scores from the perspective of several nodes}
+    \label{fig:nf_alpha_comparison}
+\end{figure}
+
+Let us now consider the informativeness of this mechanism. As described in Chapter~\ref{chap:netflow},
+one of the issues suspected was the lack of non-zero scores for nodes. If too many nodes are assigned
+a zero score, the mechanism does not actually yield a ranking. 
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=0.7\textwidth]{plots_all/plot_info}
+    \caption{Informativeness curves for different $\alpha$}
+    \label{fig:info}
+\end{figure}
+
+Figure~\ref{fig:info} provides an informativeness curve. This is constructed as follows. For each
+peer, the fraction of peers that have a positive score is computed. The lines in the plot
+are these fractions ordered from low to high. One part of the population will never be able
+to increase the informativeness by scaling. Hence, Figure~\ref{fig:info_filter} shows the same
+data, excluding peers that have not downloaded any data. Observe that as $\alpha$ increases,
+so does the informativeness. Furthermore, for higher $\alpha$ the set of peers with $0$ 
+informativeness decreases in size. In addition, note that there is quite a sharp jump from 
+$0$ informativeness to around $0.7$.
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=0.7\textwidth]{plots_all/plot_info_filter}
+    \caption{Informativeness curves for different $\alpha$, excluding peers without downloads}
+    \label{fig:info_filter}
+\end{figure}
+
+\section{Temporal PageRank Evaluation}
+
+Let us turn our attention to Temporal PageRank, starting with several examples of results of
+score computations from the perspective of a variety of peers, selected in the same way as for
+Netflow, but including some of the lower quantile representants.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}[ht]{ccc}
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_2} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_3} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_4} \\
+
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_5} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_6} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_7} \\
+
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_8} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_9} &
+        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_10} \\
+
+    \end{tabular}
+    \caption{Temporal PageRank computed by several peers}
+    \label{fig:tpr_per_peer}
+\end{figure}
+
+Looking at Figure~\ref{fig:tpr_per_peer} leads to several insights. Firstly, note that
+in contrast with Net-flow, these figures are all on the same scale, and that with the
+exception of a few nodes, most nodes are assigned somewhat the same score, regardless
+of the performance of the computing node. The general pattern is that nodes with both
+higher upload and download get a higher score and that the absolute amount matters more
+than the ratio between the two. However, there appears to be a slight overall bias
+twowards peers that have uploaded more than that they have downloaded.
+
+\section{Cross-mechanism evaluation}
+
+Since the end result of an accounting mechanism will often be used as a ranking, let us
+consider the common peers in top fractions of rankings. It makes sense to compare each
+of Net-flow and Temporal PageRank with the mechanisms that inspired them: BarterCast
+and PageRank. Furthermore, it might be fruitful to inspect the same comparison for
+Net-flow and Temporal PageRank in order to see if they approximate each other well.
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=0.7\textwidth]{plots_all/plot_boxplot_bc_netflow}
+    \caption{Box plots of fraction of common peers in rankings for BarterCast and Net-flow}
+    \label{fig:box_bc_netflow}
+\end{figure}
+
+Figure~\ref{fig:box_bc_netflow} shows the following: On the x-axis, we have the part
+of the ranking that is under consideration. For example, 0.1 means we compare the
+top 10\% for both accounting mechanisms. The corresponding boxplot then depicts
+the data set obtained if this comparison is done for every calculating peer. It shows
+the fraction in common between the two ranking methods. A simple calculation results
+in the observation that if this were completely random, the medians would lie on
+the line $y=x$. In this case, for the rankings that include up to 40\% of participants
+the median is about 40\% in common between rankings. While this is above the baseline,
+it is not an extreme overlap. This implies that there a difference, but it looks very
+structured. Once the rankings get larger, there is relatively less overlap, which
+can be attributed to Net-flows characteristic of cutting off scores at 0, leading
+to a lot of ties.
+
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=0.7\textwidth]{plots_all/plot_boxplot_common}
+    \caption{Box plots of fraction of common peers in rankings for PageRank and Temporal PageRank}
+    \label{fig:box_pr_tpr}
+\end{figure}
+
+The same comparison can be found in Figure~\ref{fig:box_pr_tpr} for the mechanisms of PageRank
+and Temporal PageRank. Here the correlation is abundantly clear. Only for the top 1\% the
+median fraction in common is below 0.7. This is not unexpected, as both of these methods
+have the same underlying structure. PageRank uses less information, but there is not particular
+reason Temporal PageRank would result in different rankings, since there is no reason to
+assume the test set has any sort of malicious activity.
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=0.7\textwidth]{plots_all/plot_boxplot_tpr_netflow}
+    \caption{Box plots of fraction of common peers in rankings for Net-flow and Temporal PageRank}
+    \label{fig:box_netflow_tpr}
+\end{figure}
+
+Finally, consider Figure~\ref{fig:box_netflow_tpr}. In this figure, the same metric is depicted, but
+for Net-flow and Temporal PageRank. Note that the medians lie almost exactly on the expectation
+if the rankings were random. While the outliers are clearly biased towards having more in common,
+there is still very little that these rankings have in common.
+
+
+
+
+
+
+
+
 
 
 
@@ -824,7 +1290,6 @@ algorithm in a distributed way.
 
 \bibliography{thesis}{}
 \bibliographystyle{plain}
-
 
 
 \end{document}

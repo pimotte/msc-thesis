@@ -253,11 +253,14 @@ Hence, applications which fit the following model will be explored.
     \end{equation*}
 \end{definition}
 
+If $i, j \in I$, $i < j$, and there exists no $i'$ such that $i < i' < j$, then
+$j$ is the successor of $i$. This is denoted by $i \preceq j$.
+
 Note that because of the total order on the finite set $I_p$, the following holds:
 For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
-a unique $i' \in I_p$ such that $i' < i$, and no $i'' \in I_p$ exists such that
-$i' < i'' < i$. We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
-of interaction $i$ for agent $p$.
+a unique $i' \in I_p$ such that $i' \preceq i$. 
+We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
+of interaction $i$ for agent $p$. 
 
   
 This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
@@ -277,14 +280,37 @@ of the order of interactions.
 
 %TODO examples
 
-\begin{definition}[Interaction graph]
-    The (directed) interaction graph $G_M$ is created by
-    
-    %TODO finish
+\begin{definition}[Block Graph]
+    Let $M = (P, I)$ be an ordered interaction model. The block graph $G^B_{M}$ is defined as follows:
 
+    \begin{itemize}
+        \item $V := \{ v_{p, i} : i \in I, p \mbox{ an agent involved in } i \}$\\
+        \item $A := \{ (v_{p,i}, v_{q,j} : i, j \in I \mbox{ s.t. } i \preceq j \}$\\
+    \end{itemize}
+
+    This graph can be weighted. Let $(v_{p,i}, v_{q, j}) = a \in A$, then:
+
+    \begin{equation*}
+        w(a) := \mbox{ The amount of work } q \mbox{ has performed in interaction } i 
+    \end{equation*}
 \end{definition}
 
 %TODO example
+
+\begin{definition}[Interaction Graph]
+    Let $M = (P, I)$ be an ordered interaction model. The interaction graph $G^I_M$ is defined as follows:
+
+    \begin{itemize}
+        \item $V := \{ v_p : p \in P \}$\\
+        \item $A := \{ (v_p, v_q) : p, q \in P \mbox{ s.t. } \exists i \in I \mbox{ involving } p \mbox{ and } q$ \\
+    \end{itemize}
+
+    This graph has weights. Let $(v_{p}, v_q) = a \in A$, then:
+
+    \begin{equation*}
+        w(a) := \mbox{ The total amount of work } p \mbox{ has performed for } q
+    \end{equation*}
+\end{definition}
 
 %TODO definition block graph
 

@@ -166,16 +166,79 @@ In this thesis, the problem of estimating trust in a distributed network is cons
 \pagenumbering{arabic}
 \chapter{Introduction}
     
-%TODO Insert general gewauwel here
+Nowadays, the internet is an absolutely critical piece of infrastructure. According
+to the International Telecommunication Union, 47\% of the world population uses the internet.
+In the developed world, 81\% of the inhabitants uses the internet~\cite{itu2016facts}.
+The internet is used for important communication and banking, education, but also for entertainment and
+leisure. Internet access has not quite
+made it to being a basic human right. However, the United Nations Special Rapporteur
+on the promotion and protection of the right to freedom of opinion and expression, wrote
+the following on the matter in a report~\cite{larue2011report}:
 
-%tragedy of the commons
+\begin{quote}
+    ``\textit{there should be as little restriction as possible  to  the  flow  of  information  via  the  Internet,
+    except  in  few,  exceptional,  and  limited  circumstances  prescribed  by  international  human  rights  law.}'' 
+    
+    -Frank La Rue  
+\end{quote}
 
-The internet is more distributed than ever [citation needed].
+This leaves little doubt that the availibility of the internet is protected by Article 19 of the
+the Universal Declaration of Human Rights ``Freedom of Opinion and Information''.
 
-Distributed systems suffer from a tragedy of the commons.
+A more controversial issue has been going on for longer than it is known to the general public.
+In 2013, Edward Snowden disclosed the first of several pieces of information that
+have shown digital communication, the internet included, is subject to extensive surveillance.
+Also known as the ``Snowden Revelations'', the information released consists of a series
+of documents and accompanying articles. The documents originate from several intelligence 
+agencies and detail the scale and methods with which these agencies perform digital
+surveillance. 
+About this, David Lyon writes the following~\cite{lyon2014surveillance}
 
-Defending against sybils is interesting in the sense
-that it will also imply that there is no gross unfairness in the system.
+\begin{quote}
+    ``\textit{Given the reliance on western liberal legal traditions
+    it is hardly surprising that public debate generally 
+    commences around the question of} privacy. 
+    \textit{Understood as a human right, it underlies aspects of democratic polity,
+    such as freedom of expression. 
+    Often understood in the post-Snowden era as relating to 
+    control of communications about oneself, 
+    it is clearly a threatened value if not – according to some – a forlorn hope.}
+
+    -David Lyon
+\end{quote}
+
+Hence, if we value the human rights to freedom of expression and privacy, then an internet
+with entities performing unbounded surveillance is not desirable. 
+
+On the one hand, even back in 2001 there was a a growing consensus that the internet poses
+a threat to the existance of authoritarian regimes~\cite{kalathil2001internet}. 
+On the other hand, regimes like China~\cite{endeshaw2004internet} and Iran~\cite{kimppa2010emancipatory}
+try their very best to censor content. 
+
+The solutions to ensuring availibility of the internet and its services
+appears to to have one thing in common. All systems aiming to do so leverage the concept of
+a \emph{distributed system}. Distributed systems are networks of computers that all perform part
+of a common task. The advantage of distributed systems is that, if well designed, they are
+extremely hard to take down. The disadvantage of a distributed systems is that there will
+be difficulties in the distribution, in particular if the the system is actually physically
+distributed. 
+
+A prime example of using a distributed system to increase availibility is the 
+bittorrent protocol~\cite{cohen2008bittorrent}. This protocol enables something called peer-to-peer filesharing.
+In this paradigm, many computers are in possesion of (part of) a file. Computers
+which do not possess the enitre file can request little pieces of it from other
+computers (also known as peers). This protocol ensures the availibility of this
+file. If any peer stops functioning for any reason whatsoever, the rest of
+the network can continue to exist as is, as long as all active peers have the
+entire file amongst themselves. 
+
+An example of a distributed system that ensure both availibility and privacy is
+TOR~\cite{dingledine2004tor}. TOR is a so-called onion routing protocol. 
+This 
+
+%TODO finish
+
+
 \chapter{Research questions}
 
 For various reasons, distributed systems can have advantages over traditional centralized

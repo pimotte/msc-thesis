@@ -250,35 +250,93 @@ but the result would be better if everyone pitched in a small amount of effort.
 The focus of this thesis is the following research question:
 
 \begin{center}
-    Can agents in a distributed network use information about the order of
-    interactions to fairly distribute resources?
+    Can agents in a distributed network use confirmed information about
+    interations and their order to judge the reputation of other agents
+    in a fair and efficient way?
 \end{center}
 
-To determine how to distribute resources, we consider accounting mechanisms. Accounting
-mechanisms can be used to assign a score to agents. These scores can then
-be used to determine priority in resource distribution.
+Before anything else, we need to specify what ``judge the reputation'' means.
+An agent will judge the reputation of others by assigning each of them a score.
+If one agent is assigned a higher score than another, the former is judged to be more
+reputable.  These scores could then be used to determine priority in distributing resources.
 
-To restrict the scope of this research, only accounting mechanism are considered as a method
+Throughout this thesis we will consider Tribler as an application area and experimental
+evaluation will be done using Tribler. 
+In this context, a system that assigns a score
+to agents given information about their interactions has been dubbed an 
+``accounting mechanism'' by Seuken~and~Parkes~\cite{seuken2010accounting}. This
+work will adhere to this terminology.
+
+To restrict the scope of this research, only accounting mechanisms are considered as a method
 of using the information about the order of interactions. This reduces the main research question
 to the following:
 
-Does information about the order of interactions allow the design of an accounting mechanism
-that satisfies the following three properties?
+\begin{center}
+    Does information about the order of interactions allow the design of an accounting mechanism
+    that satisfies the following three properties?
+\end{center}
 
 \begin{itemize}
-    \item The accounting mechanism is fair. That is, the accounting mechanism result in
-        similar priorities to some objective measure of contribution.
-    \item The accounting mechanism is manipulation-resistant. That is, agents 
-        cannot profit by methods other than actual contributions.
-    \item The accounting mechanism is efficiently computable, either by the system as a whole,
-        or by each agent.
+    \item The accounting mechanism is fair. 
+    \item The accounting mechanism is manipulation-resistant.
+    \item The accounting mechanism is efficiently computable.
 \end{itemize}
 
+These properties are far from well-defined in this context, so let us consider each of them.
+
+\section{Fairness}
+
+The meaning of fairness as in the above property is that the score assigned to an agent
+accurately reflects their contribution. The problem with this is that the target might
+vary for different application domains. For example, in the context of a social
+network where interactions are friendships, interactions are positive for both sides.
+In a system like Tribler, interactions will be positive for at least one side, but
+might have a negative impact on the reputation. In a distributed system like Bitcoin,
+we might interpret the amount of money an agent posesses as a score assigned. In
+this case, the transfer of money is the interaction, and it will be positive for one
+agent and negative for the other.
+
+For purposes of this thesis we will zoom in on fairness in the context of Tribler.
+This notion would hold up for other distributed systems in case that each node
+can contribute or consume resources, where contributing is positive, consuming
+is negative, and contributing and consuming the same amount is explicitly seen as postive.
+Generally, in bittorrent networks, the ratio between upload and download is seen
+as a fair measure of contribution. However, since in Tribler, relaying data for onion
+routing is a service that the network provides, uploading and downloading the same
+amount is seen as a postive thing. This is not reflected in the ratio, which
+means that we cannot take it as an accurate representation of a fair accounting mechanism.
+
+To at least get some notion of what constitutes fair, let us consider an agent that
+engages in a new interaction. Then the following would be an indication of a fair mechanism:
+
+\begin{itemize}
+    \item If the agent consumes more resources than they contribute, their score goes down.
+    \item If the agent consumes less resources than they contribute and less than they have
+        done historically, their score goes up.
+     \item If the agent consumes less resources than they contribute, but more than they have
+        done historically, their score might not change.
+\end{itemize}
+
+\section{Resistance to manipulation}
+
+While fairness says something about the score in relation to the actions within
+the system, resistance to manipulation concerns actions that are not ``normal''
+in the system. In particular, lying of any sort, creating extra or new identities
+and any other actions than participating in the network should not lead to an
+increase in score.
+
+\section{Efficiency of computation}
+
+As well known, the efficiency of algorithms can be compared with big-$O$ notation.
+It might vary per application domain if an accounting mechanism with a certain
+theorethical worst-case performance is useable. It might be that some
+theoretically slow mechanisms turn out to be fast in practice, or that the
+instance sizes are small enough to allow a higher-order algorithm. Hence,
+in addition to big-$O$ notation, the efficiency will be studied in practice.
 
 
 
-
-\chapter{Base Model of Accounting System}
+\chapter{Base Model of Interaction Information}
 
 In order to exploit time-based information, this information will need to be
 available in the first place. In order to allow general applicability of the
@@ -1203,7 +1261,8 @@ Firstly, let us consider the Net-flow mechanism. One of the first considerations
 of the parameter $\alpha$ is and how informative the mechanism is.
 
 
-In Figure \ref{fig:nf_alpha_comparison} shows the Net-flow scoring mechanism for four peers, for three
+Figures \ref{fig:nf_alpha_comparison_1} and \ref{fig:nf_alpha_comparison_2}
+show the Net-flow scoring mechanism for four peers, for three
 different values of $\alpha$. These peers have been selected by sorting the list of peers by their total
 amount of uploaded data, and taking the peers at the 70th, 80th, 90th and 100th percentile.
 The peer whose point of view is taken for the computation is marked red. Each bubble is a peer whose
@@ -1227,25 +1286,33 @@ peer might still have a non-zero score if they have contribute about the same or
 in absolute terms.
 
 \begin{figure}[ht]
-    \begin{tabular}[ht]{ccc}
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_7} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_7} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_7} \\
+    \begin{tabular}[ht]{cc}
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_7} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_8} \\
 
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_8} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_8} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_8} \\
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_7} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_8} \\
 
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_9} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_9} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_9} \\
-        
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow0_10} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow1_10} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_flow2_10} \\
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_7} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_8} \\
     \end{tabular}
     \caption{Net-flow scores from the perspective of several nodes}
-    \label{fig:nf_alpha_comparison}
+    \label{fig:nf_alpha_comparison_1}
+\end{figure}
+
+\begin{figure}[ht]
+    \begin{tabular}[ht]{cc}
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_9} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_10} \\
+
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_9} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_10} \\
+
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_9} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_10} \\
+    \end{tabular}
+    \caption{Net-flow scores from the perspective of several nodes}
+    \label{fig:nf_alpha_comparison_2}
 \end{figure}
 
 Let us now consider the informativeness of this mechanism. As described in Chapter~\ref{chap:netflow},
@@ -1283,25 +1350,35 @@ Netflow, but including some of the lower quantile representants.
 
 \begin{figure}[ht]
     \centering
-    \begin{tabular}[ht]{ccc}
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_2} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_3} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_4} \\
+    \begin{tabular}[ht]{cc}
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_1} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_2} \\
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_3} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_4} \\
 
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_5} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_6} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_7} \\
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_5} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_6} \\
+    \end{tabular}
+    \caption{Temporal PageRank computed by several peers}
+    \label{fig:tpr_per_peer_1}
+\end{figure}
 
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_8} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_9} &
-        \includesvg[width=0.3\textwidth]{plots_all/plot_up_down_size_tpr_10} \\
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}[ht]{cc}
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_7} & 
+
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_8} \\ 
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_9} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_10} \\
 
     \end{tabular}
     \caption{Temporal PageRank computed by several peers}
-    \label{fig:tpr_per_peer}
+    \label{fig:tpr_per_peer_2}
 \end{figure}
 
-Looking at Figure~\ref{fig:tpr_per_peer} leads to several insights. Firstly, note that
+
+Looking at Figures~\ref{fig:tpr_per_peer_1}~and~\ref{fig:tpr_per_peer_2} leads to several insights. Firstly, note that
 in contrast with Net-flow, these figures are all on the same scale, and that with the
 exception of a few nodes, most nodes are assigned somewhat the same score, regardless
 of the performance of the computing node. The general pattern is that nodes with both
@@ -1363,6 +1440,20 @@ Finally, consider Figure~\ref{fig:box_netflow_tpr}. In this figure, the same met
 for Net-flow and Temporal PageRank. Note that the medians lie almost exactly on the expectation
 if the rankings were random. While the outliers are clearly biased towards having more in common,
 there is still very little that these rankings have in common.
+
+\chapter{Conclusion and Discussion}
+
+In this thesis, we have considered a distributed system and proposed two accounting mechanisms
+in order to compute trust and reputation in said systems. We consider the fairness, resistance
+to manipulation and computability of these mechanisms.
+
+\section{Fairness}
+
+Traditionally, the contribution of peers to a bittorrent system have been judged by their
+upload/download ratio. In the context of a system like Tribler, this is not per se an accurate
+measure of contribution, because the act of relaying 
+
+
 
 
 

@@ -257,12 +257,66 @@ several key pieces of technology to provide anonymous bittorrent to its users. I
 it provides a distributed search engine for torrent files and a built-in media player in
 order to stream a torrent. 
 
+While this piece of software may seem to be the ultimate tool of an internet pirate, 
+allow us to consider it in the light of the human rights mentioned above. Due to its
+distributed nature, Tribler is much less susceptible to traditional filtering and
+censoring techniques. In particular, unless all connectivity to a peer is severed,
+there is very little an authoritarian regime can do once a user gets their hands
+on Tribler. This enables information to freely flow from peer-to-peer and hence 
+enables Frank La Rues vision of as little restriction as possible. 
+Furthermore, the other side of the human rights equation considers the human
+right to privacy. That Tribler offers this is not a point of discussion. What might
+be considered is the question of whether Tribler offers too much privacy. Does it
+prevent law enforcement from doing their job? Does Tribler impact the war on terror?
+One might argue that Tribler does in fact offer too strong of a protection.
+However, the legal measures law enforcement can take, like a digital
+wiretap specific to a person or computer, are not prevented by Tribler. What is
+prevented is the style of mass surveillance uncovered by the Snowden revelations. 
+
+Distributed systems seem to be all sunshine and no rain. Protecting human rights 
+and ensuring availibility of services. However, the decentralization does pose certain 
+problems. One problem in particular is resource management. A decentralized system
+like Tribler has many of the same properties as the climate change problem. Most of the
+world is aware climate is changing and that a change in their behavior would help to
+mitigate this problem. In fact, if the world as a whole does not alter their behavior,
+there might be catastrophic consequences. However, the impact a single person or household
+has is extraordinarily small. So small, that most people reason that their behavior
+does not impact the world, so they will just continue living as they always have. 
+This problem is known as the Tragedy of the Commons. Everyone would win if everyone
+participated, but one person can not make the difference. 
+This concept was first introduced in %TODO ref
+In Tribler, this concept exists in the following form: Everyone would like to use 
+the network to download data. However, in order to do so, there needs to be at least
+one agent to relay this data, and then another one to request it from the internet.
+This means that if enough agents fulfill these functions out of their free will,
+and everyone does a little bit, the load will be spread and the network will
+fuction. However, it is much more enticing to not contribute and only consume.
+
+Traditionally, in bittorrent networks, this problem has been solved for public torrents
+by simply relying on altruistic agents, who contribute based on nothing more than
+their good will. There also exists the concept of a private community, in which a central
+entity records how much data is downloaded and uploaded by each agent. This central
+entity then does ``ratio enforcement'' and excludes members that drop below a certain
+contribution ratio. Tribler has so far mostly relied on the altruists. 
+Recently, a movement has started to bring some sort of trust system to Tribler. In particular,
+if an agent considers another one to be trustworthy, in the sense that they have contributed
+a lot to the network, the former would give the latter priority in requests for resources.
+
+The problem here is that since the system itself needs to maintain anonimity, the task of
+finding out if an agent is contributing suddenly becomes a lot harder. In particular, 
+it becomes very hard to determine whether an agent is real, and has had interactions with
+others, if one can not have an interaction with this agent themselves. An agent could simply
+exist by claim of another, including fictional interactions with the real agent. Any trust system
+should therefore be able to deal with such attacks. The theoretical resistance to attacks,
+and the practical performance are the subjects of this thesis.
+
+
 %TODO finish
 
 
 \chapter{Research questions}
 
-For various reasons, distributed systems can have advantages over traditional centralized
+As argued in the introductions, distributed systems can have advantages over traditional centralized
 systems. However, distributing a system comes with several challenges, in particular that
 the agents in this system will need to contribute in order for the system to
 function. This can easily lead to a tragedy of the commons, where everyone is slacking,
@@ -359,7 +413,7 @@ in addition to big-$O$ notation, the efficiency will be studied in practice.
 
 \chapter{Base Model of Interaction Information}
 
-In order to exploit time-based information, this information will need to be
+In order to exploit information about interactions, this information will need to be
 available in the first place. In order to allow general applicability of the
 techniques, first the general model is considered, which is then shown to be
 relevant in the particular case of the software known as ``Tribler''.
@@ -454,8 +508,6 @@ of the order of interactions.
     \end{equation*}
 \end{definition}
 
-%TODO definition block graph
-
 \section{Base model applied to Tribler}
 
 To obtain more insight into the ordered interaction model, consider the following application:
@@ -466,7 +518,7 @@ but a single real world entity could have multiple agents. In Tribler an interac
 consists of two agents uploading data to each other. The amount of work $w_p$ performed
 by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
 
-In Tribler, these interactions are recorded in a distributed datastructure, called the multichain.
+In Tribler, these interactions are recorded in a distributed datastructure, called the multi-chain.
 Every client saves and signs their interactions, marked with a sequence number. They will then request
 a digital signature from their peer, who will mark the interaction with their own sequence number.
 These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
@@ -474,6 +526,11 @@ a sequence $(i_0, i_1, \ldots i_n)$, where $i=i_0, j=i_n$ and every pair $(i_k, 
 a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}$.
 This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
 $i$ occurred before $j$ and both involve agent $p$.
+
+The above reasoning shows that the base model as presented is compatible with Tribler as a usecase.
+Let us further elaborate on some of the properties of the multi-chain, in order to sketch a better image.
+
+%TODO multichain properties
 
 
 

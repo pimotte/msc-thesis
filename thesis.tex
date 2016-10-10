@@ -234,7 +234,28 @@ entire file amongst themselves.
 
 An example of a distributed system that ensure both availibility and privacy is
 TOR~\cite{dingledine2004tor}. TOR is a so-called onion routing protocol. 
-This 
+The concept of onion routing is as follows. One obtains a list of peers in the
+network, at least one of which needs to be available as ``exit node''. If one
+then wants to communicate with the internet, any request that would normally
+be sent directly is instead routed through two or more of these peers, the last
+of which must be an exit node. This is done by wrapping the request in one
+layer per peer. These layers constitute the onion. The way this is done is such
+that each peer in the network knows the previous and next link in this chain,
+but no one except the originator knows the entirety. The exit node is the last
+hop, and they will send this on to the recipient on the internet. Hence, they
+know everything that is not encrypted about this request and response, which includes at
+least the recipient. 
+The aim of using an onion protocol is to hide the identity of the browsing party. Indeed,
+their identity can only be revealed if too many of the peers in the chain are controlled
+by the same party. This protocol can be applied to any sort of web traffic, including
+bittorrent traffic. 
+
+The techniques of bittorrent and TOR have both been incorporated into another piece
+of software: Tribler. Since both of these techniques are quintessentially distributed,
+naturally Tribler itself works as a distributed system. This piece of software unifies
+several key pieces of technology to provide anonymous bittorrent to its users. In addition,
+it provides a distributed search engine for torrent files and a built-in media player in
+order to stream a torrent. 
 
 %TODO finish
 

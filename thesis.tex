@@ -316,6 +316,8 @@ and the practical performance are the subjects of this thesis.
 
 \chapter{Research questions}
 
+%TODO Problem description
+
 As argued in the introductions, distributed systems can have advantages over traditional centralized
 systems. However, distributing a system comes with several challenges, in particular that
 the agents in this system will need to contribute in order for the system to
@@ -529,9 +531,21 @@ $i$ occurred before $j$ and both involve agent $p$.
 
 The above reasoning shows that the base model as presented is compatible with Tribler as a usecase.
 Let us further elaborate on some of the properties of the multi-chain, in order to sketch a better image.
+The multi-chain has first been introduced by Norberhuis~\cite{norberhuis2015multichain}. For a detailed
+view into this structure, we refer to this work.
 
-%TODO multichain properties
+There are two main properties of multi-chain that are exploited in the mechanisms this work builds upon it.
+Firstly, there is the fact that a record of an interaction can only exist if both parties agree that it
+is accurate. Secondly, the multi-chain is built such that there is eventual detection of lying. In particular,
+if an agent spreads differing interations to different agents, this will be detected. In terms of the model,
+if an agent spreads interactions such that his set of interactions has no total order, the network will
+be able to detect and prove this. 
 
+There are also properties of the multi-chain that are less desirable. In particular, with no implementation
+will all agents get all the interactions at the same time. In fact, in some possible implementations, 
+agents will not even get a full view of the network. This is not necessarily problematic for the systems
+that will be proposed, but is something that should be kept in mind and these properties will eventually
+give way to attacks on the systems. 
 
 
 \chapter{Accounting mechanisms and sybil-proofness}
@@ -1014,6 +1028,8 @@ to incorporate randomness in which interactions to keep, or which agents to keep
 
 
 
+
+%TODO: Collusion attack
 \section{Theoretical Performance of Net-flow}
 
 In order to computer the score of one other node with net-flow, up to $2n+1$ max-flow
@@ -1310,6 +1326,7 @@ Theorem~\ref{thm:no_trans_trust} seems to be a bad sign for Temporal PageRank. H
 
 
 \chapter{Experimental Evaluation}
+\label{chap:exp}
 
 In Chapters \ref{chap:netflow} and \ref{chap:temporal_pr} accounting mechanisms have been presented.
 In addition, theoretical properties have been proven. This chapter contains experiments on a real-world
@@ -1527,9 +1544,44 @@ to manipulation and computability of these mechanisms.
 
 \section{Fairness}
 
-Traditionally, the contribution of peers to a bittorrent system have been judged by their
+As mentioned, the contribution of peers to a bittorrent system have traditionally been judged by their
 upload/download ratio. In the context of a system like Tribler, this is not per se an accurate
-measure of contribution, because the act of relaying 
+measure of contribution, because the act of relaying would need to be rewarded. When elaborating on
+the research question, fairness was described as a vague concept. However, with the results
+presented in Chapter \ref{chap:exp}, in particular 
+Figures~\ref{fig:nf_alpha_comparison_1},~\ref{fig:nf_alpha_comparison_2},~Figures~\ref{fig:tpr_per_peer_1}~and~\ref{fig:tpr_per_peer_2},
+this notion becomes a lot more clear. 
+
+Using net-flow with $\alpha=1$ is decidedly unfair. 
+Agents that are not the biggest contributers and contributors assign scores with an unlogical pattern and
+agents that have contributed and consumed more, but still have a net postive ratio are often assigned
+zero valued scores. For higher $\alpha$, a clear pattern emerges, where agents that contribute
+and consume more or a similar amount are assigned the highest scores in a system. For agents
+that contribute less, there is a clearly visisble pattern that matches with the concept of 
+contributing more giving a higher score. In addition, peers with significantly lower absolute contribution
+and an upload/download ratio below 1 are assigned a zero score. These patterns are consistent with a fair
+ranking.
+
+Likewise, temporal PageRank provides a somewhat fair ranking. While the patterns here may not be as
+monotonous as for net-flow, but the general trend of contributing more resulting in a higher score
+is still present. What is very much different from net-flow is that for temporal PageRank, the overal
+scoring of the agents is the same, with the exception of up to some 10 peers. The agents that are
+the exception have a higher than average score, likely because they have had direct interaction with
+the calclating agent. Also note that as the calculating peer contributes more, this effect is spread
+over more agents, and the magnitude of the difference drops. 
+
+In conclusion, both net-flow and temporal PageRank provide reasonably fair mechanisms, with the
+exception of Net-Flow with $\alpha=1$, which does not.
+
+\section{Resistance to Manipulation}
+
+One of the major advantages of net-flow would have to be that it is resistant to profitable sybil attacks,
+as detailed in Theorem~\ref{thm:prop-rob-net-flow}. This becomes a little less impressive if we
+take into account that $\alpha=1$ does not yield a fair accounting mechanism. That being said, taking
+$\alpha > 1$ will still yield an accounting mechanism with a well-established bound on the profits
+a sybil attack. Temporal PageRank, by contrast, does not have such a particular guarantee. It is not
+susceptible to the particular attack of Seuken~and~Parkes' impossibility result. However, it is
+vulnerable to some of the known attacks on normal PageRank. 
 
 
 

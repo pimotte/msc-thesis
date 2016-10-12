@@ -1481,7 +1481,7 @@ higher upload and download get a higher score and that the absolute amount matte
 than the ratio between the two. However, there appears to be a slight overall bias
 twowards peers that have uploaded more than that they have downloaded.
 
-\section{Cross-mechanism evaluation}
+\section{Cross-mechanism Evaluation}
 
 Since the end result of an accounting mechanism will often be used as a ranking, let us
 consider the common peers in top fractions of rankings. It makes sense to compare each
@@ -1535,6 +1535,49 @@ Finally, consider Figure~\ref{fig:box_netflow_tpr}. In this figure, the same met
 for Net-flow and Temporal PageRank. Note that the medians lie almost exactly on the expectation
 if the rankings were random. While the outliers are clearly biased towards having more in common,
 there is still very little that these rankings have in common.
+
+\section{Performance Evaluation}
+
+In order to evaluate the performance of both net-flow and temporal PageRank, the dataset used for
+other experiments was again leveraged. In order to study the behavior with increasing an increasing
+number of agents and interactions, the data set was replayed, and the computation time was measured
+for 1 computation for several points in the history. These points were chosen such that
+both for the number of agents and the number of interactions, there was a good spread of
+sample points.
+Net-flow was considered with $\alpha=2$, temporal PageRank with a uniform
+distribution after jumping. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{tabular}[ht]{cc}
+        \includesvg[width=0.47\textwidth]{plots_all/plot_time_netflow} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_time_interactions_netflow} \\
+        \includesvg[width=0.47\textwidth]{plots_all/plot_time_nodes_pimrank} &
+        \includesvg[width=0.47\textwidth]{plots_all/plot_time_pimrank} \\
+
+    \end{tabular}
+    \caption{Computation times for net-flow and temporal PageRank}
+    \label{fig:performance}
+\end{figure}
+
+In Figure~\ref{fig:performance} the computation times are shown. For both net-flow and temporal PageRank,
+consider the times with the number of agents and the number of interactions on the x-axis. Also note
+that for each we have split the times into build time, which is the construction of the data structure
+on which the algorithm is excecuted and the computation time of the algorithm itself. Note the sharp
+increase in computation time for netflow as a function of the number of interactions. This can be
+explained by the fact that around that moment in time, there was a sharp jump in the number of agents,
+see Figure~\ref{fig:evolution}.
+
+\begin{figure}[ht]
+    \centering
+    \includesvg[width=0.7\textwidth]{plots_all/plot_time_agents}
+    \caption{Number of agents in the network over time}
+    \label{fig:evolution}
+\end{figure}
+
+
+%TODO finish
+
 
 \chapter{Conclusion and Discussion}
 

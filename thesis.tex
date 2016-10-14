@@ -1078,90 +1078,8 @@ worst case.
 
 \chapter{Considering Time}
 \label{chap:temporal_pr}
-\subsection{Timeline inference for the base model}
 
-With OIMs, the ordering information of interactions is largely preserved. However, for some
-applications it will be useful to be able to associate timestamps with interactions. To
-this point, we introduce the concept of timeline inference.
-
-\begin{definition}[Timeline inference for ordered interaction models]
-    Let $M = (P, I)$ be an ordered interaction model. 
-
-    $f$ is a \emph{timeline information function} if:
-    \begin{itemize}
-        \item $J \subseteq I$ 
-        \item $f : J \to \bb{R}$
-        \item $f$ is increasing with respect to the partial ordering on $I$. That is:
-            for $i,j \in J$, if $i \leq j$, then $f(i) \leq f(j)$. 
-    \end{itemize}
-
-    By $f[J]$ we denote the range of $f$.
-    This allows to define the timeline inference function $T_f$:
-
-    \begin{itemize}
-        \item $T_f : I \to f[J] \times f[J]$
-        \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
-    \end{itemize}
-    
-    In addition, we define $\ov{T_f} : I \to \bb{R}$ by $\ov{T_f}(i)$ being the average of the
-    two values $T_f(i)$.
-\end{definition}
-
-
-If $f$ represents some sort of temporal information about the interactions in $J$, 
-then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
-$f$ beyond elements in $J$. In addition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
-
-\section{Time-discounted interaction effort}
-
-In order to model the effort needed to interact, we consider the fact that commitment to
-a system takes some effort. To this end, we introduce the concept of time-discounted effort.
-
-\begin{definition}[Time-discounted effort]
-    Let $M = (P, I)$ be an ordered interaction model, let $f$ be a timeline information function.
-    Let $d: \bb{R} \to \bb{R}^+$ be a decreasing function. The time-discounted interaction
-    effort is defined as:
-    \begin{align*}
-        e: & P \times I \to \bb{R} \\
-        e(p, i) &= w_p(i)*d(\ov{T_f}(i)) \\
-    \end{align*}
-\end{definition}
-
-This definition implies that an interaction in the past is regarded as having taken more effort.
-
-
-In Tribler, timeline information inference can be done by each agent $p$, if they
-keep a local record of the time at which they participated in interaction $i$. In this
-case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
-the timestamp of interaction $i$.
-
-
-
-\section{The resource distribution problem}
-
-Consider an ordered interaction model $M$. At a specific moment in time, an agent
-$p$ has a certain set of other agents suitable for interaction. The problem
-at hand is: How should $p$ choose distribute their resources to do work for other agents?
-
-
-To answer this question, there are several aspects to consider. Firstly, is the issue of
-what $p$ intends to achieve. Does $p$ want to distribute their resources in a way that
-best helps the collective of all agents? Or maybe he intends to do it such that
-he performs work for the people who are most likely to return the favour. Another possibility
-is that he wants to compensate others for work they performed for him previously.
-Some of these possibilities touch on the game theoretic and sociopsychological angles to this problem.
-
-The second aspect is the availibility of information. In some ordered interaction models, $p$ may
-have complete information considering all interactions. In other settings, in particular distributed
-systems, it may be expensive or time consuming to obtain all information. It could be that $p$ has only
-information concerning their own interactions, or they can just obtain a limited number of transactions.
-
-The third aspect is that there could be additional issues that are not captured in the ordered interaction
-model. In particular, the truthfulness of interactions, behavior of agents outside of
-events in this framework 
-
-
-
+%TODO write intro
 
 \section{Random walks in the Ordered Interaction Graph}
 
@@ -1195,15 +1113,15 @@ We take the concept of PageRank and apply it to the Ordered Interaction Graph to
 yield a technique that will be referred to as temporal PageRank
 
 \begin{definition}[Temporal PageRank]
-    Let $M$ be an Ordered Interaction Model, with corresponding Ordered Interaction Graph $G$.
+    Let $M$ be an Ordered Interaction Model, with corresponding Block Graph $G$.
     Consider a random walk in $G$, where the transition probabilities are the normalized
     weights of the arcs. Let this random walk have a chance of $\beta$ to jump to a random node.
-    This random node is determined by a distribution $X$ on nodes that represent interactions of
-    a single agent $i$. By default, this distribution is the agent's first interaction with probability 1.
+    This random node is determined by a distribution $X$ on nodes that represent $i$'s half of interactions of
+    a single agent $i$. By default, this is uniform over all nodes.
 
     The score of an interaction is it's probability in the stationary distribution of this random walk.
     Then Temporal PageRank is an accounting mechanism, which assigns as a score to agent $j$, the
-    sum of all nodes representing interaction which $j$ was a part of.
+    sum of all nodes representing $j$'s half of interactions of which $j$ was a part of.
 \end{definition}
 
 
@@ -1318,6 +1236,7 @@ known as Transitive Trust.
 \end{proof}
 
 Theorem~\ref{thm:no_trans_trust} seems to be a bad sign for Temporal PageRank. However, 
+%TODO write prob transitive trust
 
 
 
@@ -1566,7 +1485,9 @@ that for each we have split the times into build time, which is the construction
 on which the algorithm is excecuted and the computation time of the algorithm itself. Note the sharp
 increase in computation time for netflow as a function of the number of interactions. This can be
 explained by the fact that around that moment in time, there was a sharp jump in the number of agents,
-see Figure~\ref{fig:evolution}.
+see Figure~\ref{fig:evolution}. Note that both implementations use the Networkx library, but 
+
+%TODO finish
 
 \begin{figure}[ht]
     \centering
@@ -1576,7 +1497,8 @@ see Figure~\ref{fig:evolution}.
 \end{figure}
 
 
-%TODO finish
+
+
 
 
 \chapter{Conclusion and Discussion}
@@ -1626,6 +1548,10 @@ a sybil attack. Temporal PageRank, by contrast, does not have such a particular 
 susceptible to the particular attack of Seuken~and~Parkes' impossibility result. However, it is
 vulnerable to some of the known attacks on normal PageRank. 
 
+\section{Performance}
+
+In Figure~\ref{fig:performance} the performance of both Net-flow and temporal PageRank has been 
+graphed. 
 
 
 
@@ -1638,6 +1564,75 @@ vulnerable to some of the known attacks on normal PageRank.
 
 
 
+
+
+
+
+
+\appendix
+
+\chapter{Timeline Inference}
+
+The information below is one of the initial ideas what could be done with multi-chain. It did not end up being
+used in the accounting mechanisms, but could be used in methods that do studies with adversaries and need
+to model them in some way.
+    
+With oredered interaction models, the ordering information of interactions is largely preserved. However, for some
+applications it will be useful to be able to associate timestamps with interactions. To
+this point, we introduce the concept of timeline inference.
+
+\begin{definition}[Timeline inference for ordered interaction models]
+    Let $M = (P, I)$ be an ordered interaction model. 
+
+    $f$ is a \emph{timeline information function} if:
+    \begin{itemize}
+        \item $J \subseteq I$ 
+        \item $f : J \to \bb{R}$
+        \item $f$ is increasing with respect to the partial ordering on $I$. That is:
+            for $i,j \in J$, if $i \leq j$, then $f(i) \leq f(j)$. 
+    \end{itemize}
+
+    By $f[J]$ we denote the range of $f$.
+    This allows to define the timeline inference function $T_f$:
+
+    \begin{itemize}
+        \item $T_f : I \to f[J] \times f[J]$
+        \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
+    \end{itemize}
+    
+    In addition, we define $\ov{T_f} : I \to \bb{R}$ by $\ov{T_f}(i)$ being the average of the
+    two values $T_f(i)$.
+\end{definition}
+
+
+If $f$ represents some sort of temporal information about the interactions in $J$, 
+then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
+$f$ beyond elements in $J$. In addition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
+
+\section{Time-discounted interaction effort}
+
+In order to model the effort needed to interact, we consider the fact that commitment to
+a system takes some effort. To this end, we introduce the concept of time-discounted effort.
+
+\begin{definition}[Time-discounted effort]
+    Let $M = (P, I)$ be an ordered interaction model, let $f$ be a timeline information function.
+    Let $d: \bb{R} \to \bb{R}^+$ be a decreasing function. The time-discounted interaction
+    effort is defined as:
+    \begin{align*}
+        e: & P \times I \to \bb{R} \\
+        e(p, i) &= w_p(i)*d(\ov{T_f}(i)) \\
+    \end{align*}
+\end{definition}
+
+This definition implies that an interaction in the past is regarded as having taken more effort.
+
+\subsection{Timeline inference for the base model}
+
+
+In Tribler, timeline information inference can be done by each agent $p$, if they
+keep a local record of the time at which they participated in interaction $i$. In this
+case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
+the timestamp of interaction $i$.
 
 
 

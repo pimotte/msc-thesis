@@ -6,6 +6,7 @@
 \usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
 
 \usepackage[section]{placeins}
+\usepackage{tikz}
 
 \newcommand{\bb}{\mathbb}
 \newcommand{\mb}{\mathbf} \newcommand{\mc}{\mathcal}
@@ -55,6 +56,9 @@
    \begin{center}
        DRAFT of Msc Thesis
        %TODO goede titel
+       %Sybil-resistant trust mechanisms in distributed systems.
+       %Transitive trust in distributed systems with sybil resilliance.
+       %Graph-based, sybil-resilliant trust mechanisms in distributed systems
    \end{center}
    \end{minipage}}}}
 
@@ -308,17 +312,13 @@ it becomes very hard to determine whether an agent is real, and has had interact
 others, if one can not have an interaction with this agent themselves. An agent could simply
 exist by claim of another, including fictional interactions with the real agent. Any trust system
 should therefore be able to deal with such attacks. The theoretical resistance to attacks,
-and the practical performance are the subjects of this thesis.
+and the performance in practice are the subjects of this thesis.
 
-
-%TODO finish
 
 
 \chapter{Research questions}
 
-%TODO Problem description
-
-As argued in the introductions, distributed systems can have advantages over traditional centralized
+As argued in the introduction, distributed systems can have advantages over traditional centralized
 systems. However, distributing a system comes with several challenges, in particular that
 the agents in this system will need to contribute in order for the system to
 function. This can easily lead to a tragedy of the commons, where everyone is slacking,
@@ -469,14 +469,14 @@ of the order of interactions.
 
     \begin{itemize}
         \item $V := \{ v_{i} : i \in I\}$\\
-        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } \exists p \in P, \mbox{ where } i = \pred(p, j)\}$
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } i \preceq j \}\\
     \end{itemize}
 
     In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
     interaction $i$. 
 \end{definition}
 
-%TODO examples
+%TODO example
 
 \begin{definition}[Block Graph]
     Let $M = (P, I)$ be an ordered interaction model. The block graph $G^B_{M}$ is defined as follows:
@@ -509,6 +509,57 @@ of the order of interactions.
         w(a) := \mbox{ The total amount of work } p \mbox{ has performed for } q
     \end{equation*}
 \end{definition}
+
+In order to shed more light on these definitions, let us consider an example. This example involves
+3 agents: $P, Q, R$. The interactions are as follows:
+
+\begin{table}
+    \centering
+    \begin{tabular}{c|c|c|c|c|c}
+        Interaction Id & Agent 1 & Sequence Number 1 & Contribution 1 & Agent 2 & Sequence Number 2 & Contribution 2 \\\hline
+        P1Q1           & P       & 1                 & 5MB            & Q       & 1                 & 3MB            \\
+        P2R1           & P       & 2                 & 7MB            & R       & 1                 & 1MB            \\
+        Q2R2           & Q       & 2                 & 3MB            & R       & 2                 & 8MB            \\
+        P3R3           & P       & 3                 & 2MB            & R       & 3                 & 3MB            \\
+    \end{tabular}
+    \caption{Set of interactions for examples}
+    \label{tab:interactions}
+\end{table}
+
+In Table~\ref{tab:interactions}, the attributes of the interactions are specified. For each interactions the
+agents involved are listed, along with their respective contributions, the amount of data uploaded
+to the other. In addition, the sequence number is listed. Recall that the set of interactions of each agent must
+be completely ordered as defined by the partial ordering on the set of interactions. The sequence number is
+simply the numbering of this set as prescribed by the ordering. This also gives way to an easy way to uniquely
+identify an interaction, namely by concatenating the agents with their sequence numbers. This is listed
+as the interaction id.
+
+ \begin{figure}[b]
+        \centering
+         \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+            inner sep=0pt, minimum width=10pt} 
+            ]
+
+            \node [main node] (a1) {1} ;
+            \node [main node] (a2) [right = 5cm of a1] {2} ;
+            \node [main node] (a3) [below = 3cm of a1] {3} ;
+            \node [main node] (a4) [right = 5cm of a3] {4} ;
+
+            \node (l2) [right = 0.5cm of a2] {$9 - 5 = 4$};
+            \node (l3) [left = 0.5cm of a3] {$6 - 11 = -5$};
+            \node (l4) [right = 0.5cm of a4] {$0 - 0 = 0$};
+
+            \path[draw, thick]
+            (a1) edge [bend right] node [below] {5} (a2) 
+            (a2) edge [bend right] node [above] {4} (a1) 
+            (a1) edge [bend right] node [left] {6} (a3)
+            (a3) edge [bend right] node [right] {6} (a1)
+            (a2) edge [bend left=10] node [right = 0.1cm ] {5} (a3)
+            (a3) edge node [below] {10} (a4)
+            ;
+         \end{tikzpicture}
+         \caption{BarterCast scores}
+     \end{figure}
 
 \section{Base model applied to Tribler}
 
@@ -843,23 +894,33 @@ resistant to sybil attacks, in the sense that they can be profitably weakly beni
 profit.
 
 \begin{definition}[Strict Winner-Takes-All]
+   \label{def:SWTA}
    The strict winner-take-all allocation policy (SWTA) selects the agent with the highest score,
    breaking ties randomly. However, the strict winner-take-all will not select any agent
    when all agents have the same score.
 \end{definition}
 
-%TODO def MF somewhere
+Definition~\ref{def:SWTA} defines a policy to choose an agent to recieve resources given scores
+on resources. This is a policy which will likely not be used in practice, but is very useful
+for proofs. The consequence of this is that in real world systems a little bit of good will
+is necessary to bootstrap a system based on trust. All results must therefore be considered
+with this caveat. 
 
 \begin{definition}[Net-flow limited contribution]
     The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
     Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
     $i$ computes the the following for each agent $j$: 
-    $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$.
+    $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$, where $MF_{G_i}(i,j)$ denotes
+    the value of the maximum flow from $i$ to $j$ in $G_i$, where the weights are
+    the capacities on arcs.
+
     Let $G_i^N$ be the graph $G_i$ modified with $c_j$ as node capacities for each node,
     except for $c_i$ which should be unbounded.
 
     Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
 \end{definition}
+
+%TODO example
 
 \begin{theorem}[Properties and robustness of Net-flow]
     Net-flow as accounting mechanism, with SWTA as allocation policy
@@ -868,6 +929,7 @@ profit.
 
     \label{thm:prop-rob-net-flow}
 \end{theorem}
+
 
 \begin{proof}
     IDA follows from the fact that flow to and from agents does not change if independent agents
@@ -891,8 +953,6 @@ in particular if a network only cares about work contribution and consumption, a
 not about possible other external factors. Furthermore, in contrast to Drop-Edge, net-flow
 is choice set independent, which implies there is less computation for varying choice sets.
 
-
-%TODO be specifc about flow times
 
 On the other hand, this algorithm computes two max-flows for every node and then one max-flow for
 every nodes that needs to be assigned a score. This means that any algorithm that simply compute
@@ -1025,11 +1085,21 @@ the fact that it requires a very specific network topology. Furthermore, the att
 know the view of the network that potential victims have. A possible defense against this attack is
 to incorporate randomness in which interactions to keep, or which agents to keep track of.
 
+\subsection{Collusion attack}
 
+The final attack is a different beast. Suppose two agents both have a positive score. If they 
+fully trust each other, they can sign an interaction that both of them have uploaded an extremely large
+amount of data to each other (say 1TB). This might have the following effects, assuming a fluid network:
 
+%TODO explain fluid
 
+\begin{itemize}
+    \item These two agents have the highest scores in each others rankings. 
+    \item The capacities of both nodes become the sum of the capacities.
+\end{itemize}
 
-%TODO: Collusion attack
+%TODO: Collusion attack. Is this an attack?
+
 \section{Theoretical Performance of Net-flow}
 
 In order to computer the score of one other node with net-flow, up to $2n+1$ max-flow
@@ -1079,7 +1149,11 @@ worst case.
 \chapter{Considering Time}
 \label{chap:temporal_pr}
 
-%TODO write intro
+Net-flow seems quite suitable from a theoretical perspective. The guarantees against sybil 
+attacks are exactly what we set out for. However, the computational complexity is high
+enough that there is reason for worry. This leads to the idea that something that 
+
+%TODO finish intro
 
 \section{Random walks in the Ordered Interaction Graph}
 

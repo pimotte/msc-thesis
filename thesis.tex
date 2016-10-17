@@ -27,6 +27,8 @@
 
 \graphicspath{ {plots_all/} }
 
+\usetikzlibrary{positioning}
+
 
 \begin{document}
 
@@ -237,7 +239,7 @@ the network can continue to exist as is, as long as all active peers have the
 entire file amongst themselves. 
 
 An example of a distributed system that ensure both availibility and privacy is
-TOR~\cite{dingledine2004tor}. TOR is a so-called onion routing protocol. 
+Tor~\cite{dingledine2004tor}. Tor is a so-called onion routing protocol. 
 The concept of onion routing is as follows. One obtains a list of peers in the
 network, at least one of which needs to be available as ``exit node''. If one
 then wants to communicate with the internet, any request that would normally
@@ -254,7 +256,7 @@ their identity can only be revealed if too many of the peers in the chain are co
 by the same party. This protocol can be applied to any sort of web traffic, including
 bittorrent traffic. 
 
-The techniques of bittorrent and TOR have both been incorporated into another piece
+The techniques of bittorrent and Tor have both been incorporated into another piece
 of software: Tribler. Since both of these techniques are quintessentially distributed,
 naturally Tribler itself works as a distributed system. This piece of software unifies
 several key pieces of technology to provide anonymous bittorrent to its users. In addition,
@@ -469,7 +471,7 @@ of the order of interactions.
 
     \begin{itemize}
         \item $V := \{ v_{i} : i \in I\}$\\
-        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } i \preceq j \}\\
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } i \preceq j \}$\\
     \end{itemize}
 
     In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
@@ -515,7 +517,7 @@ In order to shed more light on these definitions, let us consider an example. Th
 
 \begin{table}
     \centering
-    \begin{tabular}{c|c|c|c|c|c}
+    \begin{tabular}{c|c|c|c|c|c|c}
         Interaction Id & Agent 1 & Sequence Number 1 & Contribution 1 & Agent 2 & Sequence Number 2 & Contribution 2 \\\hline
         P1Q1           & P       & 1                 & 5MB            & Q       & 1                 & 3MB            \\
         P2R1           & P       & 2                 & 7MB            & R       & 1                 & 1MB            \\

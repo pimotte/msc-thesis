@@ -290,7 +290,8 @@ has is extraordinarily small. So small, that most people reason that their behav
 does not impact the world, so they will just continue living as they always have. 
 This problem is known as the Tragedy of the Commons. Everyone would win if everyone
 participated, but one person can not make the difference. 
-This concept was first introduced in %TODO ref
+This concept has been study at length in the past decades, we refer to
+Hardin~\cite{hardin2009tragedy} for a view of this problem in broader society.
 In Tribler, this concept exists in the following form: Everyone would like to use 
 the network to download data. However, in order to do so, there needs to be at least
 one agent to relay this data, and then another one to request it from the internet.
@@ -573,7 +574,7 @@ but a single real world entity could have multiple agents. In Tribler an interac
 consists of two agents uploading data to each other. The amount of work $w_p$ performed
 by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
 
-In Tribler, these interactions are recorded in a distributed datastructure, called the multi-chain.
+In Tribler, these interactions are recorded in a distributed datastructure, called the MultiChain.
 Every client saves and signs their interactions, marked with a sequence number. They will then request
 a digital signature from their peer, who will mark the interaction with their own sequence number.
 These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
@@ -583,18 +584,18 @@ This results in a full order on $I_p$, since in that case $(i, j)$ is a valid se
 $i$ occurred before $j$ and both involve agent $p$.
 
 The above reasoning shows that the base model as presented is compatible with Tribler as a usecase.
-Let us further elaborate on some of the properties of the multi-chain, in order to sketch a better image.
-The multi-chain has first been introduced by Norberhuis~\cite{norberhuis2015multichain}. For a detailed
+Let us further elaborate on some of the properties of the MultiChain, in order to sketch a better image.
+The MultiChain has first been introduced by Norberhuis~\cite{norberhuis2015multichain}. For a detailed
 view into this structure, we refer to this work.
 
-There are two main properties of multi-chain that are exploited in the mechanisms this work builds upon it.
+There are two main properties of MultiChain that are exploited in the mechanisms this work builds upon it.
 Firstly, there is the fact that a record of an interaction can only exist if both parties agree that it
-is accurate. Secondly, the multi-chain is built such that there is eventual detection of lying. In particular,
+is accurate. Secondly, the MultiChain is built such that there is eventual detection of lying. In particular,
 if an agent spreads differing interations to different agents, this will be detected. In terms of the model,
 if an agent spreads interactions such that his set of interactions has no total order, the network will
 be able to detect and prove this. 
 
-There are also properties of the multi-chain that are less desirable. In particular, with no implementation
+There are also properties of the MultiChain that are less desirable. In particular, with no implementation
 will all agents get all the interactions at the same time. In fact, in some possible implementations, 
 agents will not even get a full view of the network. This is not necessarily problematic for the systems
 that will be proposed, but is something that should be kept in mind and these properties will eventually
@@ -908,8 +909,8 @@ for proofs. The consequence of this is that in real world systems a little bit o
 is necessary to bootstrap a system based on trust. All results must therefore be considered
 with this caveat. 
 
-\begin{definition}[Net-flow limited contribution]
-    The Net-flow limited contribution accounting mechanism $M$ is defined as follows:
+\begin{definition}[NetFlow limited contribution]
+    The NetFlow limited contribution accounting mechanism $M$ is defined as follows:
     Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
     $i$ computes the the following for each agent $j$: 
     $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$, where $MF_{G_i}(i,j)$ denotes
@@ -924,12 +925,12 @@ with this caveat.
 
 %TODO example
 
-\begin{theorem}[Properties and robustness of Net-flow]
-    Net-flow as accounting mechanism, with SWTA as allocation policy
+\begin{theorem}[Properties and robustness of NetFlow]
+    NetFlow as accounting mechanism, with SWTA as allocation policy
     satisfies IDA, ANON, weak transitive trust and is robust against
     profitably weakly benificial sybil attacks.
 
-    \label{thm:prop-rob-net-flow}
+    \label{thm:prop-rob-NetFlow}
 \end{theorem}
 
 
@@ -943,16 +944,16 @@ with this caveat.
 
     Since sybils only have connections to $j$, they cannot be involved in the flow to $j$, hence
     $M$ is resistant to sybil attacks of type $(1)$. For the same reason this scheme is resiliant
-    to attack of type (2). For case (3), $s$ can only consume at most the net-flow of $j$ ($c_j$)
-    units of work, at which point the net-flow and the reputation of $j$ will be $0$. The net-flow
+    to attack of type (2). For case (3), $s$ can only consume at most the NetFlow of $j$ ($c_j$)
+    units of work, at which point the NetFlow and the reputation of $j$ will be $0$. The NetFlow
     is bounded by the contribution of $j$ to the network, so it is impossible to turn a profit of this.
 \end{proof}
 
-Note that this result does not contradict those of Seuken and Parkes. The net-flow mechanism is
+Note that this result does not contradict those of Seuken and Parkes. The NetFlow mechanism is
 still vulnerable to weakly-benificial sybil attacks, since those are defined quite widely and
 a weakly-benificial sybil attack does not necessarily have to be detrimental to the network,
 in particular if a network only cares about work contribution and consumption, and
-not about possible other external factors. Furthermore, in contrast to Drop-Edge, net-flow
+not about possible other external factors. Furthermore, in contrast to Drop-Edge, NetFlow
 is choice set independent, which implies there is less computation for varying choice sets.
 
 
@@ -991,7 +992,7 @@ that the leverage the scaling to a strongly profitable sybil attack.
         \end{cases}
     \end{equation*}
     
-    The $\alpha$-net-flow accounting mechanism is computed as the net-flow accounting
+    The $\alpha$-NetFlow accounting mechanism is computed as the NetFlow accounting
     mechanism, but on the graph $G_i' = (V_i, E_i, w_{i,\alpha})$.
 
     As a shorthand, this mechanism is denoted by $\alpha$-NF.
@@ -1014,7 +1015,7 @@ that the leverage the scaling to a strongly profitable sybil attack.
 \end{proof}
 
 Theorem \ref{thm:sybil-anf} provides an interesting tradeoff. For $\alpha=1$, it reduces
-to one of the properties in theorem \ref{thm:prop-rob-net-flow}. For larger $\alpha$,
+to one of the properties in theorem \ref{thm:prop-rob-NetFlow}. For larger $\alpha$,
 the mechanism becomes more vulnerable to sybil attacks, but more agents will have
 a positive net flow in the first computation step, meaning that more agents will
 have a non-zero score, increasing the informativeness of the system. Note
@@ -1051,12 +1052,12 @@ lower levels helping each other.
 \section{Attacks on Net-Flow}
 
 Theorem \ref{thm:sybil-anf} suggests an almost absolute defense against sybil attacks. However,
-due to the formulation of the model, and the properties of the underlying multi-chain data structure,
+due to the formulation of the model, and the properties of the underlying MultiChain data structure,
 there are possible angles of attack.
 
 \subsection{Propagation slowness}
 
-One of the properties of the multi-chain includes that any interaction is signed by two parties and
+One of the properties of the MultiChain includes that any interaction is signed by two parties and
 then is valid immediately. There is no concept of network-wide confirmation. This means that an attacker
 could approach several nodes in the network simultaneously and extract more data from the multiple parties
 than they would have allowed if each party had known about the ongoing interactions with the other peers.
@@ -1074,10 +1075,10 @@ to choose a lower $\alpha$ to account for this attack.
 
 \subsection{Partial network visibility}
 
-Tangentially related to the above attack is another attack that exploits the fact that if the multi-chain
+Tangentially related to the above attack is another attack that exploits the fact that if the MultiChain
 network grows very large, is not expected for every agent to have a full view of the network. This
 is a desirable paradigm, as otherwise it would be trivial to spam the network by creating and broadcasting
-multi-chain blocks. However, this also implies that different agents have a different view of the network.
+MultiChain blocks. However, this also implies that different agents have a different view of the network.
 In particular, if an attacker $s$ participates in an interaction $I_1$ in which he contributes a lot
 of resources, and victims $v_1, v_2$ both know about $I_1$, but are not even aware of the existence of
 the other victim, then the attacker could exploit this and request resources from both. 
@@ -1102,15 +1103,15 @@ amount of data to each other (say 1TB). This might have the following effects, a
 
 %TODO: Collusion attack. Is this an attack?
 
-\section{Theoretical Performance of Net-flow}
+\section{Theoretical Performance of NetFlow}
 
-In order to computer the score of one other node with net-flow, up to $2n+1$ max-flow
+In order to computer the score of one other node with NetFlow, up to $2n+1$ max-flow
 computations are necessary, where $n$ is the number of nodes. In case one would compute
 the scores of all other nodes, $3n$ max-flow computations are needed. Hence, the
-performance of net-flow will depend on the max-flow algorithm used and then incur
+performance of NetFlow will depend on the max-flow algorithm used and then incur
 another factor $n$ of computational complexity. This could be mitigated by finding
 a way to compute multiple flows at the same time. In this section, possibilities
-to improve the performance of net-flow will be explored. With $n$ we denote
+to improve the performance of NetFlow will be explored. With $n$ we denote
 the number of nodes, with $m$ the number of edges.
 
 Well known algorithms for max-flow include Ford-Fulkerson~\cite{ford1956maximal},
@@ -1138,10 +1139,10 @@ for which $n-1$ max-flow computations suffice. However, this method only works f
 According to Ahuja, Magnati and Orlin~\cite{ahuja1993network}, no method is known for all-pairs max-flow
 on directed graphs that uses less than $\omega(n^2)$ max-flow computations. This work is from
 1993, and to our knowledge this has not changed since. Note that for the application of
-net-flow, it would be necessary to compute all flows with one fixed sink or one fixed source,
+NetFlow, it would be necessary to compute all flows with one fixed sink or one fixed source,
 which is not quite the same as the all-pairs max-flow problem.
 
-The above research implies that using state of the art algorithms, a net-flow algorithm
+The above research implies that using state of the art algorithms, a NetFlow algorithm
 implemented with current state-of-the-art algorithms would be at least $O(n^2m)$ in the
 worst case. 
 
@@ -1151,7 +1152,7 @@ worst case.
 \chapter{Considering Time}
 \label{chap:temporal_pr}
 
-Net-flow seems quite suitable from a theoretical perspective. The guarantees against sybil 
+NetFlow seems quite suitable from a theoretical perspective. The guarantees against sybil 
 attacks are exactly what we set out for. However, the computational complexity is high
 enough that there is reason for worry. This leads to the idea that something that 
 
@@ -1334,25 +1335,25 @@ of these accounting mechanisms.
 \section{Data collection}
 
 Prior work %TODO citation
-has implemented the multi-chain data structure into Tribler. In collaboration with Bongers and Veldhuisen,
+has implemented the MultiChain data structure into Tribler. In collaboration with Bongers and Veldhuisen,
 this system has been brought up to production level and released in an experimental release of Tribler,
 version 6.6.0 \footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
 release was ran by people with a close interest in Tribler. It was announced on the forums and could
-also be found through above GitHub page. A crawler was deployed to request multi-chain blocks from throughout
+also be found through above GitHub page. A crawler was deployed to request MultiChain blocks from throughout
 the network. A database dump from this crawler has been acquired on the 31th of August. The software
 was released on the 26th of July. This means that the data has been generated by users during a period
 that lasted a little over a month. During this period 917 identities have been observed in the network.
 These identities are not necessarily unique users, since technically savvy users may purposefully 
 delete their identity or users may have installed the software on multiple machines.
 
-\section{Net-flow evaluation}
+\section{NetFlow evaluation}
 
-Firstly, let us consider the Net-flow mechanism. One of the first considerations will be what the influence
+Firstly, let us consider the NetFlow mechanism. One of the first considerations will be what the influence
 of the parameter $\alpha$ is and how informative the mechanism is.
 
 
 Figures \ref{fig:nf_alpha_comparison_1} and \ref{fig:nf_alpha_comparison_2}
-show the Net-flow scoring mechanism for four peers, for three
+show the NetFlow scoring mechanism for four peers, for three
 different values of $\alpha$. These peers have been selected by sorting the list of peers by their total
 amount of uploaded data, and taking the peers at the 70th, 80th, 90th and 100th percentile.
 The peer whose point of view is taken for the computation is marked red. Each bubble is a peer whose
@@ -1386,7 +1387,7 @@ in absolute terms.
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_7} &
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_8} \\
     \end{tabular}
-    \caption{Net-flow scores from the perspective of several nodes}
+    \caption{NetFlow scores from the perspective of several nodes}
     \label{fig:nf_alpha_comparison_1}
 \end{figure}
 
@@ -1401,7 +1402,7 @@ in absolute terms.
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_9} &
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_10} \\
     \end{tabular}
-    \caption{Net-flow scores from the perspective of several nodes}
+    \caption{NetFlow scores from the perspective of several nodes}
     \label{fig:nf_alpha_comparison_2}
 \end{figure}
 
@@ -1469,7 +1470,7 @@ Netflow, but including some of the lower quantile representants.
 
 
 Looking at Figures~\ref{fig:tpr_per_peer_1}~and~\ref{fig:tpr_per_peer_2} leads to several insights. Firstly, note that
-in contrast with Net-flow, these figures are all on the same scale, and that with the
+in contrast with NetFlow, these figures are all on the same scale, and that with the
 exception of a few nodes, most nodes are assigned somewhat the same score, regardless
 of the performance of the computing node. The general pattern is that nodes with both
 higher upload and download get a higher score and that the absolute amount matters more
@@ -1480,14 +1481,14 @@ twowards peers that have uploaded more than that they have downloaded.
 
 Since the end result of an accounting mechanism will often be used as a ranking, let us
 consider the common peers in top fractions of rankings. It makes sense to compare each
-of Net-flow and Temporal PageRank with the mechanisms that inspired them: BarterCast
+of NetFlow and Temporal PageRank with the mechanisms that inspired them: BarterCast
 and PageRank. Furthermore, it might be fruitful to inspect the same comparison for
-Net-flow and Temporal PageRank in order to see if they approximate each other well.
+NetFlow and Temporal PageRank in order to see if they approximate each other well.
 
 \begin{figure}[ht]
     \centering
     \includesvg[width=0.7\textwidth]{plots_all/plot_boxplot_bc_netflow}
-    \caption{Box plots of fraction of common peers in rankings for BarterCast and Net-flow}
+    \caption{Box plots of fraction of common peers in rankings for BarterCast and NetFlow}
     \label{fig:box_bc_netflow}
 \end{figure}
 
@@ -1501,7 +1502,7 @@ the line $y=x$. In this case, for the rankings that include up to 40\% of partic
 the median is about 40\% in common between rankings. While this is above the baseline,
 it is not an extreme overlap. This implies that there a difference, but it looks very
 structured. Once the rankings get larger, there is relatively less overlap, which
-can be attributed to Net-flows characteristic of cutting off scores at 0, leading
+can be attributed to NetFlows characteristic of cutting off scores at 0, leading
 to a lot of ties.
 
 
@@ -1522,24 +1523,24 @@ assume the test set has any sort of malicious activity.
 \begin{figure}[ht]
     \centering
     \includesvg[width=0.7\textwidth]{plots_all/plot_boxplot_tpr_netflow}
-    \caption{Box plots of fraction of common peers in rankings for Net-flow and Temporal PageRank}
+    \caption{Box plots of fraction of common peers in rankings for NetFlow and Temporal PageRank}
     \label{fig:box_netflow_tpr}
 \end{figure}
 
 Finally, consider Figure~\ref{fig:box_netflow_tpr}. In this figure, the same metric is depicted, but
-for Net-flow and Temporal PageRank. Note that the medians lie almost exactly on the expectation
+for NetFlow and Temporal PageRank. Note that the medians lie almost exactly on the expectation
 if the rankings were random. While the outliers are clearly biased towards having more in common,
 there is still very little that these rankings have in common.
 
 \section{Performance Evaluation}
 
-In order to evaluate the performance of both net-flow and temporal PageRank, the dataset used for
+In order to evaluate the performance of both NetFlow and temporal PageRank, the dataset used for
 other experiments was again leveraged. In order to study the behavior with increasing an increasing
 number of agents and interactions, the data set was replayed, and the computation time was measured
 for 1 computation for several points in the history. These points were chosen such that
 both for the number of agents and the number of interactions, there was a good spread of
 sample points.
-Net-flow was considered with $\alpha=2$, temporal PageRank with a uniform
+NetFlow was considered with $\alpha=2$, temporal PageRank with a uniform
 distribution after jumping. 
 
 \begin{figure}[ht]
@@ -1551,11 +1552,11 @@ distribution after jumping.
         \includesvg[width=0.47\textwidth]{plots_all/plot_time_pimrank} \\
 
     \end{tabular}
-    \caption{Computation times for net-flow and temporal PageRank}
+    \caption{Computation times for NetFlow and temporal PageRank}
     \label{fig:performance}
 \end{figure}
 
-In Figure~\ref{fig:performance} the computation times are shown. For both net-flow and temporal PageRank,
+In Figure~\ref{fig:performance} the computation times are shown. For both NetFlow and temporal PageRank,
 consider the times with the number of agents and the number of interactions on the x-axis. Also note
 that for each we have split the times into build time, which is the construction of the data structure
 on which the algorithm is excecuted and the computation time of the algorithm itself. Note the sharp
@@ -1593,7 +1594,7 @@ presented in Chapter \ref{chap:exp}, in particular
 Figures~\ref{fig:nf_alpha_comparison_1},~\ref{fig:nf_alpha_comparison_2},~Figures~\ref{fig:tpr_per_peer_1}~and~\ref{fig:tpr_per_peer_2},
 this notion becomes a lot more clear. 
 
-Using net-flow with $\alpha=1$ is decidedly unfair. 
+Using NetFlow with $\alpha=1$ is decidedly unfair. 
 Agents that are not the biggest contributers and contributors assign scores with an unlogical pattern and
 agents that have contributed and consumed more, but still have a net postive ratio are often assigned
 zero valued scores. For higher $\alpha$, a clear pattern emerges, where agents that contribute
@@ -1604,20 +1605,20 @@ and an upload/download ratio below 1 are assigned a zero score. These patterns a
 ranking.
 
 Likewise, temporal PageRank provides a somewhat fair ranking. While the patterns here may not be as
-monotonous as for net-flow, but the general trend of contributing more resulting in a higher score
-is still present. What is very much different from net-flow is that for temporal PageRank, the overal
+monotonous as for NetFlow, but the general trend of contributing more resulting in a higher score
+is still present. What is very much different from NetFlow is that for temporal PageRank, the overal
 scoring of the agents is the same, with the exception of up to some 10 peers. The agents that are
 the exception have a higher than average score, likely because they have had direct interaction with
 the calclating agent. Also note that as the calculating peer contributes more, this effect is spread
 over more agents, and the magnitude of the difference drops. 
 
-In conclusion, both net-flow and temporal PageRank provide reasonably fair mechanisms, with the
+In conclusion, both NetFlow and temporal PageRank provide reasonably fair mechanisms, with the
 exception of Net-Flow with $\alpha=1$, which does not.
 
 \section{Resistance to Manipulation}
 
-One of the major advantages of net-flow would have to be that it is resistant to profitable sybil attacks,
-as detailed in Theorem~\ref{thm:prop-rob-net-flow}. This becomes a little less impressive if we
+One of the major advantages of NetFlow would have to be that it is resistant to profitable sybil attacks,
+as detailed in Theorem~\ref{thm:prop-rob-NetFlow}. This becomes a little less impressive if we
 take into account that $\alpha=1$ does not yield a fair accounting mechanism. That being said, taking
 $\alpha > 1$ will still yield an accounting mechanism with a well-established bound on the profits
 a sybil attack. Temporal PageRank, by contrast, does not have such a particular guarantee. It is not
@@ -1626,7 +1627,7 @@ vulnerable to some of the known attacks on normal PageRank.
 
 \section{Performance}
 
-In Figure~\ref{fig:performance} the performance of both Net-flow and temporal PageRank has been 
+In Figure~\ref{fig:performance} the performance of both NetFlow and temporal PageRank has been 
 graphed. 
 
 
@@ -1649,7 +1650,7 @@ graphed.
 
 \chapter{Timeline Inference}
 
-The information below is one of the initial ideas what could be done with multi-chain. It did not end up being
+The information below is one of the initial ideas what could be done with MultiChain. It did not end up being
 used in the accounting mechanisms, but could be used in methods that do studies with adversaries and need
 to model them in some way.
     

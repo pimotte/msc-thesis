@@ -56,11 +56,7 @@
  {\textbf{
    \begin{minipage}{13cm}\Large
    \begin{center}
-       DRAFT of Msc Thesis
-       %TODO goede titel
-       %Sybil-resistant trust mechanisms in distributed systems.
-       %Transitive trust in distributed systems with sybil resilliance.
-       %Graph-based, sybil-resilliant trust mechanisms in distributed systems
+       Sybil-resistant trust mechanisms in distributed systems
    \end{center}
    \end{minipage}}}}
 
@@ -438,8 +434,8 @@ Hence, applications which fit the following model will be explored.
         \item $I$, a finite partially ordered set of interactions
     \end{itemize}
 
-    agents represent entities that can interact with each other.
-    An interaction consists of two agents, one or both performing
+    Agents represent entities that can interact with each other.
+    An interaction consists of two different agents, one or both performing
     work for each other. 
     
     An interaction is defined by two pairs of properties:
@@ -448,22 +444,23 @@ Hence, applications which fit the following model will be explored.
         \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
     \end{enumerate}
 
-    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on 
+    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on:
     \begin{equation*}
         I_p = \{i \in I : p \mbox{ is an agent in } i\}
     \end{equation*}
 \end{definition}
 
-If $i, j \in I$, $i < j$, and there exists no $i'$ such that $i < i' < j$, then
-$j$ is the successor of $i$. This is denoted by $i \preceq j$.
+This model is designed such that the Tribler use case can be mapped to it. However, this model is
+generic enough that it might be applied in other situations. In particular, any system where
+agents interact and perform work for each other, where this work can be quantified in a number,
+this model can be applied to. In most cases, the ordering on the interaction will be relatable
+to time.
 
-Note that because of the total order on the finite set $I_p$, the following holds:
-For each $i \in I_p$, either $i$ is the minimum of $I_p$, or there exists
-a unique $i' \in I_p$ such that $i' \preceq i$. 
-We define: $\pred(p, i) := i'$, so interaction $i'$ is the predecessor
-of interaction $i$ for agent $p$. 
-
-  
+\begin{definition}[Successor of an interaction]
+     If $i, j \in I$, $i < j$, and there exists no $i'$ such that $i < i' < j$, then
+$j$ is a successor of $i$. This is denoted by $i \preceq j$.
+\end{definition}
+ 
 This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
 of the order of interactions.
 \begin{definition}[Ordered interaction graph]
@@ -519,7 +516,7 @@ In order to shed more light on these definitions, let us consider an example. Th
 \begin{table}
     \centering
     \begin{tabular}{c|c|c|c|c|c|c}
-        Interaction Id & Agent 1 & Sequence Number 1 & Contribution 1 & Agent 2 & Sequence Number 2 & Contribution 2 \\\hline
+        Interaction Id & Agent 1 & Seq 1 & Contribution 1 & Agent 2 & Seq 2 & Contribution 2 \\\hline
         P1Q1           & P       & 1                 & 5MB            & Q       & 1                 & 3MB            \\
         P2R1           & P       & 2                 & 7MB            & R       & 1                 & 1MB            \\
         Q2R2           & Q       & 2                 & 3MB            & R       & 2                 & 8MB            \\
@@ -531,38 +528,100 @@ In order to shed more light on these definitions, let us consider an example. Th
 
 In Table~\ref{tab:interactions}, the attributes of the interactions are specified. For each interactions the
 agents involved are listed, along with their respective contributions, the amount of data uploaded
-to the other. In addition, the sequence number is listed. Recall that the set of interactions of each agent must
+to the other. In addition, the sequence number (``Seq'') is listed. Recall that the set of interactions of each agent must
 be completely ordered as defined by the partial ordering on the set of interactions. The sequence number is
 simply the numbering of this set as prescribed by the ordering. This also gives way to an easy way to uniquely
 identify an interaction, namely by concatenating the agents with their sequence numbers. This is listed
 as the interaction id.
 
- \begin{figure}[b]
-        \centering
-         \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
-            inner sep=0pt, minimum width=10pt} 
-            ]
+\begin{figure}[b]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
 
-            \node [main node] (a1) {1} ;
-            \node [main node] (a2) [right = 5cm of a1] {2} ;
-            \node [main node] (a3) [below = 3cm of a1] {3} ;
-            \node [main node] (a4) [right = 5cm of a3] {4} ;
+        \node [main node] (p1q1) {P1Q1} ;
+        \node [main node] (p2r1) [below right  = 1.5cm and 1.5cm of p1q1] {P2R1} ;
+        \node [main node] (q2r2) [below left = 1.5cm and 1.5cm of p2r1] {Q2R2} ;
+        \node [main node] (p3r3) [below right = 1.5cm and 1.5cm of q2r2] {P3R3} ;
 
-            \node (l2) [right = 0.5cm of a2] {$9 - 5 = 4$};
-            \node (l3) [left = 0.5cm of a3] {$6 - 11 = -5$};
-            \node (l4) [right = 0.5cm of a4] {$0 - 0 = 0$};
+        \path[draw, thick]
+        (p1q1) edge node [right] {5MB} (p2r1) 
+        (p1q1) edge node [left] {3MB} (q2r2) 
+        (p2r1) edge node [right] {7MB} (p3r3) 
+        (p2r1) edge node [below right] {1MB} (q2r2) 
+        (q2r2) edge node [left] {8MB} (p3r3) 
+        ;
+     \end{tikzpicture}
+     \caption{Example of an ordered interaction graph}
+     \label{fig:ex_oig}
+\end{figure}
 
-            \path[draw, thick]
-            (a1) edge [bend right] node [below] {5} (a2) 
-            (a2) edge [bend right] node [above] {4} (a1) 
-            (a1) edge [bend right] node [left] {6} (a3)
-            (a3) edge [bend right] node [right] {6} (a1)
-            (a2) edge [bend left=10] node [right = 0.1cm ] {5} (a3)
-            (a3) edge node [below] {10} (a4)
-            ;
-         \end{tikzpicture}
-         \caption{BarterCast scores}
-     \end{figure}
+Figure~\ref{fig:ex_oig} depicts the ordered interaction graph derived from the data in Table~\ref{tab:interactions}.
+Note that some numbers in the graph are not in the graph, as the contributions in an interaction are
+weights in the arcs to the successors of that interaction. If that successor does not exist yet, those
+contributions have no representant in the graph. The ordered interaction graph functions mainly as a 
+structure to consider, as the name says, the order of interactions. It is by definition, the directed
+acyclic graph induced by the partial ordering.
+
+\begin{figure}[b]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (p1) {P1} ;
+        \node [main node] (p2) [below = 1.5cm of p1] {P2} ;
+        \node [main node] (q1) [left = 1.5cm of p1] {Q1} ;
+        \node [main node] (r1) [right = 1.5cm of p2]  {R1} ;
+        \node [main node] (r2) [below = 1.5cm of r1] {R2} ;
+        \node [main node] (q2) [below = 1.5cm of q1] {Q2} ;
+        \node [main node] (r3) [below = 1.5cm of r2] {R3} ;
+        \node [main node] (p3) [below = 1.5cm of p2] {P3} ;
+
+        \path[draw, thick]
+        (p1) edge node [right] {5MB} (p2)
+        (p2) edge node [left] {7MB} (p3)
+        (q1) edge node [left] {3MB} (q2)
+        (r1) edge node [right] {1MB} (r2)
+        (r2) edge node [right] {8MB} (r3)
+        (p1) edge node [above left, pos=0.1] {3MB} (q2)
+        (q1) edge node [below left, pos=0.9] {5MB} (p2)
+        (p2) edge node [below left, pos=0.9] {1MB} (r2)
+        (r1) edge node [above left, pos=0.1] {7MB} (p3)
+        (q2) edge [bend right] node [left] {8MB} (r3)
+
+
+        ;
+     \end{tikzpicture}
+     \caption{Example of a block graph}
+\end{figure}
+
+
+\begin{figure}[b]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (p) {P} ;
+        \node [main node] (q) [below right = 3.46cm and 2cm] {Q} ;
+        \node [main node] (r) [below left = 3.46cm and 2cm] {R} ;
+
+        \path[draw, thick]
+        (p) edge [bend right=20] node [right] {5MB} (q)
+        (q) edge [bend right=20] node [right] {3MB} (p)
+        (p) edge [bend right=20] node [left] {9MB} (r)
+        (r) edge [bend right=20] node [left] {4MB} (p)
+        (q) edge [bend right=20] node [below] {3MB} (r)
+        (r) edge [bend right=20] node [below] {8MB} (q)
+        ;
+     \end{tikzpicture}
+     \caption{Example of an interaction graph}
+\end{figure}
+
+
+%TODO finish examples
 
 \section{Base model applied to Tribler}
 
@@ -655,7 +714,7 @@ attack that exploits this property:
 
 \section{Accounting mechanisms and DropEdge}
 
-In this paper, Seuken and Parkes introduce the concept of an accounting mechanism. This formalization gives
+In the paper mentioned above, Seuken and Parkes introduce the concept of an accounting mechanism. This formalization gives
 a little bit more structure to the problem at hand. It is here that the notions of subjective work graphs
 and choice sets are also formalized. Subjective work graphs allow for a framework in which agents
 do not have a full view of the network, but only have information about agents that they have interacted
@@ -712,6 +771,8 @@ information and subjective work are considered.
    is labeled with one, or both, of weights $w^j_i(j, k), w_i^k(j, k)$ as known to $i$. For edges $(i,j)$
    and $(j,i)$ the associated weight is $w_i^i(i,j) = w(i,j)$ and $w_i^i(j, i) = w(j,i)$ respectively.
 \end{definition}
+
+%TODO Stress misreportproofness 
 
 The definition of a subjective work graph contains a lot of machinery to deal with conflicting information
 and already resolves some of the conflicts. In particular, if reports of others conflict with the observations
@@ -926,7 +987,7 @@ with this caveat.
 %TODO example
 
 \begin{theorem}[Properties and robustness of NetFlow]
-    NetFlow as accounting mechanism, with SWTA as allocation policy
+    NetFlow as accounting mechanism with a complete work graph, with SWTA as allocation policy
     satisfies IDA, ANON, weak transitive trust and is robust against
     profitably weakly benificial sybil attacks.
 
@@ -947,6 +1008,7 @@ with this caveat.
     to attack of type (2). For case (3), $s$ can only consume at most the NetFlow of $j$ ($c_j$)
     units of work, at which point the NetFlow and the reputation of $j$ will be $0$. The NetFlow
     is bounded by the contribution of $j$ to the network, so it is impossible to turn a profit of this.
+    Since the computing agent possesses the complete work graph, no work can leak outside of this graph.
 \end{proof}
 
 Note that this result does not contradict those of Seuken and Parkes. The NetFlow mechanism is
@@ -1351,7 +1413,7 @@ delete their identity or users may have installed the software on multiple machi
 Firstly, let us consider the NetFlow mechanism. One of the first considerations will be what the influence
 of the parameter $\alpha$ is and how informative the mechanism is.
 
-
+%TODO fix numbering in figures
 Figures \ref{fig:nf_alpha_comparison_1} and \ref{fig:nf_alpha_comparison_2}
 show the NetFlow scoring mechanism for four peers, for three
 different values of $\alpha$. These peers have been selected by sorting the list of peers by their total
@@ -1573,6 +1635,9 @@ see Figure~\ref{fig:evolution}. Note that both implementations use the Networkx 
     \label{fig:evolution}
 \end{figure}
 
+%TODO y-axis is wrong
+
+
 
 
 
@@ -1631,11 +1696,16 @@ In Figure~\ref{fig:performance} the performance of both NetFlow and temporal Pag
 graphed. 
 
 
+%TODO finish performance
+
+
+%TODO finish conclusion
 
 
 
 
 
+%TODO Publish dataset
 
 
 

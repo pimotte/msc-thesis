@@ -5,7 +5,7 @@
 %
 \usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
 
-\usepackage[section]{placeins}
+%\usepackage[section]{placeins}
 \usepackage{tikz}
 
 \newcommand{\bb}{\mathbb}
@@ -476,7 +476,6 @@ of the order of interactions.
     interaction $i$. 
 \end{definition}
 
-%TODO example
 
 \begin{definition}[Block Graph]
     Let $M = (P, I)$ be an ordered interaction model. The block graph $G^B_{M}$ is defined as follows:
@@ -493,7 +492,6 @@ of the order of interactions.
     \end{equation*}
 \end{definition}
 
-%TODO example
 
 \begin{definition}[Interaction Graph]
     Let $M = (P, I)$ be an ordered interaction model. The interaction graph $G^I_M$ is defined as follows:
@@ -513,7 +511,7 @@ of the order of interactions.
 In order to shed more light on these definitions, let us consider an example. This example involves
 3 agents: $P, Q, R$. The interactions are as follows:
 
-\begin{table}
+\begin{table}[h]
     \centering
     \begin{tabular}{c|c|c|c|c|c|c}
         Interaction Id & Agent 1 & Seq 1 & Contribution 1 & Agent 2 & Seq 2 & Contribution 2 \\\hline
@@ -532,9 +530,11 @@ to the other. In addition, the sequence number (``Seq'') is listed. Recall that 
 be completely ordered as defined by the partial ordering on the set of interactions. The sequence number is
 simply the numbering of this set as prescribed by the ordering. This also gives way to an easy way to uniquely
 identify an interaction, namely by concatenating the agents with their sequence numbers. This is listed
-as the interaction id.
+as the interaction id. Note that the units of the contributions are in MB. This is a foreshadowing of
+the next section, in which we consider the application of this model to Tribler, where the contribution in
+interactions consists of transferring data.
 
-\begin{figure}[b]
+\begin{figure}[h]
     \centering
      \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
         inner sep=0pt, minimum width=20pt} 
@@ -564,7 +564,7 @@ contributions have no representant in the graph. The ordered interaction graph f
 structure to consider, as the name says, the order of interactions. It is by definition, the directed
 acyclic graph induced by the partial ordering.
 
-\begin{figure}[b]
+\begin{figure}[h]
     \centering
      \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
         inner sep=0pt, minimum width=20pt} 
@@ -595,10 +595,18 @@ acyclic graph induced by the partial ordering.
         ;
      \end{tikzpicture}
      \caption{Example of a block graph}
+     \label{fig:ex_block}
 \end{figure}
 
+In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has largely the same structure
+as the ordered interaction graph, except that each interaction is split into parts belonging to each respective
+party. In the case of MultiChain, this representation really shows the chain aspect of this datastructure,
+in the sense that each agent has their own sequence of nodes, with additional arcs denoting the interactions.
+Again, the lack of representation of the last interactions can be seen. This graph will be used
+in Chapter~\ref{chap:temporal_pr} to serve as the basis for Temporal PageRank.
 
-\begin{figure}[b]
+
+\begin{figure}[h]
     \centering
      \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
         inner sep=0pt, minimum width=20pt} 
@@ -618,10 +626,18 @@ acyclic graph induced by the partial ordering.
         ;
      \end{tikzpicture}
      \caption{Example of an interaction graph}
+     \label{fig:ex_ig}
 \end{figure}
 
+Finally, Figure~\ref{fig:ex_ig} shows the interaction graph. Traditionally, this is the graph
+that has been used in literature. However, when considering an ordered interaction model, this
+graph is the one that might be less obvious at first glance. The structure of the graph
+is the block graph with a contraction of all nodes per agent. The weights on the arcs are
+the sums of the edges in the block graph, but in the other direction. This graph does
+not reflect the notion of time or order in any way. It will be the basis for the
+NetFlow mechanism presented in Chapter~\ref{chap:netflow}.
 
-%TODO finish examples
+
 
 \section{Base model applied to Tribler}
 
@@ -772,13 +788,13 @@ information and subjective work are considered.
    and $(j,i)$ the associated weight is $w_i^i(i,j) = w(i,j)$ and $w_i^i(j, i) = w(j,i)$ respectively.
 \end{definition}
 
-%TODO Stress misreportproofness 
-
 The definition of a subjective work graph contains a lot of machinery to deal with conflicting information
 and already resolves some of the conflicts. In particular, if reports of others conflict with the observations
 of the agent itself, those reports are not considered. This model does not assume anything about the truthfulness
 of the reports used to constructed the subjective work graph, but it is implied that all information concerning
-interactions involving agent $i$ themselves is correct.
+interactions involving agent $i$ themselves is correct. Furthermore, in the application to Tribler, the
+MultiChain structure enforces that any report is signed by the two parties involved. Hence, it is not possible
+to simply make negative reports about other parties without their consent. 
 
 \begin{definition}[Choice Set]
     We let $C_i \subseteq V \setminus \{i\}$ denote the choice set for agent $i$, i.e., the set of agents that
@@ -944,6 +960,9 @@ view of possible attacks.
     \label{def:sybil_profit}
 \end{definition}
 
+The amount of work that needs to be performed for the attack ($w^n_-$) is performed for non-sybil
+agents. The interactions through which this is done are also known as attack edges in broader
+literature.
 Definition \ref{def:sybil_profit} provides a certain amount of backwards compatibility with the work
 of Seuken and Parkes, while still being more distinctive with respect to the different impacts
 sybil attacks can have on the network. In addition, note that the gap between profitably weakly
@@ -1154,16 +1173,31 @@ to incorporate randomness in which interactions to keep, or which agents to keep
 
 The final attack is a different beast. Suppose two agents both have a positive score. If they 
 fully trust each other, they can sign an interaction that both of them have uploaded an extremely large
-amount of data to each other (say 1TB). This might have the following effects, assuming a fluid network:
-
-%TODO explain fluid
+amount of data to each other (say 1TB). Assuming a fluid network,
+in which the flows are bounded by capacities of the source or sink, or the cuts around them.
+In such a network, the following effects would be the consequence of this attack.
 
 \begin{itemize}
     \item These two agents have the highest scores in each others rankings. 
     \item The capacities of both nodes become the sum of the capacities.
 \end{itemize}
 
-%TODO: Collusion attack. Is this an attack?
+This might result in increased scores from agents that have a higher absolute contribution
+than either of these agents, but lower than their sum. For agents that do not match this
+criterion, the scores will likely remain the same.
+
+The presence of this attack vector is a consequence of the desire to fight sybils. It should be
+actively undesirable to spread ones efforts over multiple identities. Since this attack 
+effectively merges two identities into one, it is plausible this yields a positive effect,
+since the inverse operation must be negative, or at least neutral. At first sight, this
+might seem like a problematic attack. However, this attack is only strictly positive for both parties as long
+as they have the same ratio. Once one contributes more than the other, they will get relative negative
+effects. This attack can be feasible if the involved parties have complete trust in each other. In some
+cases it might be considered less of an attack, and more of a feature. For example, if a user
+has multiple machines, they can link their identities in this way without reusing it across machines.
+To conclude, this attack might be a risk and needs to be kept in mind in implementations, but seems relatively
+harmless for the network and fairly risky for the parties involved.
+
 
 \section{Theoretical Performance of NetFlow}
 
@@ -1216,9 +1250,11 @@ worst case.
 
 NetFlow seems quite suitable from a theoretical perspective. The guarantees against sybil 
 attacks are exactly what we set out for. However, the computational complexity is high
-enough that there is reason for worry. This leads to the idea that something that 
+enough that there is reason for worry. This leads to the idea that a cheaper method that uses
+the temporal information in an ordered interaction model might lead to a more feasible method
+that is still resistant to sybil attacks. This chapter will detail an accounting mechanism
+based on PageRank that will prevent ``historical'' sybil attacks.
 
-%TODO finish intro
 
 \section{Random walks in the Ordered Interaction Graph}
 
@@ -1396,10 +1432,10 @@ of these accounting mechanisms.
 
 \section{Data collection}
 
-Prior work %TODO citation
-has implemented the MultiChain data structure into Tribler. In collaboration with Bongers and Veldhuisen,
+Prior work by Norberhuis~\cite{norberhuis2015multichain} includes
+an implementation of the MultiChain data structure into Tribler. In collaboration with Bongers and Veldhuisen,
 this system has been brought up to production level and released in an experimental release of Tribler,
-version 6.6.0 \footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
+version 6.6.0~\footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
 release was ran by people with a close interest in Tribler. It was announced on the forums and could
 also be found through above GitHub page. A crawler was deployed to request MultiChain blocks from throughout
 the network. A database dump from this crawler has been acquired on the 31th of August. The software
@@ -1625,8 +1661,12 @@ on which the algorithm is excecuted and the computation time of the algorithm it
 increase in computation time for netflow as a function of the number of interactions. This can be
 explained by the fact that around that moment in time, there was a sharp jump in the number of agents,
 see Figure~\ref{fig:evolution}. Note that both implementations use the Networkx library, but 
-
-%TODO finish
+Temporal PageRank is one library call, whereas the NetFlow algorithm involves $O(n)$ calls to
+a max-flow subroutine. This leads to the suspicion that not only algorithmic optimizations might
+be possible for NetFlow, as mentioned at the end of Chapter~\ref{chap:netflow}, but there is also
+room for programmatical optimzation, in particular in the reuse of data structures. That
+being said, it is clear that Temporal PageRank is much easier to compute than NetFlow for 
+the testing data, which matches the theoretical worst-case analysis.
 
 \begin{figure}[ht]
     \centering
@@ -1635,7 +1675,6 @@ see Figure~\ref{fig:evolution}. Note that both implementations use the Networkx 
     \label{fig:evolution}
 \end{figure}
 
-%TODO y-axis is wrong
 
 
 

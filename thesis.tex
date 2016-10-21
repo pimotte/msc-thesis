@@ -348,7 +348,7 @@ of using the information about the order of interactions. This reduces the main 
 to the following:
 
 \begin{center}
-    Does information about the order of interactions allow the design of an accounting mechanism
+    Does confirmed information about interactions and their order allow the design of an accounting mechanism
     that satisfies the following three properties?
 \end{center}
 
@@ -1240,7 +1240,8 @@ which is not quite the same as the all-pairs max-flow problem.
 
 The above research implies that using state of the art algorithms, a NetFlow algorithm
 implemented with current state-of-the-art algorithms would be at least $O(n^2m)$ in the
-worst case. 
+worst case. Our implementation uses the preflow-push algorithm, yielding a worst-case
+complexity of $O(n^3m)$. 
 
 
 
@@ -1334,7 +1335,7 @@ the result converges. It is a desirable property to have quick convergence of th
 \begin{theorem}[Convergence of Temporal PageRank]
     The error after $t$ iterations of the power method, for Temporal PageRank with
     jump probability $\beta$, is $O(|1-\beta|^t)$
-    \label{}
+    \label{thm:conv_tpr}
 \end{theorem}
 
 \begin{proof}
@@ -1357,6 +1358,17 @@ the result converges. It is a desirable property to have quick convergence of th
 
 This result implies that the convergence is exponential, but perhaps more importantly, that it is bounded
 by a term independent of the size of the matrix. 
+
+\begin{corollary}[Worst-case performance of temporal PageRank]
+    Computing the temporal PageRank with an error $\eps$ takes $O(m\log\frac1\eps)$ in the worst-case,
+    with $m$ the number of interactions.
+\end{corollary}
+\begin{proof}
+    The size of the matrix involved in Theorem~\ref{thm:conv_tpr} is $m \times m$. Since each interaction
+    has at most 2 successors, the matrix $P$ has $O(m)$ elements. This means that using a sparse implementation,
+    an iteration of the power method will take $O(m)$ multiplications. For a certain error, the number of
+    iterations needed is logarithmic in $\frac1\eps$, yielding the worst-case $O(m\log\farc1\eps)$.
+\end{proof}
 
 \begin{proposition}[Properties of Temporal PageRank]
     Temporal PageRank satisfies IDA and ANON  
@@ -1411,7 +1423,19 @@ known as Transitive Trust.
 \end{proof}
 
 Theorem~\ref{thm:no_trans_trust} seems to be a bad sign for Temporal PageRank. However, 
-%TODO write prob transitive trust
+there still is some notion of transitivity. In particular, the score of each agent
+is the sum of the stationary probabilities on the interaction. In the compuation, 
+the jump probability is $1$. When another interaction occurs, $1-\beta$ of these
+transitions become diverted to the new interactions. Suppose agent $a$ interacts
+with agent $b$, and $b$ then interacts with a new agent $c$, where $b$ is the only
+contributor in the interaction with $a$ and $c$ is the only contributor in
+the interaction with $a$. In this case, $c$ will obtain a fraction $(1-\beta)^2$ of
+the stationary probability of the last interaction of agent $a$. Furthermore, it will
+also obtain a fraction $(1-\beta)$ of the stationary probability on the last interaction
+of agent $b$.
+
+
+
 
 
 
@@ -1727,22 +1751,37 @@ take into account that $\alpha=1$ does not yield a fair accounting mechanism. Th
 $\alpha > 1$ will still yield an accounting mechanism with a well-established bound on the profits
 a sybil attack. Temporal PageRank, by contrast, does not have such a particular guarantee. It is not
 susceptible to the particular attack of Seuken~and~Parkes' impossibility result. However, it is
-vulnerable to some of the known attacks on normal PageRank. 
+vulnerable to some of the known attacks on normal PageRank. Temporal PageRank, however does have
+the resistance against historical attacks, which implies that only interactions after the
+first attack edge are considered.
 
 \section{Performance}
 
 In Figure~\ref{fig:performance} the performance of both NetFlow and temporal PageRank has been 
-graphed. 
+graphed. Recall the theoretical analysis, in which the NetFlow has been shown to have
+worst case computational cost of $O(n^3m)$ and temporal PageRank $O(m\log\frac1\eps)$. For
+a constant error in the PageRank computation, this comes down to a difference of $O(n^3)$.
+This certainly shows in the performance. For temporal PageRank, the time to build the data structure
+is in fact comparable to the actual computation time, whereas in the case of NetFlow, the computation
+time quickly eclipses the time to build the data structure. In comparison, temporal PageRank is much 
+more feasible to compute. It might depend on the actual system whether these algorithms are fast enough.
 
+\section{General conclusion}
 
-%TODO finish performance
-
+The research question asked if an accounting mechanism could use confirmed information about
+interactions and their order allow the design of a fair, manipulation-resistant and efficient
+reputation system. The answer these two mechanisms and their study leads to is a tentative
+``yes''. Temporal PageRank is reasonably fair, and without question performant. It also
+has some desirable manipulation-resistant properties. NetFlow, with $\alpha>1$ looks to
+yield a fair accounting mechanism. Furthermore, it has some of the strongest sybil-resistant
+properties of known accounting mechanisms. However, the fact that 
 
 %TODO finish conclusion
 
 
 
 
+%TODO finish performance
 
 %TODO Publish dataset
 

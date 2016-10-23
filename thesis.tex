@@ -3,7 +3,7 @@
 % The current document is based on a document by Marten Wortel
 % who is greatly acknowledged for making his document available
 %
-\usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
+\usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg,xcolor}
 
 %\usepackage[section]{placeins}
 \usepackage{tikz}
@@ -12,6 +12,10 @@
 \newcommand{\mb}{\mathbf} \newcommand{\mc}{\mathcal}
 \newcommand{\pred}{\mathrm{Pred}}
 \newcommand{\ov}{\overline}
+\newcommand{\eps}{\epsilon}
+\newcommand\musthave[1]{\textcolor{red}{TODO: #1}}
+\newcommand\nicetohave[1]{\textcolor{orange}{TODO: #1}}
+\newcommand\suggestion[1]{\textcolor{green}{TODO: #1}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -158,7 +162,6 @@ $\;$ & \\
 
 \newpage
 
-%TODO make figures black-white compatible 
 \chapter*{\centering \begin{normalsize}Abstract\end{normalsize}}
 
 In this thesis, the problem of estimating trust in a distributed network is considered.
@@ -1003,7 +1006,7 @@ with this caveat.
     Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
 \end{definition}
 
-%TODO example
+\musthave{Small example of NetFlow computation}
 
 \begin{theorem}[Properties and robustness of NetFlow]
     NetFlow as accounting mechanism with a complete work graph, with SWTA as allocation policy
@@ -1105,7 +1108,6 @@ a vector of scores results in a continuous function. Furthermore, if we let $\al
 tend to infinity, this results in an accounting mechanism where every score is the
 max-flow from that node to $i$. 
 
-%TODO picture
 
 There are more desirable properties of $\alpha$-NF. While on the surface, it seems to
 be about ratio's and relative usage, there actually is a subtle way in which
@@ -1119,6 +1121,7 @@ whereas the third will have a score of 0 still. This is because the scaling
 of the upload of the first agent could only have an effect on agents which
 have downloaded more than the total upload of the first agent, divided
 by $\alpha$. 
+\musthave{Graph depicting this situation}
 
 In a broad sense, this means that choosing a higher $\alpha$ will increase the score 
 of agents which have been around longer than yourself, or slightly shorter. This
@@ -1367,7 +1370,7 @@ by a term independent of the size of the matrix.
     The size of the matrix involved in Theorem~\ref{thm:conv_tpr} is $m \times m$. Since each interaction
     has at most 2 successors, the matrix $P$ has $O(m)$ elements. This means that using a sparse implementation,
     an iteration of the power method will take $O(m)$ multiplications. For a certain error, the number of
-    iterations needed is logarithmic in $\frac1\eps$, yielding the worst-case $O(m\log\farc1\eps)$.
+    iterations needed is logarithmic in $\frac1\eps$, yielding the worst-case $O(m\log\frac1\eps)$.
 \end{proof}
 
 \begin{proposition}[Properties of Temporal PageRank]
@@ -1473,10 +1476,13 @@ delete their identity or users may have installed the software on multiple machi
 Firstly, let us consider the NetFlow mechanism. One of the first considerations will be what the influence
 of the parameter $\alpha$ is and how informative the mechanism is.
 
-%TODO fix numbering in figures
 Figures \ref{fig:nf_alpha_comparison_1} and \ref{fig:nf_alpha_comparison_2}
 show the NetFlow scoring mechanism for four peers, for three
-different values of $\alpha$. These peers have been selected by sorting the list of peers by their total
+different values of $\alpha$. 
+\musthave{Numbering of these figures suggests they represent different things. Make clear they are the
+same for different parameters. } 
+\nicetohave{Make figures black-white compatible}
+These peers have been selected by sorting the list of peers by their total
 amount of uploaded data, and taking the peers at the 70th, 80th, 90th and 100th percentile.
 The peer whose point of view is taken for the computation is marked red. Each bubble is a peer whose
 score is computed. Note that the scale of the bubbles is different between the different pictures. 
@@ -1774,16 +1780,45 @@ reputation system. The answer these two mechanisms and their study leads to is a
 ``yes''. Temporal PageRank is reasonably fair, and without question performant. It also
 has some desirable manipulation-resistant properties. NetFlow, with $\alpha>1$ looks to
 yield a fair accounting mechanism. Furthermore, it has some of the strongest sybil-resistant
-properties of known accounting mechanisms. However, the fact that 
-
-%TODO finish conclusion
-
+properties of known accounting mechanisms. However, the fact that a state-of-the-art implementation
+would still take $O(nm^2)$ makes it not performant enough for some applications.
 
 
+\section{Discussion}
 
-%TODO finish performance
+In this discussion, we will consider two topics that came to mind when looking back at this
+research. One is the possibility of future research, the other is the broader perspective
+in which this research can be placed. 
 
-%TODO Publish dataset
+\subsection{Future Research}
+
+Both the mechanisms presented have areas where improvement can be obtained. In the case of
+temporal PageRank, a more precise study could be done towards its fairness. Furthermore,
+since its resistance against is not quite as strong as NetFlows, more research could be done
+into hardening the theoretical resistance against sybil attacks, or to study what sybil
+attacks are possible and determine the risks involved.
+
+As for NetFlow, most of the improvement could be gained in performance. A smart way
+to compute more flows in one go, or a slightly different mechanism that is
+easier to computer, but has the same theoretical resistance against sybil-attacks 
+would be desirable. The reference implementation could also be improved to see if
+programming more efficiently would make this method suitable for more systems.
+
+\subsection{This Research in Broader Context}
+The accounting mechanisms presented here have been designed with the usecase of
+Tribler in mind. In this case, a resource is exhanged (data), but it is not of extreme
+importance that there is an exact balance. In other distributed systems, a currency
+might be involved. In this case, there is still a resource involved, but the balance
+is important. In other applications, like social networks, there is no resource involved
+at all, and ``trusting someone'' is often a symmetric relationship. 
+
+Systems like NetFlow and temporal PageRank could be applicable in other distributed
+systems. Depending on the exact properties of said system, one of them could be
+applied with little alteration, but in other cases it might require non-trivial
+customizations.
+
+
+\musthave{Publish dataset somewhere}
 
 
 

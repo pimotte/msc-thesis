@@ -1,9 +1,10 @@
-documentclass[a4paper,11pt]{book}
+\documentclass[a4paper,11pt]{book}
 %
 % The current document is based on a document by Marten Wortel
 % who is greatly acknowledged for making his document available
 %
-\usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg,xcolor}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
 
 %\usepackage[section]{placeins}
 \usepackage{tikz}
@@ -728,7 +729,7 @@ attack that exploits this property:
     1 in either direction. Now let $j$ create another sybil $s_2$ and claim it uploaded 1MB to $j$. 
     Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. 
     So when $s_2$ asks for data, $i$ is likely to oblige. This process can be repeated for an unbounded
-    number of sybils, obtaining an unbounded amount of work from $i$.
+    number of sybils, obtaining an unbounded amount of work from $i$. \musthave{Picture}
 \end{example}
 
 \section{Accounting mechanisms and DropEdge}
@@ -1006,7 +1007,75 @@ with this caveat.
     Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
 \end{definition}
 
+In order to provide some insight in the behavior of the NetFlow mechanism, let us consider a
+small example. Figure~\ref{fig:ex_ig_for_nf} depicts the interaction graph for which a computation
+will be done. The computation will be done from the perspective of agent R.
+
+\begin{figure}[h]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (p) {P} ;
+        \node [main node] (q) [below right = 3.46cm and 2cm] {Q} ;
+        \node [main node,fill=gray] (r) [below left = 3.46cm and 2cm] {R} ;
+        \node [main node] (t) [right = 3.46cm of p] {T};
+
+        \path[draw, thick]
+        (p) edge [bend right=20] node [right] {5} (q)
+        (q) edge [bend right=20] node [right] {3} (p)
+        (p) edge [bend right=20] node [left] {9} (r)
+        (r) edge [bend right=20] node [left] {4} (p)
+        (q) edge [bend right=20] node [below] {3} (r)
+        (r) edge [bend right=20] node [below] {8} (q)
+        (t) edge node [above] {2} (p)
+        (t) edge node [below = 0.4 cm] {2} (q)
+        ;
+     \end{tikzpicture}
+     \caption{Interaction graph for a NetFlow computation}
+     \label{fig:ex_ig_for_nf}
+\end{figure}
+
+The first step in the algorithm is to compute two max-flows and subtract the flow towards
+the other agent from the flow coming from that agent. This first step is shown in Figure~\ref{fig:ex_nf_1}.
+Observe that agents P and T have a positive capacity. This means they are eligible for positive
+scores, and that they can serve as a conduit for the purposes of transitive trust. 
+
+\begin{figure}[h]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (p) {P} ;
+        \node [main node] (q) [below right = 3.46cm and 2cm] {Q} ;
+        \node [main node,fill=gray] (r) [below left = 3.46cm and 2cm] {R} ;
+        \node [main node] (t) [right = 3.46cm of p] {T};
+
+        \node [ForestGreen] [above = 0.3 cm of p] {$12 - 7 = 5$};
+        \node [red] [below = 0.3 cm of q] {$6 - 12 = -6$};
+        \node [ForestGreen] [right = 0.3 cm of t] {$4 - 0 = 4$};
+
+
+        \path[draw, thick]
+        (p) edge [bend right=20] node [right] {5} (q)
+        (q) edge [bend right=20] node [right] {3} (p)
+        (p) edge [bend right=20] node [left] {9} (r)
+        (r) edge [bend right=20] node [left] {4} (p)
+        (q) edge [bend right=20] node [below] {3} (r)
+        (r) edge [bend right=20] node [below] {8} (q)
+        (t) edge node [above] {2} (p)
+        (t) edge node [below = 0.4 cm] {2} (q)
+        ;
+     \end{tikzpicture}
+     \caption{The first step of a NetFlow computation}
+     \label{fig:ex_nf_1}
+\end{figure}
+
+
 \musthave{Small example of NetFlow computation}
+
 
 \begin{theorem}[Properties and robustness of NetFlow]
     NetFlow as accounting mechanism with a complete work graph, with SWTA as allocation policy

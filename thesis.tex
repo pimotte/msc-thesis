@@ -1026,7 +1026,7 @@ will be done. The computation will be done from the perspective of agent R.
         (p) edge [bend right=20] node [right] {5} (q)
         (q) edge [bend right=20] node [right] {3} (p)
         (p) edge [bend right=20] node [left] {9} (r)
-        (r) edge [bend right=20] node [left] {4} (p)
+        (r) edge [bend right=20] node [left] {6} (p)
         (q) edge [bend right=20] node [below] {3} (r)
         (r) edge [bend right=20] node [below] {8} (q)
         (t) edge node [above] {2} (p)
@@ -1039,8 +1039,10 @@ will be done. The computation will be done from the perspective of agent R.
 
 The first step in the algorithm is to compute two max-flows and subtract the flow towards
 the other agent from the flow coming from that agent. This first step is shown in Figure~\ref{fig:ex_nf_1}.
-Observe that agents P and T have a positive capacity. This means they are eligible for positive
-scores, and that they can serve as a conduit for the purposes of transitive trust. 
+Observe that agents P and T have a positive capacity, $3$ and $4$ respectively. 
+This means they are eligible for positive
+scores, and that they can serve as a conduit for the purposes of transitive trust. For $Q$, the
+subtraction results in a negative number, which is then rounded to $0$ to yield the capacity.
 
 \begin{figure}[h]
     \centering
@@ -1053,7 +1055,7 @@ scores, and that they can serve as a conduit for the purposes of transitive trus
         \node [main node,fill=gray] (r) [below left = 3.46cm and 2cm] {R} ;
         \node [main node] (t) [right = 3.46cm of p] {T};
 
-        \node [ForestGreen] [above = 0.3 cm of p] {$12 - 7 = 5$};
+        \node [ForestGreen] [above = 0.3 cm of p] {$12 - 9 = 3$};
         \node [red] [below = 0.3 cm of q] {$6 - 12 = -6$};
         \node [ForestGreen] [right = 0.3 cm of t] {$4 - 0 = 4$};
 
@@ -1062,7 +1064,7 @@ scores, and that they can serve as a conduit for the purposes of transitive trus
         (p) edge [bend right=20] node [right] {5} (q)
         (q) edge [bend right=20] node [right] {3} (p)
         (p) edge [bend right=20] node [left] {9} (r)
-        (r) edge [bend right=20] node [left] {4} (p)
+        (r) edge [bend right=20] node [left] {6} (p)
         (q) edge [bend right=20] node [below] {3} (r)
         (r) edge [bend right=20] node [below] {8} (q)
         (t) edge node [above] {2} (p)
@@ -1071,6 +1073,45 @@ scores, and that they can serve as a conduit for the purposes of transitive trus
      \end{tikzpicture}
      \caption{The first step of a NetFlow computation}
      \label{fig:ex_nf_1}
+\end{figure}
+
+The second step in the NetFlow algorithm involves flows from the other agents towards the calculating
+agent, respecting the node capacities calculated in the first step. This yields the scores for each
+agent. Agent $P$ is the highest ranked agent with a score of 3, then $T$ with a score of $2$, followed
+by $Q$ with a score of $0$. Note that purely based on the contributions from a neutral perspective,
+one might rate agent $T$ as having contributed more than agent $P$, but due to the structure of the
+interaction graph, this is not the case. 
+
+
+\begin{figure}[h]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (p) {P} ;
+        \node [main node] (q) [below right = 3.46cm and 2cm] {Q} ;
+        \node [main node,fill=gray] (r) [below left = 3.46cm and 2cm] {R} ;
+        \node [main node] (t) [right = 3.46cm of p] {T};
+
+        \node [ForestGreen] [above = 0.3 cm of p] {$5\mbox{ }( \mbox{cap: } 5)$};
+        \node [red] [below = 0.3 cm of q] {$0\mbox{ }(\mbox{cap: } 0)$};
+        \node [ForestGreen] [right = 0.3 cm of t] {$2\mbox{ }(\mbox{cap: } 4)$};
+
+
+        \path[draw, thick]
+        (p) edge [bend right=20] node [right] {5} (q)
+        (q) edge [bend right=20] node [right] {3} (p)
+        (p) edge [bend right=20] node [left] {9} (r)
+        (r) edge [bend right=20] node [left] {6} (p)
+        (q) edge [bend right=20] node [below] {3} (r)
+        (r) edge [bend right=20] node [below] {8} (q)
+        (t) edge node [above] {2} (p)
+        (t) edge node [below = 0.4 cm] {2} (q)
+        ;
+     \end{tikzpicture}
+     \caption{The second step of a NetFlow computation}
+     \label{fig:ex_nf_2}
 \end{figure}
 
 

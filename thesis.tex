@@ -730,6 +730,7 @@ attack that exploits this property:
     Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. 
     So when $s_2$ asks for data, $i$ is likely to oblige. This process can be repeated for an unbounded
     number of sybils, obtaining an unbounded amount of work from $i$. \musthave{Picture}
+    \label{ex:bc_sybil}
 \end{example}
 
 \section{Accounting mechanisms and DropEdge}
@@ -1007,7 +1008,16 @@ with this caveat.
     Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
 \end{definition}
 
-In order to provide some insight in the behavior of the NetFlow mechanism, let us consider a
+The first step of the NetFlow algorithm is exactly the BarterCast algorithm. However,
+as opposed to BarterCast, this step is only used to settle the consumption and production
+of resources. The second step determines the scores, capping it at the \emph{net} contribution
+of each agent. The second step still enables transitive trust, but capped by the net contribution
+of the agents on the paths between the agent whose score is computed and the computing agent.
+This construction still preserves some amount of transitivity in trust, but also prevents it
+from being abused like in Example~\ref{ex:bc_sybil}.
+
+\begin{example}
+ In order to provide some insight in the behavior of the NetFlow mechanism, let us consider a
 small example. Figure~\ref{fig:ex_ig_for_nf} depicts the interaction graph for which a computation
 will be done. The computation will be done from the perspective of agent R.
 
@@ -1075,13 +1085,12 @@ subtraction results in a negative number, which is then rounded to $0$ to yield 
      \label{fig:ex_nf_1}
 \end{figure}
 
-The second step in the NetFlow algorithm involves flows from the other agents towards the calculating
+The second step (Figure~\ref{fig:ex_nf_2} in the NetFlow algorithm involves flows from the other agents towards the calculating
 agent, respecting the node capacities calculated in the first step. This yields the scores for each
 agent. Agent $P$ is the highest ranked agent with a score of 3, then $T$ with a score of $2$, followed
 by $Q$ with a score of $0$. Note that purely based on the contributions from a neutral perspective,
 one might rate agent $T$ as having contributed more than agent $P$, but due to the structure of the
 interaction graph, this is not the case. 
-
 
 \begin{figure}[h]
     \centering
@@ -1117,6 +1126,9 @@ interaction graph, this is not the case.
 
 \musthave{Small example of NetFlow computation}
 
+
+   
+\end{example}
 
 \begin{theorem}[Properties and robustness of NetFlow]
     NetFlow as accounting mechanism with a complete work graph, with SWTA as allocation policy

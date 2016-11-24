@@ -7,6 +7,7 @@
 
 %\usepackage[section]{placeins}
 \usepackage{tikz}
+\usepackage[normalem]{ulem}
 
 \newcommand{\bb}{\mathbb}
 \newcommand{\mb}{\mathbf} \newcommand{\mc}{\mathcal}
@@ -16,6 +17,7 @@
 \newcommand\musthave[1]{\textcolor{red}{TODO: #1}}
 \newcommand\nicetohave[1]{\textcolor{orange}{TODO: #1}}
 \newcommand\suggestion[1]{\textcolor{green}{TODO: #1}}
+\newcommand\question[1]{\textcolor{blue}{TODO Question: #1}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -121,6 +123,7 @@ Copyright \copyright{} 2016 by Pim Otte. All rights reserved.
 \vspace{1.5cm}
 
 \textbf{``Considering temporal factors in distributed trust''}
+\question{SH: Why is this different from the title on the first page?}
 
 \vspace{1.5cm}
 
@@ -165,17 +168,19 @@ $\;$ & \\
 \chapter*{\centering \begin{normalsize}Abstract\end{normalsize}}
 
 In this thesis, the problem of estimating trust in a distributed network is considered.
+\musthave{Page numbers are in weird/inconsistent places.}
 
 \clearpage
 \tableofcontents
 \pagenumbering{arabic}
 \chapter{Introduction}
     
+\suggestion{Look at capitalization of the Internet vs an internet}
 Nowadays, the internet is an absolutely critical piece of infrastructure. According
 to the International Telecommunication Union, 47\% of the world population uses the internet.
 In the developed world, 81\% of the inhabitants uses the internet~\cite{itu2016facts}.
 The internet is used for important communication and banking, education, but also for entertainment and
-leisure. Internet access has not quite
+leisure. \suggestion{Link this sentence to the previous sentence with some word} Internet access has not quite
 made it to being a basic human right. However, the United Nations Special Rapporteur
 on the promotion and protection of the right to freedom of opinion and expression, wrote
 the following on the matter in a report~\cite{larue2011report}:
@@ -187,8 +192,9 @@ the following on the matter in a report~\cite{larue2011report}:
     -Frank La Rue  
 \end{quote}
 
-This leaves little doubt that the availibility of the internet is protected by Article 19 of the
-the Universal Declaration of Human Rights ``Freedom of Opinion and Information''.
+This leaves little doubt that the availability of the internet is protected by Article 19 of
+the Universal Declaration of Human Rights ``Freedom of Opinion and Information''. \nicetohave{Reference to this Article
+19?}
 
 A more controversial issue has been going on for longer than it is known to the general public.
 In 2013, Edward Snowden disclosed the first of several pieces of information that
@@ -203,6 +209,7 @@ About this, David Lyon writes the following~\cite{lyon2014surveillance}
     ``\textit{Given the reliance on western liberal legal traditions
     it is hardly surprising that public debate generally 
     commences around the question of} privacy. 
+		\question{I think you want to emphasize privacy? I would use bold rather than not-cursive here}
     \textit{Understood as a human right, it underlies aspects of democratic polity,
     such as freedom of expression. 
     Often understood in the post-Snowden era as relating to 
@@ -215,25 +222,27 @@ About this, David Lyon writes the following~\cite{lyon2014surveillance}
 Hence, if we value the human rights to freedom of expression and privacy, then an internet
 with entities performing unbounded surveillance is not desirable. 
 
-On the one hand, even back in 2001 there was a a growing consensus that the internet poses
-a threat to the existance of authoritarian regimes~\cite{kalathil2001internet}. 
+On the one hand, even back in 2001 there was a growing consensus that the internet poses
+a threat to the existence of authoritarian regimes~\cite{kalathil2001internet}. 
 On the other hand, regimes like China~\cite{endeshaw2004internet} and Iran~\cite{kimppa2010emancipatory}
 try their very best to censor content. 
 
-The solutions to ensuring availibility of the internet and its services
+The solutions to ensuring availability of the internet and its services
 appears to to have one thing in common. All systems aiming to do so leverage the concept of
 a \emph{distributed system}. Distributed systems are networks of computers that all perform part
 of a common task. The advantage of distributed systems is that, if well designed, they are
 extremely hard to take down. The disadvantage of a distributed systems is that there will
-be difficulties in the distribution, in particular if the the system is actually physically
+be difficulties in the distribution, in particular if the system is actually physically
 distributed. 
 
+\question{Is BitTorrent not with a capital B and T?}
 A prime example of using a distributed system to increase availibility is the 
-bittorrent protocol~\cite{cohen2008bittorrent}. This protocol enables something called peer-to-peer filesharing.
+bittorrent protocol~\cite{cohen2008bittorrent}. This protocol enables something\suggestion{replace something with: a/the
+technique} called peer-to-peer filesharing.
 In this paradigm, many computers are in possesion of (part of) a file. Computers
 which do not possess the enitre file can request little pieces of it from other
 computers (also known as peers). This protocol ensures the availibility of this
-file. If any peer stops functioning for any reason whatsoever, the rest of
+file. If any peer stops functioning \sout{for any reason whatsoever}, the rest of
 the network can continue to exist as is, as long as all active peers have the
 entire file amongst themselves. 
 
@@ -254,6 +263,7 @@ The aim of using an onion protocol is to hide the identity of the browsing party
 their identity can only be revealed if too many of the peers in the chain are controlled
 by the same party. This protocol can be applied to any sort of web traffic, including
 bittorrent traffic. 
+\nicetohave{An image to visualize this}
 
 The techniques of bittorrent and Tor have both been incorporated into another piece
 of software: Tribler. Since both of these techniques are quintessentially distributed,
@@ -262,12 +272,12 @@ several key pieces of technology to provide anonymous bittorrent to its users. I
 it provides a distributed search engine for torrent files and a built-in media player in
 order to stream a torrent. 
 
-While this piece of software may seem to be the ultimate tool of an internet pirate, 
+While this piece of software may \suggestion{at first glance} seem to be the ultimate tool of an internet pirate, 
 allow us to consider it in the light of the human rights mentioned above. Due to its
 distributed nature, Tribler is much less susceptible to traditional filtering and
 censoring techniques. In particular, unless all connectivity to a peer is severed,
 there is very little an authoritarian regime can do once a user gets their hands
-on Tribler. This enables information to freely flow from peer-to-peer and hence 
+on Tribler. This enables information to freely flow from peer-to-peer\suggestion{Do not hyphenate this here?} and hence 
 enables Frank La Rues vision of as little restriction as possible. 
 Furthermore, the other side of the human rights equation considers the human
 right to privacy. That Tribler offers this is not a point of discussion. What might
@@ -316,6 +326,9 @@ exist by claim of another, including fictional interactions with the real agent.
 should therefore be able to deal with such attacks. The theoretical resistance to attacks,
 and the performance in practice are the subjects of this thesis.
 
+\suggestion{Also mention the main research questions + contributions here? Mathijs gave me the following general lay-out
+for an introduction: Probeer de volgende opbouw aan te houden:  1. motivatie en algemeen doel 2. stand van zaken 3. open
+uitdaging 4. jouw bijdrage Ik denk dat je dit daarna nog een keer wil doen voor de deelvragen.}
 
 
 \chapter{Research questions}
@@ -323,23 +336,26 @@ and the performance in practice are the subjects of this thesis.
 As argued in the introduction, distributed systems can have advantages over traditional centralized
 systems. However, distributing a system comes with several challenges, in particular that
 the agents in this system will need to contribute in order for the system to
-function. This can easily lead to a tragedy of the commons, where everyone is slacking,
+function. \question{Not sure about ``distributing a system'' as a verb} This can easily lead to a tragedy of the commons, where everyone is slacking,
 but the result would be better if everyone pitched in a small amount of effort.
 
 The focus of this thesis is the following research question:
-
+\suggestion{Maybe explictly label it as "Research Question" in bold?}
 \begin{center}
     Can agents in a distributed network use confirmed information about
     interations and their order to judge the reputation of other agents
     in a fair and efficient way?
 \end{center}
 
+\suggestion{The concepts introduced in this RQ have not been introduced before, see my earlier comment about the
+introduction based on Mathijs's feedback on my wip thesis doc}
+
 Before anything else, we need to specify what ``judge the reputation'' means.
 An agent will judge the reputation of others by assigning each of them a score.
 If one agent is assigned a higher score than another, the former is judged to be more
 reputable.  These scores could then be used to determine priority in distributing resources.
 
-Throughout this thesis we will consider Tribler as an application area and experimental
+Throughout this thesis we \sout{will} consider Tribler as an application area and experimental
 evaluation will be done using Tribler. 
 In this context, a system that assigns a score
 to agents given information about their interactions has been dubbed an 
@@ -360,6 +376,8 @@ to the following:
     \item The accounting mechanism is manipulation-resistant.
     \item The accounting mechanism is efficiently computable.
 \end{itemize}
+
+\suggestion{As a new reader I would still be unsure what an accounting mechanism is exactly}
 
 These properties are far from well-defined in this context, so let us consider each of them.
 
@@ -392,6 +410,7 @@ engages in a new interaction. Then the following would be an indication of a fai
     \item If the agent consumes more resources than they contribute, their score goes down.
     \item If the agent consumes less resources than they contribute and less than they have
         done historically, their score goes up.
+				\question{less than they have done historically?}
      \item If the agent consumes less resources than they contribute, but more than they have
         done historically, their score might not change.
 \end{itemize}
@@ -412,7 +431,19 @@ theorethical worst-case performance is useable. It might be that some
 theoretically slow mechanisms turn out to be fast in practice, or that the
 instance sizes are small enough to allow a higher-order algorithm. Hence,
 in addition to big-$O$ notation, the efficiency will be studied in practice.
-
+\nicetohave{Balance the sections a bit. The second and third are far shorter}
+\musthave{Maybe formulate subresearchquestions that you answer throughout the thesis? 
+Mine are still WIP, but I have something like this (formatting removed, because it's in a todo thing)\\\hfill\\
+The goals of this thesis can therefore be formulated by the following four research questions:                           \\
+  RQ1 To what extent have planning and scheduling techniques been applied to wireless sensor networks before?     \\
+  RQ2 How can we best model wireless sensor networks that observe a phenomenon so that existing planning algorithms
+  can be used to determine what observations to communicate, whilst honouring the constraints and requirements inherent  
+  to wireless sensor networks?                                                                                           \\
+  RQ3 What kind of models are able to predict the temperature most accurately and how can we combine these with   
+  the planning policies?                                                                                                 \\
+  RQ4 How does such a policy hold up in practice in terms of battery life and measurment accuracy?                \\
+Each of these questions matches a chapter in my thesis.
+}
 
 
 \chapter{Base Model of Interaction Information}
@@ -430,6 +461,7 @@ there will be some assumptions needed about the information which is available.
 Hence, applications which fit the following model will be explored.
 
 \begin{definition}[Ordered interaction model]
+		\suggestion{Write as: $M=<P,I>$ instead}
     An \emph{ordered interaction model} $M$ consists of two sets:  
     
     \begin{itemize}
@@ -441,12 +473,14 @@ Hence, applications which fit the following model will be explored.
     An interaction consists of two different agents, one or both performing
     work for each other. 
     
+		\suggestion{Again write as: an interaction$=<(p,q),(w_p,w_q)>$}
     An interaction is defined by two pairs of properties:
     \begin{enumerate}
         \item $p, q \in P$, two agents involved in the interaction.
         \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
     \end{enumerate}
 
+		\nicetohave{Make the following sentence easier to grasp first try ;)}
     Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on:
     \begin{equation*}
         I_p = \{i \in I : p \mbox{ is an agent in } i\}
@@ -457,7 +491,7 @@ This model is designed such that the Tribler use case can be mapped to it. Howev
 generic enough that it might be applied in other situations. In particular, any system where
 agents interact and perform work for each other, where this work can be quantified in a number,
 this model can be applied to. In most cases, the ordering on the interaction will be relatable
-to time.
+to time.\nicetohave{Add concrete example, preferably even outside computer science/torrent.}
 
 \begin{definition}[Successor of an interaction]
      If $i, j \in I$, $i < j$, and there exists no $i'$ such that $i < i' < j$, then
@@ -469,6 +503,7 @@ of the order of interactions.
 \begin{definition}[Ordered interaction graph]
     The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
     Its structure is as follows:
+		\question{$A$ for edges? What anarchy is this?}
 
     \begin{itemize}
         \item $V := \{ v_{i} : i \in I\}$\\
@@ -476,7 +511,7 @@ of the order of interactions.
     \end{itemize}
 
     In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
-    interaction $i$. 
+    interaction $i$. \nicetohave{Add this in math form}
 \end{definition}
 
 
@@ -511,8 +546,11 @@ of the order of interactions.
     \end{equation*}
 \end{definition}
 
+\suggestion{I would prefer explanatory text intermixed with definitions. I've now read the definitions, but have no idea
+how they relate, differ, are going to be used, etc.}
 In order to shed more light on these definitions, let us consider an example. This example involves
-3 agents: $P, Q, R$. The interactions are as follows:
+3 agents: $P, Q, R$. The interactions are as follows: \suggestion{This table does not neccessarily follow in the pdf
+immediately. I would suggest rephrasing this.}
 
 \begin{table}[h]
     \centering
@@ -535,7 +573,7 @@ simply the numbering of this set as prescribed by the ordering. This also gives 
 identify an interaction, namely by concatenating the agents with their sequence numbers. This is listed
 as the interaction id. Note that the units of the contributions are in MB. This is a foreshadowing of
 the next section, in which we consider the application of this model to Tribler, where the contribution in
-interactions consists of transferring data.
+interactions consists of transferring data.\suggestion{Do not foreshadow. Just make them unitless here}
 
 \begin{figure}[h]
     \centering
@@ -561,7 +599,8 @@ interactions consists of transferring data.
 \end{figure}
 
 Figure~\ref{fig:ex_oig} depicts the ordered interaction graph derived from the data in Table~\ref{tab:interactions}.
-Note that some numbers in the graph are not in the graph, as the contributions in an interaction are
+Note that some numbers in the graph are not in the graph\suggestion{This sentence is weird, I think you mean table in
+the second case}, as the contributions in an interaction are
 weights in the arcs to the successors of that interaction. If that successor does not exist yet, those
 contributions have no representant in the graph. The ordered interaction graph functions mainly as a 
 structure to consider, as the name says, the order of interactions. It is by definition, the directed
@@ -603,7 +642,7 @@ acyclic graph induced by the partial ordering.
 
 In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has largely the same structure
 as the ordered interaction graph, except that each interaction is split into parts belonging to each respective
-party. In the case of MultiChain, this representation really shows the chain aspect of this datastructure,
+party.\suggestion{It looks and feels very differnt to me, not ``largely the same''.} In the case of MultiChain, this representation really shows the chain aspect of this datastructure,
 in the sense that each agent has their own sequence of nodes, with additional arcs denoting the interactions.
 Again, the lack of representation of the last interactions can be seen. This graph will be used
 in Chapter~\ref{chap:temporal_pr} to serve as the basis for Temporal PageRank.
@@ -669,7 +708,7 @@ view into this structure, we refer to this work.
 There are two main properties of MultiChain that are exploited in the mechanisms this work builds upon it.
 Firstly, there is the fact that a record of an interaction can only exist if both parties agree that it
 is accurate. Secondly, the MultiChain is built such that there is eventual detection of lying. In particular,
-if an agent spreads differing interations to different agents, this will be detected. In terms of the model,
+if an agent spreads differing\question{different?} interations to different agents, this will be detected. In terms of the model,
 if an agent spreads interactions such that his set of interactions has no total order, the network will
 be able to detect and prove this. 
 

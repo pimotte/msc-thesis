@@ -122,8 +122,8 @@ Copyright \copyright{} 2016 by Pim Otte. All rights reserved.
 
 \vspace{1.5cm}
 
-\textbf{``Considering temporal factors in distributed trust''}
-\question{SH: Why is this different from the title on the first page?}
+\textbf{``Sybil-resistant trust mechanisms in distributed systems''}
+       
 
 \vspace{1.5cm}
 
@@ -175,12 +175,11 @@ In this thesis, the problem of estimating trust in a distributed network is cons
 \pagenumbering{arabic}
 \chapter{Introduction}
     
-\suggestion{Look at capitalization of the Internet vs an internet}
-Nowadays, the internet is an absolutely critical piece of infrastructure. According
+Nowadays, the Internet is an absolutely critical piece of infrastructure. According
 to the International Telecommunication Union, 47\% of the world population uses the internet.
 In the developed world, 81\% of the inhabitants uses the internet~\cite{itu2016facts}.
-The internet is used for important communication and banking, education, but also for entertainment and
-leisure. \suggestion{Link this sentence to the previous sentence with some word} Internet access has not quite
+The Internet is used for important communication and banking, education, but also for entertainment and
+leisure. Perhaps surprisingly, Internet access has not quite
 made it to being a basic human right. However, the United Nations Special Rapporteur
 on the promotion and protection of the right to freedom of opinion and expression, wrote
 the following on the matter in a report~\cite{larue2011report}:
@@ -206,15 +205,14 @@ surveillance.
 About this, David Lyon writes the following~\cite{lyon2014surveillance}
 
 \begin{quote}
-    ``\textit{Given the reliance on western liberal legal traditions
+    ``Given the reliance on western liberal legal traditions
     it is hardly surprising that public debate generally 
-    commences around the question of} privacy. 
-		\question{I think you want to emphasize privacy? I would use bold rather than not-cursive here}
-    \textit{Understood as a human right, it underlies aspects of democratic polity,
+    commences around the question of \textbf{privacy}.
+    Understood as a human right, it underlies aspects of democratic polity,
     such as freedom of expression. 
     Often understood in the post-Snowden era as relating to 
     control of communications about oneself, 
-    it is clearly a threatened value if not – according to some – a forlorn hope.}
+    it is clearly a threatened value if not – according to some – a forlorn hope.
 
     -David Lyon
 \end{quote}
@@ -228,25 +226,24 @@ On the other hand, regimes like China~\cite{endeshaw2004internet} and Iran~\cite
 try their very best to censor content. 
 
 The solutions to ensuring availability of the internet and its services
-appears to to have one thing in common. All systems aiming to do so leverage the concept of
+appears to have one thing in common. All systems aiming to do so leverage the concept of
 a \emph{distributed system}. Distributed systems are networks of computers that all perform part
 of a common task. The advantage of distributed systems is that, if well designed, they are
 extremely hard to take down. The disadvantage of a distributed systems is that there will
 be difficulties in the distribution, in particular if the system is actually physically
 distributed. 
 
-\question{Is BitTorrent not with a capital B and T?}
 A prime example of using a distributed system to increase availibility is the 
-bittorrent protocol~\cite{cohen2008bittorrent}. This protocol enables something\suggestion{replace something with: a/the
-technique} called peer-to-peer filesharing.
-In this paradigm, many computers are in possesion of (part of) a file. Computers
-which do not possess the enitre file can request little pieces of it from other
+BitTorrent protocol~\cite{cohen2008BitTorrent}. This protocol enables the technique
+called peer-to-peer filesharing.
+In this paradigm, many computers are in possession of (part of) a file. Computers
+that do not possess the enitre file can request little pieces of it from other
 computers (also known as peers). This protocol ensures the availibility of this
-file. If any peer stops functioning \sout{for any reason whatsoever}, the rest of
+file. If any peer stops functioning, the rest of
 the network can continue to exist as is, as long as all active peers have the
 entire file amongst themselves. 
 
-An example of a distributed system that ensure both availibility and privacy is
+An example of a distributed system that ensures both availibility and privacy is
 Tor~\cite{dingledine2004tor}. Tor is a so-called onion routing protocol. 
 The concept of onion routing is as follows. One obtains a list of peers in the
 network, at least one of which needs to be available as ``exit node''. If one
@@ -262,22 +259,22 @@ least the recipient.
 The aim of using an onion protocol is to hide the identity of the browsing party. Indeed,
 their identity can only be revealed if too many of the peers in the chain are controlled
 by the same party. This protocol can be applied to any sort of web traffic, including
-bittorrent traffic. 
+BitTorrent traffic. 
 \nicetohave{An image to visualize this}
 
-The techniques of bittorrent and Tor have both been incorporated into another piece
+The techniques of BitTorrent and Tor have both been incorporated into another piece
 of software: Tribler. Since both of these techniques are quintessentially distributed,
 naturally Tribler itself works as a distributed system. This piece of software unifies
-several key pieces of technology to provide anonymous bittorrent to its users. In addition,
+several key pieces of technology to provide anonymous BitTorrent to its users. In addition,
 it provides a distributed search engine for torrent files and a built-in media player in
 order to stream a torrent. 
 
-While this piece of software may \suggestion{at first glance} seem to be the ultimate tool of an internet pirate, 
+While this piece of software may at first glance seem to be the ultimate tool of an internet pirate, 
 allow us to consider it in the light of the human rights mentioned above. Due to its
 distributed nature, Tribler is much less susceptible to traditional filtering and
 censoring techniques. In particular, unless all connectivity to a peer is severed,
 there is very little an authoritarian regime can do once a user gets their hands
-on Tribler. This enables information to freely flow from peer-to-peer\suggestion{Do not hyphenate this here?} and hence 
+on Tribler. This enables information to freely flow from peer to peer and hence 
 enables Frank La Rues vision of as little restriction as possible. 
 Furthermore, the other side of the human rights equation considers the human
 right to privacy. That Tribler offers this is not a point of discussion. What might
@@ -299,7 +296,7 @@ has is extraordinarily small. So small, that most people reason that their behav
 does not impact the world, so they will just continue living as they always have. 
 This problem is known as the Tragedy of the Commons. Everyone would win if everyone
 participated, but one person can not make the difference. 
-This concept has been study at length in the past decades, we refer to
+This concept has been studied at length in the past decades, we refer to
 Hardin~\cite{hardin2009tragedy} for a view of this problem in broader society.
 In Tribler, this concept exists in the following form: Everyone would like to use 
 the network to download data. However, in order to do so, there needs to be at least
@@ -308,7 +305,7 @@ This means that if enough agents fulfill these functions out of their free will,
 and everyone does a little bit, the load will be spread and the network will
 fuction. However, it is much more enticing to not contribute and only consume.
 
-Traditionally, in bittorrent networks, this problem has been solved for public torrents
+Traditionally, in BitTorrent networks, this problem has been solved for public torrents
 by simply relying on altruistic agents, who contribute based on nothing more than
 their good will. There also exists the concept of a private community, in which a central
 entity records how much data is downloaded and uploaded by each agent. This central
@@ -326,36 +323,52 @@ exist by claim of another, including fictional interactions with the real agent.
 should therefore be able to deal with such attacks. The theoretical resistance to attacks,
 and the performance in practice are the subjects of this thesis.
 
+The concrete contributions of this thesis are as follows: Chapter~\ref{chap:research_questions} contains
+the research question about the existance of a reputation system for distributed systems.
+Additionally, it contains a division of this question into several parts representing different aspects of the problem.
+Chapter~\ref{chap:base_model} presents the base model for interactions in distributed systems, which will
+be used in the rest of the thesis to study systems that are candidates for fulfilling the research question.
+Chapter~\ref{chap:netflow} contains our NetFlow mechanism, supported with examples and theoretical results
+about its properties, in particular its resistance to sybil attacks. Next is Chapter~\ref{chap:temporal_pr}, 
+in which Temporal PageRank, a mechanism that uses the order of interactions in the system to compute reputation.
+Again, some theoretical properties are highlighted. Chapter~\ref{chap:exp} shows the performance and properties
+of above mechanisms in practice. This is done by applying the mechanisms to a dataset obtained through
+a real-world deployment of Tribler with its brand new MultiChain data structure. Finally, Chapter~\ref{chap:conclusion}
+concludes the research and discusses cave-ats and potential for future research.
+
+
 \suggestion{Also mention the main research questions + contributions here? Mathijs gave me the following general lay-out
 for an introduction: Probeer de volgende opbouw aan te houden:  1. motivatie en algemeen doel 2. stand van zaken 3. open
 uitdaging 4. jouw bijdrage Ik denk dat je dit daarna nog een keer wil doen voor de deelvragen.}
 
 
 \chapter{Research questions}
+\label{chap:research_questions}
 
 As argued in the introduction, distributed systems can have advantages over traditional centralized
-systems. However, distributing a system comes with several challenges, in particular that
+systems. However, building and maintaining a distributed system comes with several challenges, in particular that
 the agents in this system will need to contribute in order for the system to
-function. \question{Not sure about ``distributing a system'' as a verb} This can easily lead to a tragedy of the commons, where everyone is slacking,
+function. This can easily lead to a tragedy of the commons, where everyone is slacking,
 but the result would be better if everyone pitched in a small amount of effort.
 
 The focus of this thesis is the following research question:
-\suggestion{Maybe explictly label it as "Research Question" in bold?}
+%\suggestion{Maybe explictly label it as "Research Question" in bold?}
 \begin{center}
     Can agents in a distributed network use confirmed information about
     interations and their order to judge the reputation of other agents
     in a fair and efficient way?
 \end{center}
 
-\suggestion{The concepts introduced in this RQ have not been introduced before, see my earlier comment about the
-introduction based on Mathijs's feedback on my wip thesis doc}
+%\suggestion{The concepts introduced in this RQ have not been introduced before, see my earlier comment about the
+%introduction based on Mathijs's feedback on my wip thesis doc}
+% Are non-technical terms.
 
 Before anything else, we need to specify what ``judge the reputation'' means.
 An agent will judge the reputation of others by assigning each of them a score.
 If one agent is assigned a higher score than another, the former is judged to be more
 reputable.  These scores could then be used to determine priority in distributing resources.
 
-Throughout this thesis we \sout{will} consider Tribler as an application area and experimental
+Throughout this thesis we consider Tribler as an application area and experimental
 evaluation will be done using Tribler. 
 In this context, a system that assigns a score
 to agents given information about their interactions has been dubbed an 
@@ -397,7 +410,7 @@ For purposes of this thesis we will zoom in on fairness in the context of Trible
 This notion would hold up for other distributed systems in case that each node
 can contribute or consume resources, where contributing is positive, consuming
 is negative, and contributing and consuming the same amount is explicitly seen as postive.
-Generally, in bittorrent networks, the ratio between upload and download is seen
+Generally, in BitTorrent networks, the ratio between upload and download is seen
 as a fair measure of contribution. However, since in Tribler, relaying data for onion
 routing is a service that the network provides, uploading and downloading the same
 amount is seen as a postive thing. This is not reflected in the ratio, which
@@ -410,10 +423,11 @@ engages in a new interaction. Then the following would be an indication of a fai
     \item If the agent consumes more resources than they contribute, their score goes down.
     \item If the agent consumes less resources than they contribute and less than they have
         done historically, their score goes up.
-				\question{less than they have done historically?}
      \item If the agent consumes less resources than they contribute, but more than they have
         done historically, their score might not change.
 \end{itemize}
+
+\musthave{This is pretty unclear.}
 
 \section{Resistance to manipulation}
 
@@ -423,6 +437,8 @@ in the system. In particular, lying of any sort, creating extra or new identitie
 and any other actions than participating in the network should not lead to an
 increase in score.
 
+\musthave{A little about Sybil attacks}
+
 \section{Efficiency of computation}
 
 As well known, the efficiency of algorithms can be compared with big-$O$ notation.
@@ -431,37 +447,37 @@ theorethical worst-case performance is useable. It might be that some
 theoretically slow mechanisms turn out to be fast in practice, or that the
 instance sizes are small enough to allow a higher-order algorithm. Hence,
 in addition to big-$O$ notation, the efficiency will be studied in practice.
-\nicetohave{Balance the sections a bit. The second and third are far shorter}
-\musthave{Maybe formulate subresearchquestions that you answer throughout the thesis? 
-Mine are still WIP, but I have something like this (formatting removed, because it's in a todo thing)\\\hfill\\
-The goals of this thesis can therefore be formulated by the following four research questions:                           \\
-  RQ1 To what extent have planning and scheduling techniques been applied to wireless sensor networks before?     \\
-  RQ2 How can we best model wireless sensor networks that observe a phenomenon so that existing planning algorithms
-  can be used to determine what observations to communicate, whilst honouring the constraints and requirements inherent  
-  to wireless sensor networks?                                                                                           \\
-  RQ3 What kind of models are able to predict the temperature most accurately and how can we combine these with   
-  the planning policies?                                                                                                 \\
-  RQ4 How does such a policy hold up in practice in terms of battery life and measurment accuracy?                \\
-Each of these questions matches a chapter in my thesis.
-}
 
+%\nicetohave{Balance the sections a bit. The second and third are far shorter}
+%\musthave{Maybe formulate subresearchquestions that you answer throughout the thesis? 
+%Mine are still WIP, but I have something like this (formatting removed, because it's in a todo thing)\\\hfill\\
+%The goals of this thesis can therefore be formulated by the following four research questions:                           \\
+%  RQ1 To what extent have planning and scheduling techniques been applied to wireless sensor networks before?     \\
+%  RQ2 How can we best model wireless sensor networks that observe a phenomenon so that existing planning algorithms
+%  can be used to determine what observations to communicate, whilst honouring the constraints and requirements inherent  
+%  to wireless sensor networks?                                                                                           \\
+%  RQ3 What kind of models are able to predict the temperature most accurately and how can we combine these with   
+%  the planning policies?                                                                                                 \\
+%  RQ4 How does such a policy hold up in practice in terms of battery life and measurment accuracy?                \\
+%Each of these questions matches a chapter in my thesis.
+%}
 
 \chapter{Base Model of Interaction Information}
+\label{chap:base_model}
 
 In order to exploit information about interactions, this information will need to be
 available in the first place. In order to allow general applicability of the
 techniques, first the general model is considered, which is then shown to be
-relevant in the particular case of the software known as ``Tribler''.
+relevant in the particular case of Tribler.
 
 
 \section{Base model}
 
 In order to incorporate temporal information in sybil defense mechanisms,
 there will be some assumptions needed about the information which is available.
-Hence, applications which fit the following model will be explored.
+Hence, applications that fit the following model will be explored.
 
 \begin{definition}[Ordered interaction model]
-		\suggestion{Write as: $M=<P,I>$ instead}
     An \emph{ordered interaction model} $M$ consists of two sets:  
     
     \begin{itemize}
@@ -473,19 +489,20 @@ Hence, applications which fit the following model will be explored.
     An interaction consists of two different agents, one or both performing
     work for each other. 
     
-		\suggestion{Again write as: an interaction$=<(p,q),(w_p,w_q)>$}
     An interaction is defined by two pairs of properties:
     \begin{enumerate}
         \item $p, q \in P$, two agents involved in the interaction.
         \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
     \end{enumerate}
 
-		\nicetohave{Make the following sentence easier to grasp first try ;)}
+    %\nicetohave{Make the following sentence easier to grasp first try ;)}
     Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on:
     \begin{equation*}
         I_p = \{i \in I : p \mbox{ is an agent in } i\}
     \end{equation*}
 \end{definition}
+
+\musthave{Redefine above with functions and without partial order}
 
 This model is designed such that the Tribler use case can be mapped to it. However, this model is
 generic enough that it might be applied in other situations. In particular, any system where
@@ -507,7 +524,7 @@ of the order of interactions.
 
     \begin{itemize}
         \item $V := \{ v_{i} : i \in I\}$\\
-        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ s.t. } i \preceq j \}$\\
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ and } i \preceq j \}$\\
     \end{itemize}
 
     In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
@@ -520,7 +537,7 @@ of the order of interactions.
 
     \begin{itemize}
         \item $V := \{ v_{p, i} : i \in I, p \mbox{ an agent involved in } i \}$\\
-        \item $A := \{ (v_{p,i}, v_{q,j} : i, j \in I \mbox{ s.t. } i \preceq j \}$\\
+        \item $A := \{ (v_{p,i}, v_{q,j}) : i, j \in I \mbox{ and } i \preceq j \}$\\
     \end{itemize}
 
     This graph can be weighted. Let $(v_{p,i}, v_{q, j}) = a \in A$, then:
@@ -1752,6 +1769,7 @@ the testing data, which matches the theoretical worst-case analysis.
 
 
 \chapter{Conclusion and Discussion}
+\label{chap:conclusion}
 
 In this thesis, we have considered a distributed system and proposed two accounting mechanisms
 in order to compute trust and reputation in said systems. We consider the fairness, resistance
@@ -1759,7 +1777,7 @@ to manipulation and computability of these mechanisms.
 
 \section{Fairness}
 
-As mentioned, the contribution of peers to a bittorrent system have traditionally been judged by their
+As mentioned, the contribution of peers to a BitTorrent system have traditionally been judged by their
 upload/download ratio. In the context of a system like Tribler, this is not per se an accurate
 measure of contribution, because the act of relaying would need to be rewarded. When elaborating on
 the research question, fairness was described as a vague concept. However, with the results

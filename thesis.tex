@@ -169,6 +169,7 @@ $\;$ & \\
 \chapter*{\centering \begin{normalsize}Abstract\end{normalsize}}
 
 In this thesis, the problem of estimating trust in a distributed network is considered.
+\musthave{Actually write abstract}
 \musthave{Page numbers are in weird/inconsistent places.}
 
 \clearpage
@@ -178,7 +179,7 @@ In this thesis, the problem of estimating trust in a distributed network is cons
     
 Nowadays, the Internet is an absolutely critical piece of infrastructure. According
 to the International Telecommunication Union, 47\% of the world population uses the internet.
-In the developed world, 81\% of the inhabitants uses the internet~\cite{itu2016facts}.
+In the developed world, 81\% of the inhabitants use the internet~\cite{itu2016facts}.
 The Internet is used for important communication and banking, education, but also for entertainment and
 leisure. Perhaps surprisingly, Internet access has not quite
 made it to being a basic human right. However, the United Nations Special Rapporteur
@@ -213,7 +214,7 @@ About this, David Lyon writes the following~\cite{lyon2014surveillance}
     such as freedom of expression. 
     Often understood in the post-Snowden era as relating to 
     control of communications about oneself, 
-    it is clearly a threatened value if not – according to some – a forlorn hope.
+    it is clearly a threatened value if not – according to some – a forlorn hope.''
 
     -David Lyon
 \end{quote}
@@ -343,7 +344,7 @@ for an introduction: Probeer de volgende opbouw aan te houden:  1. motivatie en 
 uitdaging 4. jouw bijdrage Ik denk dat je dit daarna nog een keer wil doen voor de deelvragen.}
 
 
-\chapter{Research questions}
+\chapter{Research question}
 \label{chap:research_questions}
 
 As argued in the introduction, distributed systems can have advantages over traditional centralized
@@ -355,9 +356,9 @@ but the result would be better if everyone pitched in a small amount of effort.
 The focus of this thesis is the following research question:
 %\suggestion{Maybe explictly label it as "Research Question" in bold?}
 \begin{center}
-    Can agents in a distributed network use confirmed information about
+    \emph{Can agents in a distributed network use confirmed information about
     interations and their order to judge the reputation of other agents
-    in a fair and efficient way?
+in a fair and efficient way?}
 \end{center}
 
 %\suggestion{The concepts introduced in this RQ have not been introduced before, see my earlier comment about the
@@ -861,6 +862,8 @@ information and subjective work are considered.
    and $(j,i)$ the associated weight is $w_i^i(i,j) = w(i,j)$ and $w_i^i(j, i) = w(j,i)$ respectively.
 \end{definition}
 
+\nicetohave{Something that's less convoluted}
+
 The definition of a subjective work graph contains a lot of machinery to deal with conflicting information
 and already resolves some of the conflicts. In particular, if reports of others conflict with the observations
 of the agent itself, those reports are not considered. This model does not assume anything about the truthfulness
@@ -874,6 +877,11 @@ to simply make negative reports about other parties without their consent.
     are currently interested in receiving some work from $i$.
     \label{def:choice_set}
 \end{definition}
+
+Definition~\ref{def:choice_set} is as Seuken~and~Parkes origially formulated it. For compatibility reason,
+we adhere to their definition. However, we note that it is possible to take $C_i \subseteq V_i \setminus \{i\}$
+to obtain the same result if one assumes agents that are not in $V_i$ are added to the subjective work graph,
+as their existence is then known.
 
 \begin{definition}[Accounting Mechanism]
    An accounting mechanism $M$ takes as input a subjective work graph $G_i$, a choice set $C_i$, and
@@ -894,8 +902,7 @@ to be efficiently computable.
     \label{def:all_pol}
 \end{definition}
 
-Note that in definition \ref{def:all_pol} the term function is to be taken in a flexible sense,
-in that this function may include randomization. This definition is also not part of the original work,
+This definition is not part of the original work of Seuken~and~Parkes,
 where only the following example is given.
 
 \begin{example}[Winner-Take-All]
@@ -924,7 +931,7 @@ been included in the definition, but are not quite so generic that one would wan
 
 \begin{property}[Independence of Disconnected Agents (IDA)]
     Let $M$ be an accounting mechanism, let $G_i = (V_i, E_i, w_i)$ be a subjective work graph, let 
-    $C_i$ be a choice set. $k \in V_i$ is a disconnected agent, if for this agent there are no edges
+    $C_i$ be a choice set. Agent $k \in V_i$ is a disconnected agent, if for this agent there are no edges
     in $E_i$, or for this agent all edges in $E_i$ have zero weight. By $G_i'$ we denote the subjective
     work graph with a disconnected agent $k$ removed.
 
@@ -946,11 +953,11 @@ but limit the sum of these scores might not possess this property.
 
 \begin{property}[Anonimity (ANON)]
     Let $M$ be an accounting mechanism, let $G_i = (V_i, E_i, w_i)$ be a subjective work graph, let 
-    $C_i$ be a choice set and let $f$ be a graph isomorphism such that $G'_i = f(G_i)$, $C'_i = f(C_i)$
-    and $f(i) = i$. $M$ satisfies anonymity if the following condition holds:
+    $C_i$ be a choice set and let $f$ be a graph isomorphism such that $G'_i = f(G_i)$, $C'_i = f(C_i)$.
+    $M$ satisfies anonymity if the following condition holds:
 
     \begin{equation*}
-        \forall j \in V_i \setminus \{i\} : S_{ij}^M(G_i, C_i) = S_{if(j)}^M(G'_i, C'_i)
+        \forall j \in V_i \setminus \{i\} : S_{ij}^M(G_i, C_i) = S_{f(i)f(j)}^M(G'_i, C'_i)
     \end{equation*}
     \label{prop:anon}
 \end{property}
@@ -960,6 +967,8 @@ scores can only be based on the structure of the subjective work graph. If two a
 same with respect to the subjective work graph, they must get the same score. Again, it is possible
 to imagine accounting mechanisms without this property, but they will likely need more information
 about agents than present in the work graph to assign sensible differing scores.
+The definition given here is slightly stronger than the original definition. In the original definition,
+the results may depend on which agent 
 
 
 \begin{property}[Weak Transitive Trust]

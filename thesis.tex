@@ -6,7 +6,7 @@
 \usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
 
-%\usepackage[section]{placeins}
+\usepackage[section]{placeins}
 \usepackage{tikz}
 \usepackage[normalem]{ulem}
 
@@ -436,7 +436,7 @@ While fairness says something about the score in relation to the actions within
 the system, resistance to manipulation concerns actions that are not ``normal''
 in the system. In particular, lying of any sort, creating extra or new identities
 and any other actions than participating in the network should not lead to an
-increase in score. \musthave{Something about sybil attacks}
+increase in score. 
 
 \musthave{A little about Sybil attacks}
 
@@ -479,152 +479,149 @@ there will be some assumptions needed about the information which is available.
 Hence, applications that fit the following model will be explored.
 
 \begin{definition}[Ordered interaction model]
-    An \emph{ordered interaction model} $M$ consists of two sets:  
+    An \emph{ordered interaction model} $M=\langle P, I, a, w \rangle$ consists of two sets and two functions.
     
     \begin{itemize}
         \item $P$, a finite set of agents
-        \item $I$, a finite partially ordered set of interactions
+        \item $I$, a finite set of interactions
+        \item $a: I \to P \times P$, a function mapping each interaction to the participants involved
+        \item $w: I \times P \to \bb{R}_{\geq0}$, a function which describes the contribution of an agent in an interaction
     \end{itemize}
 
     Agents represent entities that can interact with each other.
-    An interaction consists of two different agents, one or both performing
+    An interaction involves two different agents, one or both performing
     work for each other. 
-    
-    An interaction is defined by two pairs of properties:
-    \begin{enumerate}
-        \item $p, q \in P$, two agents involved in the interaction.
-        \item $w_p, w_q \in \bb{R}_{\geq0}$, representing amount of work done by $p$, respectively $q$.
-    \end{enumerate}
-
+   
     %\nicetohave{Make the following sentence easier to grasp first try ;)}
-    Furthermore, for each $p \in P$, the partial order on $I$ must induce a total order on:
+    Furthermore, for each $p \in P$, the following set must be completely ordered.
     \begin{equation*}
-        I_p = \{i \in I : p \mbox{ is an agent in } i\}
+        I_p = \{i \in I : p \in a(i)\}
     \end{equation*}
-\end{definition}
 
-\musthave{Redefine above with functions and without partial order}
+    The ordering on $I_p$ is denoted by $\leq_p$.
+\end{definition}
 
 This model is designed such that the Tribler use case can be mapped to it. However, this model is
 generic enough that it might be applied in other situations. In particular, any system where
 agents interact and perform work for each other, where this work can be quantified in a number,
 this model can be applied to. In most cases, the ordering on the interaction will be relatable
-to time.\nicetohave{Add concrete example, preferably even outside computer science/torrent.}
+to time. A possible application might be a system in which agents lend each other money. Any
+kind of payment then is an interaction, where the contribution is the amount of money transferred.
 
 \begin{definition}[Successor of an interaction]
-     If $i, j \in I$, $i < j$, and there exists no $i'$ such that $i < i' < j$, then
-$j$ is a successor of $i$. This is denoted by $i \preceq j$.
+    Let $M=\langle P, I, a, w \rangle$ be an ordered interaction model.
+    Let $p \in P$, $i, j \in I$ such that $i <_p j$. If there exists no $i'$ such that $i <_p i' <_p j$, then
+    $j$ is the successor of $i$. This is denoted by $i \preceq_p j$.
 \end{definition}
  
 This model induces a graph that resembles traditional interaction graphs, but preserves the knowledge
 of the order of interactions.
-\begin{definition}[Ordered interaction graph]
-    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
-    Its structure is as follows:
-		\question{$A$ for edges? What anarchy is this?}
-
-    \begin{itemize}
-        \item $V := \{ v_{i} : i \in I\}$\\
-        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ and } i \preceq j \}$\\
-    \end{itemize}
-
-    In contexts where not defined otherwise, the weight of an arc is the amount of the work performed by $p$ in
-    interaction $i$. \nicetohave{Add this in math form}
-\end{definition}
 
 
-\begin{definition}[Block Graph]
-    Let $M = (P, I)$ be an ordered interaction model. The block graph $G^B_{M}$ is defined as follows:
-
-    \begin{itemize}
-        \item $V := \{ v_{p, i} : i \in I, p \mbox{ an agent involved in } i \}$\\
-        \item $A := \{ (v_{p,i}, v_{q,j}) : i, j \in I \mbox{ and } i \preceq j \}$\\
-    \end{itemize}
-
-    This graph can be weighted. Let $(v_{p,i}, v_{q, j}) = a \in A$, then:
-
-    \begin{equation*}
-        w(a) := \mbox{ The amount of work } q \mbox{ has performed in interaction } i 
-    \end{equation*}
-\end{definition}
-
-
-\begin{definition}[Interaction Graph]
-    Let $M = (P, I)$ be an ordered interaction model. The interaction graph $G^I_M$ is defined as follows:
-
-    \begin{itemize}
-        \item $V := \{ v_p : p \in P \}$\\
-        \item $A := \{ (v_p, v_q) : p, q \in P \mbox{ s.t. } \exists i \in I \mbox{ involving } p \mbox{ and } q$ \\
-    \end{itemize}
-
-    This graph has weights. Let $(v_{p}, v_q) = a \in A$, then:
-
-    \begin{equation*}
-        w(a) := \mbox{ The total amount of work } p \mbox{ has performed for } q
-    \end{equation*}
-\end{definition}
-
-\suggestion{I would prefer explanatory text intermixed with definitions. I've now read the definitions, but have no idea
-how they relate, differ, are going to be used, etc.}
-In order to shed more light on these definitions, let us consider an example. This example involves
-3 agents: $P, Q, R$. The interactions are as follows: \suggestion{This table does not neccessarily follow in the pdf
-immediately. I would suggest rephrasing this.}
+In order to shed more light the concept of an ordered interaction model and other
+definitions that will depend on this, let us consider a running example. This example involves
+3 agents: $P, Q, R$. The model is represented in Table~\ref{tab:interactions}
 
 \begin{table}[h]
     \centering
     \begin{tabular}{c|c|c|c|c|c|c}
         Interaction Id & Agent 1 & Seq 1 & Contribution 1 & Agent 2 & Seq 2 & Contribution 2 \\\hline
-        P1Q1           & P       & 1                 & 5MB            & Q       & 1                 & 3MB            \\
-        P2R1           & P       & 2                 & 7MB            & R       & 1                 & 1MB            \\
-        Q2R2           & Q       & 2                 & 3MB            & R       & 2                 & 8MB            \\
-        P3R3           & P       & 3                 & 2MB            & R       & 3                 & 3MB            \\
+        P1Q1           & P       & 1                 & 5            & Q       & 1                 & 3            \\
+        P2R1           & P       & 2                 & 7            & R       & 1                 & 1            \\
+        Q2R2           & Q       & 2                 & 3            & R       & 2                 & 8            \\
+        P3R3           & P       & 3                 & 2            & R       & 3                 & 3            \\
     \end{tabular}
     \caption{Set of interactions for examples}
     \label{tab:interactions}
 \end{table}
 
-In Table~\ref{tab:interactions}, the attributes of the interactions are specified. For each interactions the
+In Table~\ref{tab:interactions}, the attributes of the interactions are specified. For each interaction the
 agents involved are listed, along with their respective contributions, the amount of data uploaded
 to the other. In addition, the sequence number (``Seq'') is listed. Recall that the set of interactions of each agent must
-be completely ordered as defined by the partial ordering on the set of interactions. The sequence number is
-simply the numbering of this set as prescribed by the ordering. This also gives way to an easy way to uniquely
+be completely ordered. The sequence number is
+simply the numbering of this set as prescribed by the ordering. This also gives an easy way to uniquely
 identify an interaction, namely by concatenating the agents with their sequence numbers. This is listed
-as the interaction id. Note that the units of the contributions are in MB. This is a foreshadowing of
-the next section, in which we consider the application of this model to Tribler, where the contribution in
-interactions consists of transferring data.\suggestion{Do not foreshadow. Just make them unitless here}
+as the interaction id.
 
-\begin{figure}[h]
-    \centering
-     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
-        inner sep=0pt, minimum width=20pt} 
-        ]
+With this example in mind, allow us to consider Definition~\ref{def:oig}, one of three graphs based on 
+an ordered interaction model.
 
-        \node [main node] (p1q1) {P1Q1} ;
-        \node [main node] (p2r1) [below right  = 1.5cm and 1.5cm of p1q1] {P2R1} ;
-        \node [main node] (q2r2) [below left = 1.5cm and 1.5cm of p2r1] {Q2R2} ;
-        \node [main node] (p3r3) [below right = 1.5cm and 1.5cm of q2r2] {P3R3} ;
+\begin{definition}[Ordered interaction graph]
+    The directed graph $G_M = (V, A)$ is defined as the \emph{ordered interaction graph} derived from an ordered interaction model $M = (P,I)$.
+    Its structure is as follows:
+    \begin{itemize}
+        \item $V := \{ v_{i} : i \in I\}$\\
+        \item $A := \{ (v_{i}, v_{j}) : i, j \in I, \mbox{ and } \exists p\in P \mbox{ s.t. } i \preceq_p j \}$\\
+    \end{itemize}
+    \label{def:oig}
+\end{definition}
 
-        \path[draw, thick]
-        (p1q1) edge node [right] {5MB} (p2r1) 
-        (p1q1) edge node [left] {3MB} (q2r2) 
-        (p2r1) edge node [right] {7MB} (p3r3) 
-        (p2r1) edge node [below right] {1MB} (q2r2) 
-        (q2r2) edge node [left] {8MB} (p3r3) 
-        ;
-     \end{tikzpicture}
-     \caption{Example of an ordered interaction graph}
-     \label{fig:ex_oig}
-\end{figure}
 
-Figure~\ref{fig:ex_oig} depicts the ordered interaction graph derived from the data in Table~\ref{tab:interactions}.
-Note that some numbers in the graph are not in the graph\suggestion{This sentence is weird, I think you mean table in
-the second case}, as the contributions in an interaction are
-weights in the arcs to the successors of that interaction. If that successor does not exist yet, those
-contributions have no representant in the graph. The ordered interaction graph functions mainly as a 
-structure to consider, as the name says, the order of interactions. It is by definition, the directed
-acyclic graph induced by the partial ordering.
+\begin{example}
 
-\begin{figure}[h]
+    Figure~\ref{fig:ex_oig} depicts the ordered interaction graph derived from the data in Table~\ref{tab:interactions}.
+    Note that some numbers present in the table are not in the graph, as the contributions in an interaction are
+    weights on the arcs to the successors of that interaction. If that successor does not exist yet, those
+    contributions have no representant in the graph. The ordered interaction graph functions mainly as a 
+    structure to consider, as the name says, the order of interactions. Note that if the ordering of the $I_p$ represents
+    a temporal relationship and there are no disparities between the time an agent records an interaction, 
+    the ordered interaction graph is an acyclic graph that corresponds to the natural partial order that
+    is induced by the total orders on the $I_p$. If this is not the case, this graph will contain cycles.
+    In this case one can still derive a partial order, in which interactions that are in the same cycle
+    are considered to be incomparable. However, this might result in the complete order of the $I_p$
+    not being maintained.
+
+    \begin{figure}[h]
+        \centering
+         \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+            inner sep=0pt, minimum width=20pt} 
+            ]
+
+            \node [main node] (p1q1) {P1Q1} ;
+            \node [main node] (p2r1) [below right  = 1.5cm and 1.5cm of p1q1] {P2R1} ;
+            \node [main node] (q2r2) [below left = 1.5cm and 1.5cm of p2r1] {Q2R2} ;
+            \node [main node] (p3r3) [below right = 1.5cm and 1.5cm of q2r2] {P3R3} ;
+
+            \path[draw, thick]
+            (p1q1) edge node [right] {5} (p2r1) 
+            (p1q1) edge node [left] {3} (q2r2) 
+            (p2r1) edge node [right] {7} (p3r3) 
+            (p2r1) edge node [below right] {1} (q2r2) 
+            (q2r2) edge node [left] {8} (p3r3) 
+            ;
+         \end{tikzpicture}
+         \caption{Example of an ordered interaction graph}
+         \label{fig:ex_oig}
+    \end{figure}
+
+\end{example}
+
+\begin{definition}[Block Graph]
+    Let $M = (P, I)$ be an ordered interaction model. The block graph $G^B_{M}$ is defined as follows:
+
+    \begin{itemize}
+        \item $V := \{ v_{p, i} : i \in I, p \in a(i) \}$\\
+        \item $A := \{ (v_{p,i}, v_{q,j}) : i, j \in I, p \in a(i), q \in a(j) \mbox{ and } (i \preceq_p j \mbox{ or } i \preceq_q j) \}$\\
+    \end{itemize}
+
+    This graph can be weighted. Let $(v_{p,i}, v_{q, j}) = a \in A$, then the weight of $a$ in $G$, $w_G(a)$ is:
+
+    \begin{equation*}
+        w_G(a) := w(i, q)
+    \end{equation*}
+\end{definition}
+
+\begin{example}
+    In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has a similar structure
+    as the ordered interaction graph, except that each interaction is split into the two parts belonging to each respective
+    party. This representation yields a different view on the ordered interaction model.
+    In this graph, the fact that each agent has their own sequence of interactions
+    is stressed, with additional arcs indicating the other party involved.
+    Again, the lack of representation of the last interactions can be seen. This graph will be used
+    in Chapter~\ref{chap:temporal_pr} to serve as the basis for Temporal PageRank.
+
+
+ \begin{figure}[ht]
     \centering
      \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
         inner sep=0pt, minimum width=20pt} 
@@ -640,16 +637,16 @@ acyclic graph induced by the partial ordering.
         \node [main node] (p3) [below = 1.5cm of p2] {P3} ;
 
         \path[draw, thick]
-        (p1) edge node [right] {5MB} (p2)
-        (p2) edge node [left] {7MB} (p3)
-        (q1) edge node [left] {3MB} (q2)
-        (r1) edge node [right] {1MB} (r2)
-        (r2) edge node [right] {8MB} (r3)
-        (p1) edge node [above left, pos=0.1] {3MB} (q2)
-        (q1) edge node [below left, pos=0.9] {5MB} (p2)
-        (p2) edge node [below left, pos=0.9] {1MB} (r2)
-        (r1) edge node [above left, pos=0.1] {7MB} (p3)
-        (q2) edge [bend right] node [left] {8MB} (r3)
+        (p1) edge node [right] {5} (p2)
+        (p2) edge node [left] {7} (p3)
+        (q1) edge node [left] {3} (q2)
+        (r1) edge node [right] {1} (r2)
+        (r2) edge node [right] {8} (r3)
+        (p1) edge node [above left, pos=0.1] {3} (q2)
+        (q1) edge node [below left, pos=0.9] {5} (p2)
+        (p2) edge node [below left, pos=0.9] {1} (r2)
+        (r1) edge node [above left, pos=0.1] {7} (p3)
+        (q2) edge [bend right] node [left] {8} (r3)
 
 
         ;
@@ -658,13 +655,33 @@ acyclic graph induced by the partial ordering.
      \label{fig:ex_block}
 \end{figure}
 
-In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has largely the same structure
-as the ordered interaction graph, except that each interaction is split into parts belonging to each respective
-party.\suggestion{It looks and feels very differnt to me, not ``largely the same''.} In the case of MultiChain, this representation really shows the chain aspect of this datastructure,
-in the sense that each agent has their own sequence of nodes, with additional arcs denoting the interactions.
-Again, the lack of representation of the last interactions can be seen. This graph will be used
-in Chapter~\ref{chap:temporal_pr} to serve as the basis for Temporal PageRank.
+   
+\end{example}
 
+
+\begin{definition}[Interaction Graph]
+    Let $M = (P, I)$ be an ordered interaction model. The interaction graph $G^I_M$ is defined as follows:
+
+    \begin{itemize}
+        \item $V := \{ v_p : p \in P \}$\\
+        \item $A := \{ (v_p, v_q) : p, q \in P \mbox{ s.t. } \exists i \in I \mbox{ involving } p \mbox{ and } q$ \\
+    \end{itemize}
+
+    This graph has weights. Let $(v_{p}, v_q) = a \in A$, then:
+
+    \begin{equation*}
+        w(a) := \sum_{i \in I : a(i) = (p, q)} w(i, p)
+    \end{equation*}
+\end{definition}
+
+\begin{example}
+Finally, Figure~\ref{fig:ex_ig} shows the interaction graph. Traditionally, this is the graph
+that has been used in literature. However, when considering an ordered interaction model, this
+graph is the one that might be less obvious at first glance. The structure of the graph
+is the block graph with a contraction of all nodes per agent. The weights on the arcs are
+the sums of the edges in the block graph, but in the other direction. This graph does
+not reflect the notion of time or order in any way. It will be the basis for the
+NetFlow mechanism presented in Chapter~\ref{chap:netflow}.
 
 \begin{figure}[h]
     \centering
@@ -688,20 +705,13 @@ in Chapter~\ref{chap:temporal_pr} to serve as the basis for Temporal PageRank.
      \caption{Example of an interaction graph}
      \label{fig:ex_ig}
 \end{figure}
-
-Finally, Figure~\ref{fig:ex_ig} shows the interaction graph. Traditionally, this is the graph
-that has been used in literature. However, when considering an ordered interaction model, this
-graph is the one that might be less obvious at first glance. The structure of the graph
-is the block graph with a contraction of all nodes per agent. The weights on the arcs are
-the sums of the edges in the block graph, but in the other direction. This graph does
-not reflect the notion of time or order in any way. It will be the basis for the
-NetFlow mechanism presented in Chapter~\ref{chap:netflow}.
+\end{example}
 
 
 
 \section{Base model applied to Tribler}
 
-To obtain more insight into the ordered interaction model, consider the following application:
+To obtain more insight into the ordered interaction model, consider the following application.
 
 Tribler is an anonymous peer-to-peer file sharing client. In the application of the model,
 the set of agents consists of Tribler clients. Each Tribler client is uniquely identifiable,
@@ -718,15 +728,15 @@ a common agent, for which the sequence number in $i_k$ is lower than in $i_{k+1}
 This results in a full order on $I_p$, since in that case $(i, j)$ is a valid sequence if
 $i$ occurred before $j$ and both involve agent $p$.
 
-The above reasoning shows that the base model as presented is compatible with Tribler as a usecase.
+The above reasoning shows that the base model as presented is compatible with Tribler as a use case.
 Let us further elaborate on some of the properties of the MultiChain, in order to sketch a better image.
 The MultiChain has first been introduced by Norberhuis~\cite{norberhuis2015multichain}. For a detailed
 view into this structure, we refer to this work.
 
-There are two main properties of MultiChain that are exploited in the mechanisms this work builds upon it.
+There are two main properties of MultiChain that are exploited in the mechanisms this work builds upon.
 Firstly, there is the fact that a record of an interaction can only exist if both parties agree that it
 is accurate. Secondly, the MultiChain is built such that there is eventual detection of lying. In particular,
-if an agent spreads differing\question{different?} interations to different agents, this will be detected. In terms of the model,
+if an agent spreads inconsistent interations to different agents, this will be detected. In terms of the model,
 if an agent spreads interactions such that his set of interactions has no total order, the network will
 be able to detect and prove this. 
 
@@ -751,10 +761,10 @@ cheat the system, are relatively uncommon in real-world systems.
 BarterCast is built on voluntary reporting. All agents in the system can report to other agents
 about their interactions with third parties. These reports contain information about how much data
 was exchanged between the two agents. These reports are then used in a max-flow based algorithm.
-The graph that is constructed has all agents as nodes. Edges are directed and and the capacity
+The graph that is constructed has all agents as nodes. Edges are directed and the capacity
 of an edge from agent $i$ to agent $j$ is equal to the magnitude of all data that $i$ has
 uploaded to $j$ in bytes. Using this graph, the subjective reputation of $j$ from the perspective
-of $i$ is the result of a monotonous function applied to the difference of the max-flow from $j$ to $i$
+of $i$ is the result of an increasing function applied to the difference of the max-flow from $j$ to $i$
 minus the max-flow from $i$ to $j$.
 
 BarterCast has various desirable properties. Firstly, agents contributing more resources, or consuming
@@ -765,17 +775,19 @@ downloads. Finally, this is a system that does not require the presence of any c
 
 However, BarterCast also has some flaws. In particular, there is a disincentive for agents to report
 interactions in which they had a net negative contribution to the network. Even worse, there is no mechanism
-to verify who is lying in the case of conflicting reports. This means there exists a strictly optimal 
-reporting strategy: Claiming that you uploaded a lot of data to one or more people, even if that is not
+to verify who is lying in the case of conflicting reports. This means there exists a
+misreporting strategy that makes an agent seem better than they have performed:
+Claiming that you uploaded a lot of data to one or more people, even if that is not
 the case. This is a major weakness in the protocol and a solution has been suggested by Seuken and 
-Parkes~\cite{seuken2010accounting}. 
+Parkes~\cite{seuken2010accounting}. The solution involves dropping the reports by any agents
+which are currently under consideration for receiving services.
 
 In addition to the reporting disincentive, there is a more fundamental problem. Bartercast is built
 to transitively propagate uploads to you. In some sense, agents are more trusted if they uploaded
 more to you. This is a perfectly valid construction. However, the reverse also holds. If an agent
 has downloaded a lot, all agents that downloaded from them are transitively punished. While
-this seems philosophical at first, but there is an actual sybil
-attack that exploits this property:
+this seems philosophical at first, there is an actual sybil
+attack that exploits this property.
 
 \begin{example}[Sybil attack on BarterCast]
      Let $i, j$ be agents. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow

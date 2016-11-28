@@ -968,7 +968,8 @@ same with respect to the subjective work graph, they must get the same score. Ag
 to imagine accounting mechanisms without this property, but they will likely need more information
 about agents than present in the work graph to assign sensible differing scores.
 The definition given here is slightly stronger than the original definition. In the original definition,
-the results may depend on which agent 
+the results may depend on which agent is doing the computation. This definition is agnostic of the
+actual identity of the computing agent.
 
 
 \begin{property}[Weak Transitive Trust]
@@ -1008,31 +1009,35 @@ collapses to the one used by Seuken and Parkes if $|J|=1$.
     where $V_s = \{ s_{J_1}, s_{J_2}, \ldots\}$ is a set of sybils, 
     $E_s = \{(x, y) : x, y \in S \cup J\}$, and $w_s$ are the edge weights for
     the edges in $E_s$. Applying the sybil attack to agent $i$'s subjective work graph
-    is done in the same way as for normal sybil attacks.
+    $G_i = (V_i, E_i, w_i)$ results in a modified graph 
+    $G_i \downarrow \sigma_J = G_i' = (V_i \cup V_s, E_i \cup E_s, w')$, where
+    $w'(e) = w_i(e)$ for $e \in E_i$ and $w'(e) = w_s(e)$ for $e \in E_s$.
     \label{def:collsybil}
 \end{definition}
 
 On the face, Definition \ref{def:collsybil} doesn't seem to add much to the definition of a sybil attack.
-After all, an attacker can already create an arbitrary amount of identities. However, the definition of a
+After all, an attacker can already create an arbitrary number of identities. However, the definition of a
 sybil attack only allows a single point where sybils can interact with the rest of the network, which is a pretty limited
 view of possible attacks. 
 
 \begin{definition}[Sybil attack profit]
     Let $G_i$ be a subjective work graph. For all $j \in \bb{N}$, let $(\sigma_J)_j$ be a sybil attack
     on $(G_i)_j$, where $(G_i)_0 := G_i$ and $(G_i)_j$ for $j > 0$ is defined by the subjective
-    work graph that consists of $(G_i)_{j-1}$ and the assignment of one unit of work to 
-    $A(S^M( (G_i)_{j-1}, C_i))$.
+    work graph that consists of $(G_i)_{j-1} \downarrow (\sigma_J)_j$ and the assignment of one unit of work to 
+    $A(S^M( (G_i)_{j-1} \downarrow (\sigma_J)_j, C_i))$.
 
-    Let $\omega^n_-$ be the amount of work that any of the agents in $J$ have performed for
-    the network after $n$ steps. Let $\omega^n_+$ be the amount of work that $J$ of any of their
-    sybils obtain from the network.
+    Let $\omega^n_-$ be the sum of the amount of the work agents in $J$ have performed for
+    the network after $n$ steps (including before the start of the sybil attack.
+    Let $\omega^n_+$ be the amount of work that $J$ of any of their
+    sybils obtain from the network. It is assumed that no work is obtained before the start of the
+    sybil attack.
 
     The profit of this sequence of sybil attacks is:
     \begin{equation*}
         \sup \{\frac{\omega^n_+}{\omega^n_-}\ : n \in \bb{N}, \omega^n_- \neq 0\}
     \end{equation*}
 
-    If this supremum is unbounded, the sybil attack is strongly beneficial.
+    If this supremum is infinite, the sybil attack is strongly beneficial.
 
     If the supremum exists and is strictly larger than 1, the sybil attack is 
     profitably weakly benificial.
@@ -1043,14 +1048,16 @@ view of possible attacks.
 \end{definition}
 
 The amount of work that needs to be performed for the attack ($w^n_-$) is performed for non-sybil
-agents. The interactions through which this is done are also known as attack edges in broader
+agents. The interactions through which this is done are also known as \emph{attack edges} in broader
 literature.
 Definition \ref{def:sybil_profit} provides a certain amount of backwards compatibility with the work
 of Seuken and Parkes, while still being more distinctive with respect to the different impacts
 sybil attacks can have on the network. In addition, note that the gap between profitably weakly
-benificial and strongly beneficial is quite small. In particular, profitibly weakly beneficial
+benificial and strongly beneficial may appear to be quite small. In particular, profitibly weakly beneficial
 attacks can be repeated by new identities for infinite profit. The difference lies in that
-this infinite profit then requires infinte contribution as well.
+this infinite profit then requires infinte contribution as well. This means that for practical systems
+allowing profitibly weakly benificial sybil attacks may be good enough, but for most systems a 
+strongly beneficial sybil attack would be detrimental.
 
 \section{Bounding sybil attack profit}
 
@@ -1074,13 +1081,13 @@ with this caveat.
 \begin{definition}[NetFlow limited contribution]
     The NetFlow limited contribution accounting mechanism $M$ is defined as follows:
     Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, agent
-    $i$ computes the the following for each agent $j$: 
+    $i$ computes the following for each agent $j$: 
     $c_j := \max\{MF_{G_i}(j,i) - MF_{G_i}(i,j), 0\}$, where $MF_{G_i}(i,j)$ denotes
     the value of the maximum flow from $i$ to $j$ in $G_i$, where the weights are
     the capacities on arcs.
 
     Let $G_i^N$ be the graph $G_i$ modified with $c_j$ as node capacities for each node,
-    except for $c_i$ which should be unbounded.
+    except for $c_i$ which should be infinite.
 
     Now $S^M_j(G_i, C_i) = MF_{G_i^N}(j, i)$.
 \end{definition}
@@ -1200,11 +1207,6 @@ interaction graph, this is not the case.
      \label{fig:ex_nf_2}
 \end{figure}
 
-
-\musthave{Small example of NetFlow computation}
-
-
-   
 \end{example}
 
 \begin{theorem}[Properties and robustness of NetFlow]
@@ -1224,11 +1226,17 @@ interaction graph, this is not the case.
     $M := \max_{j \in C_i}\{S^M_j(G_i, C_i)\}$ be the largest amount of reputation in the system.
     Then using $W_j = M+1$ and $W_k = M+1$ satisfies the requirements of weak transitive trust.
 
-    Since sybils only have connections to $j$, they cannot be involved in the flow to $j$, hence
-    $M$ is resistant to sybil attacks of type $(1)$. For the same reason this scheme is resiliant
-    to attack of type (2). For case (3), $s$ can only consume at most the NetFlow of $j$ ($c_j$)
-    units of work, at which point the NetFlow and the reputation of $j$ will be $0$. The NetFlow
-    is bounded by the contribution of $j$ to the network, so it is impossible to turn a profit of this.
+    This leaves robustness against profitably weakly benificial sybil attacks. Consider the amount of
+    work performed by the agents in $J$ after $n$ steps of the sybil attack,  $\omega^n_-$. For each
+    unit of work that is contributed to an agent in $J$ during the sybil attack, the capacity
+    of some agent in $J$ that has directly contributed to the network must drop by 1 unit, possibly more
+    agents in $J$. This means that at most $\omega^n_-$ units of work can be contributed to agents
+    in $J$ after $n$ steps. Therefore, $\omega^n_+ \leq \omega^n_-$, and thus:
+
+    \begin{equation*}
+        \sup \{\frac{\omega^n_+}{\omega^n_-}\ : n \in \bb{N}, \omega^n_- \neq 0\} \leq 1
+    \end{equation*}
+
     Since the computing agent possesses the complete work graph, no work can leak outside of this graph.
 \end{proof}
 
@@ -1241,7 +1249,7 @@ is choice set independent, which implies there is less computation for varying c
 
 
 On the other hand, this algorithm computes two max-flows for every node and then one max-flow for
-every nodes that needs to be assigned a score. This means that any algorithm that simply compute
+every node that needs to be assigned a score. This means that any algorithm that simply computes
 these flows will run for up to $O(n^4)$ time, which is quite harsh. 
 Furthermore, this mechanism is quite strict. There is the SWTA policy involved. However,
 this is mainly for the benefit of the proof. One could quite easily enable the WTA policy instead.
@@ -1257,20 +1265,23 @@ to these agents.
 
 \subsection{Improving informativeness by scaling}
 An idea to improve the informativeness would be to weight the work performed by the other
-agent higher than their work consumed. The idea behind this scheme is that it agents
+agents higher than work consumed by them. The idea behind this scheme is that agents
 that perform less work than they consume are tolerated to some degree. This is a trade-off
 in the sense that this will allow weakly profitable sybil attacks in exchange for increased
 informativeness of the mechanism. In particular, a scaling would need to guarantee
-that the leverage the scaling to a strongly profitable sybil attack. 
+that it is impossible to leverage the scaling to a strongly profitable sybil attack. 
 
-\begin{definition}[$\alpha$-Net-Flow limited contribution]
-    Given a subjective work graph $G_i = (V_i, E_i, w_i)$ and choice set $C_i$, the $\alpha$-scaled
+We scale NetFlow by rating work performed by the calculating agent $i$ lower than other
+work, which is equivalent to rating all other work higher.
+
+\begin{definition}[$\alpha$-NetFlow limited contribution]
+    Given a subjective work graph $G_i = (V_i, E_i, w_i)$, choice set $C_i$, $\alpha \geq 1$, the $\alpha$-scaled
     weights $w_{i,\alpha}$ are defined as follows:
 
     \begin{equation*}
         w_{i,\alpha}(e) = 
         \begin{cases}
-            \frac{w_i(e)}{\alpha} &\mbox{ if } e = (j, i) \mbox{ with } j \in V_i \\
+            \frac{w_i(e)}{\alpha} &\mbox{ if } e = (i, j) \mbox{ with } j \in V_i \\
             w_i(e) &\mbox{ otherwise}
         \end{cases}
     \end{equation*}
@@ -1278,18 +1289,18 @@ that the leverage the scaling to a strongly profitable sybil attack.
     The $\alpha$-NetFlow accounting mechanism is computed as the NetFlow accounting
     mechanism, but on the graph $G_i' = (V_i, E_i, w_{i,\alpha})$.
 
-    As a shorthand, this mechanism is denoted by $\alpha$-NF.
+    As a shorthand, this mechanism is denoted by $\alpha$-NetFlow.
 \end{definition}
 
-\begin{theorem}[Robustness of $\alpha$-NF]
-    $\alpha$-NF with SWTA is robust against weakly benificial sybil attacks with
+\begin{theorem}[Robustness of $\alpha$-NetFlow]
+    $\alpha$-NetFlow with SWTA is robust against weakly benificial sybil attacks with
     profit more than $\alpha$.
     \label{thm:sybil-anf}
 \end{theorem}
 
 \begin{proof}
-    Since net flow is robust against weakly benificial sybil attacks with profit at most
-    1 and the only difference between the two systems is that the contributions of
+    Since NetFlow is robust against weakly benificial sybil attacks with profit at most
+    1 by Theorem~\ref{thm:prop-rob-NetFlow}  and the only difference between the two systems is that the contributions of
     agent $i$ are decreased by a factor $\alpha$, it must be the case that the profit
     of a sybil attack can be at most $\alpha$. After all, all altered interactions
     are with $i$ and are therefore known to have actually happened. Therefore, the
@@ -1308,14 +1319,14 @@ tend to infinity, this results in an accounting mechanism where every score is t
 max-flow from that node to $i$. 
 
 
-There are more desirable properties of $\alpha$-NF. While on the surface, it seems to
+There are more desirable properties of $\alpha$-NetFlow. While on the surface, it seems to
 be about ratio's and relative usage, there actually is a subtle way in which
 this accounting mechanism cares about absolute amounts of work performed. 
 In particular, consider three agents. The first has performed and received
 100MB worth of work, the second 70MB and the third 1MB. The second and third
 agent have only interacted with the first. If the first computes scores
-in 1-NF, then both the second and third agent are assigned a 0 score.
-However, in the case of 2-NF, the second agent will have a score of 20MB,
+in 1-NetFlow, then both the second and third agent are assigned a 0 score.
+However, in the case of 2-NetFlow, the second agent will have a score of 20MB,
 whereas the third will have a score of 0 still. This is because the scaling
 of the upload of the first agent could only have an effect on agents which
 have downloaded more than the total upload of the first agent, divided
@@ -1330,6 +1341,8 @@ contributing to agents around their level or above it. Any surplus will trickle 
 to the lower levels. If a huge influx of users results in an increase in the lower
 levels, the higher levels will not be impacted that much, and it will be mainly the
 lower levels helping each other.
+
+\nicetohave{What would happen if scaling Flows}
 
 
 \section{Attacks on Net-Flow}
@@ -1359,7 +1372,7 @@ to choose a lower $\alpha$ to account for this attack.
 \subsection{Partial network visibility}
 
 Tangentially related to the above attack is another attack that exploits the fact that if the MultiChain
-network grows very large, is not expected for every agent to have a full view of the network. This
+network grows very large, it is not expected for every agent to have a full view of the network. This
 is a desirable paradigm, as otherwise it would be trivial to spam the network by creating and broadcasting
 MultiChain blocks. However, this also implies that different agents have a different view of the network.
 In particular, if an attacker $s$ participates in an interaction $I_1$ in which he contributes a lot
@@ -1404,7 +1417,8 @@ harmless for the network and fairly risky for the parties involved.
 \section{Theoretical Performance of NetFlow}
 
 In order to computer the score of one other node with NetFlow, up to $2n+1$ max-flow
-computations are necessary, where $n$ is the number of nodes. In case one would compute
+computations are necessary, where $n$ is the number of nodes in a subjective work graph $G_i$. 
+In case one would compute
 the scores of all other nodes, $3n$ max-flow computations are needed. Hence, the
 performance of NetFlow will depend on the max-flow algorithm used and then incur
 another factor $n$ of computational complexity. This could be mitigated by finding
@@ -1427,7 +1441,7 @@ has a worst-case complexity of $O(n^2m)$. Again, this can be reduced to
 $O(nm\log\frac{n^2}{m})$ by using dynamic trees.
 
 Work by King, Rao and Tarjan~\cite{king1992faster} has resulted in an algorithm of
-order $O(nm\log_{\frac{m}{n\log(n)}n})$. In combination with work by Orlin~\cite{orlin2013max},
+order $O(nm\log_{\frac{m}{n\log(n)}}n)$. In combination with work by Orlin~\cite{orlin2013max},
 this results in an $O(nm)$ algorithm for max-flow. This is the current state-of-the-art
 when considering single source-sink max-flow.
 
@@ -1435,7 +1449,7 @@ When we consider all-pairs max-flow, one might think a speedup is possible.
 Building a Gomory-Hu tree~\cite{gomory1961multi} yields a method
 for which $n-1$ max-flow computations suffice. However, this method only works for undirected graphs.
 According to Ahuja, Magnati and Orlin~\cite{ahuja1993network}, no method is known for all-pairs max-flow
-on directed graphs that uses less than $\omega(n^2)$ max-flow computations. This work is from
+on directed graphs that uses less than $\Omega(n^2)$ max-flow computations. This work is from
 1993, and to our knowledge this has not changed since. Note that for the application of
 NetFlow, it would be necessary to compute all flows with one fixed sink or one fixed source,
 which is not quite the same as the all-pairs max-flow problem.
@@ -1444,6 +1458,13 @@ The above research implies that using state of the art algorithms, a NetFlow alg
 implemented with current state-of-the-art algorithms would be at least $O(n^2m)$ in the
 worst case. Our implementation uses the preflow-push algorithm, yielding a worst-case
 complexity of $O(n^3m)$. 
+
+In the case of Tribler, the algorithm needs to scale to at least 10.000 nodes. Anecdotal
+evidence suggests that this is the desired size of a distributed network that can collectively
+provide enough resources to provide value to all participants. The number of pairs of agents
+that have interacted is the number of edges. Past measurements have shown that the number
+of edges in a distributed network of this sort generally observes a power law. 
+\nicetohave{Big O of number of edges}
 
 
 
@@ -1469,18 +1490,20 @@ of random walks and considers both the exploratory effect and the
 load on important nodes in a random walk.
 
 Kamvar, Schlosser and Garcia-Molina~\cite{kamvar2003eigentrust} introduce
-the EigenTrust algorithm, which is a distributed way to contribute PageRank.
+the EigenTrust algorithm, which is a distributed way to calculate PageRank.
 PageRank is the stationary distribution of a random walk~\cite{page1999pagerank},
 where the random walk is uniform over links, with a probability to jump to a
 random node, specified by a distribution on those nodes. The trick in this context
-is to distribute the computation over untrusted nodes. 
+is to distribute the computation over all nodes, in such a way that a portion
+of them can be malicious without influencing the result.
 
 Yu, Gibbions, Kaminsky and Xiao~\cite{yu2008sybillimit} present SybilLimit, which
 is a method that is specifically designed for sybil detection. Again, the basis
-lies in random walks and this work specifies how to compute the desired
-algorithm in a distributed way.
+lies in random walks and this work specifies how to perform the desired
+algorithm in a distributed way. Again, spreading computational effort through
+the network. 
 
-Random walks are interesting for the the purpose of sybil detection for several reasons.
+Random walks are interesting for the purpose of sybil detection for several reasons.
 Firstly, it matches certain models of behavior, as in the case of PageRank. Secondly, it 
 is a relatively cheap technique from a computational perspective, which is especially
 interesting sine the main
@@ -1661,7 +1684,7 @@ of these accounting mechanisms.
 Prior work by Norberhuis~\cite{norberhuis2015multichain} includes
 an implementation of the MultiChain data structure into Tribler. In collaboration with Bongers and Veldhuisen,
 this system has been brought up to production level and released in an experimental release of Tribler,
-version 6.6.0~\footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
+version 6.6.0\footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
 release was ran by people with a close interest in Tribler. It was announced on the forums and could
 also be found through above GitHub page. A crawler was deployed to request MultiChain blocks from throughout
 the network. A database dump from this crawler has been acquired on the 31th of August. The software
@@ -2018,7 +2041,7 @@ applied with little alteration, but in other cases it might require non-trivial
 customizations.
 
 
-\musthave{Publish dataset somewhere}
+\musthave{Publish dataset somewhere. Reference to code.}
 
 
 

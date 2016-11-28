@@ -173,7 +173,18 @@ $\;$ & \\
 In this thesis, the problem of estimating trust in a distributed systems is considered.
 Distributed systems can be virtual or real-world systems in which multiple agents interact.
 One of the biggest problems in distributed systems is that they only function well if
-everyone contributes some resources. 
+everyone contributes some resources. If agents do not participate, or try to pretend they
+participate, but in fact are slacking off, then the system might not achieve its desired purpose.
+This work presents two methods to estimate how well
+agents contribute to the network, while preventing cheating. 
+Firstly, the NetFlow algorithm, which uses max-flow computations
+to bound the profit of cheating by sybil attacks. Secondly, the Temporal PageRank
+algorithm, which uses information about the ordering of the interactions to provide
+a robust mechanism to determine reputation. Theoretical guarantees about several aspects
+of these algorithms are provided. Furthermore, these mechanisms are tested on
+data from a real-world distributed system: Tribler, an anonymous peer-to-peer downloading
+system. Finally, taking both the theoretical and practical results, the broader implications
+of these mechanisms and future possiblities are explored.
 
 \musthave{Actually write abstract}
 \musthave{Page numbers are in weird/inconsistent places.}

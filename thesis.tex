@@ -36,6 +36,8 @@
 
 \usetikzlibrary{positioning}
 
+\pagenumbering{arabic}
+
 
 \begin{document}
 
@@ -168,13 +170,16 @@ $\;$ & \\
 
 \chapter*{\centering \begin{normalsize}Abstract\end{normalsize}}
 
-In this thesis, the problem of estimating trust in a distributed network is considered.
+In this thesis, the problem of estimating trust in a distributed systems is considered.
+Distributed systems can be virtual or real-world systems in which multiple agents interact.
+One of the biggest problems in distributed systems is that they only function well if
+everyone contributes some resources. 
+
 \musthave{Actually write abstract}
 \musthave{Page numbers are in weird/inconsistent places.}
 
 \clearpage
 \tableofcontents
-\pagenumbering{arabic}
 \chapter{Introduction}
     
 Nowadays, the Internet is an absolutely critical piece of infrastructure. According
@@ -1506,7 +1511,7 @@ the network.
 Random walks are interesting for the purpose of sybil detection for several reasons.
 Firstly, it matches certain models of behavior, as in the case of PageRank. Secondly, it 
 is a relatively cheap technique from a computational perspective, which is especially
-interesting sine the main
+interesting since the main
 drawback of the Net-Flow technique presented in Chapter~\ref{chap:netflow} 
 are the computing expenses.
 
@@ -1514,17 +1519,18 @@ We take the concept of PageRank and apply it to the Ordered Interaction Graph to
 yield a technique that will be referred to as temporal PageRank
 
 \begin{definition}[Temporal PageRank]
-    Let $M$ be an Ordered Interaction Model, with corresponding Block Graph $G$.
+    Let $M$ be an Ordered Interaction Model, with corresponding Block Graph $G$. 
+    Let $i$ be the agent that performs the computation.
+
     Consider a random walk in $G$, where the transition probabilities are the normalized
     weights of the arcs. Let this random walk have a chance of $\beta$ to jump to a random node.
     This random node is determined by a distribution $X$ on nodes that represent $i$'s half of interactions of
     a single agent $i$. By default, this is uniform over all nodes.
 
-    The score of an interaction is it's probability in the stationary distribution of this random walk.
+    The score of a half-interaction is it's probability in the stationary distribution of this random walk.
     Then Temporal PageRank is an accounting mechanism, which assigns as a score to agent $j$, the
     sum of all nodes representing $j$'s half of interactions of which $j$ was a part of.
 \end{definition}
-
 
 Before considering the functionality of this mechanism, let us visit the well-definedness.
 
@@ -1536,7 +1542,7 @@ Before considering the functionality of this mechanism, let us visit the well-de
 \end{theorem}
 \begin{proof}
     This random walk can be associated with a Markov chain, where the set of states is the set of
-    interactions. Let $W$ be the set of nodes/states with non-zero probability in the distribution
+    blocks (half-interactions). Let $W$ be the set of nodes/states with non-zero probability in the distribution
     that determines the node jumped to with chance $\beta$.
 
     Let $\ov{W}$ be the set of nodes that can be reached by following a path in $G$ from a node
@@ -1546,27 +1552,27 @@ Before considering the functionality of this mechanism, let us visit the well-de
     state is aperiodic, so this Markov chain is aperiodic. This means that the Markov chain of the
     random walk restricted to nodes in $\ov{W}$, has a unique stationary distribution.
 
-    $\ov{W}$ is closed, the unique stationary distribution with $0$ probability for states outside
+    Since $\ov{W}$ is closed, the unique stationary distribution with $0$ probability for states outside
     $\ov{W}$ yields a stationary distribution for the full random walk. Since states
     outside $\ov{W}$ are transient. In fact, there is a $0$ probability of returning to that
     state. This means that all states outside $\ov{W}$ must have a $0$ probability in a stationary
     distribution, hence the stationary distribution is unique.
 \end{proof}
 
-Generally, random walks are generally computed by the power method. This involves repeatedly
+Generally, random walks are computed by the power method. This involves repeatedly
 multiplying an initial probability vector with the matrix of transition probabilities until
 the result converges. It is a desirable property to have quick convergence of this method.
 
 \begin{theorem}[Convergence of Temporal PageRank]
     The error after $t$ iterations of the power method, for Temporal PageRank with
-    jump probability $\beta$, is $O(|1-\beta|^t)$
+    jump probability $0 \leq \beta \leq 1$, is $O((1-\beta)^t)$
     \label{thm:conv_tpr}
 \end{theorem}
 
 \begin{proof}
     This follows from a result of Haveliwala and Kamvar \cite{haveliwala2003second}. This
     result is that for a matrix $A = [cP + (1-c)E]^T$, with $P$ $n \times n$ row-stochastic
-    and $E$ a non-negative rank-one row-stocahstic matrix, and $0 \leq c \leq 1$, the
+    and $E$ a non-negative rank-one row-stochastic matrix, and $0 \leq c \leq 1$, the
     second eigenvalue of $A$ satisfies $|\lambda_2| \leq c$. 
 
     If we take $c=1-\beta$, $P$ the transition probabilities without the jump, and $E$ the
@@ -1578,7 +1584,7 @@ the result converges. It is a desirable property to have quick convergence of th
     the proof of which follows by decomposing the matrix into Jordan Normal Form.
 
     Combining these facts yields that the error of the power method for this particular matrix
-    after $t$ iterations is at most $O(|1-\beta|^t)$. 
+    after $t$ iterations is at most $O( (1-\beta)^t)$.
 \end{proof}
 
 This result implies that the convergence is exponential, but perhaps more importantly, that it is bounded
@@ -1635,21 +1641,24 @@ answer is no. Not because it is particularly robust, but because it simply lacks
 known as Transitive Trust.
 
 \begin{theorem}[Lack of Transitive Trust]
-    Temporal PageRank with a uniform distribution for the jump and WTA does not satisfy Weak Transitive Trust.
+    Temporal PageRank with a uniform distribution for the jump and Winner-Takes-All does not satisfy Weak Transitive Trust.
     \label{thm:no_trans_trust}
 \end{theorem}
 
 \begin{proof}
-    Consider a OIM with agents $i, j, l$, where agent $i$ has had some number $N$ interactions,
+    Consider an ordered interaction model $M$ with agents $i, j, l$, 
+    where agent $i$ has had some number $N$ interactions,
     alternatingly with $j$ and $l$, where $i$ consumes one unit of work and provides
     one unit of work. Since the probability in the stationary distribution will
     be spread over all interactions, for large enough $N$ the probability on the most recent
     interactions will be too small to be able to surpass $l$ by helping $j$ or vice versa.
+
+    \musthave{Picture}
 \end{proof}
 
 Theorem~\ref{thm:no_trans_trust} seems to be a bad sign for Temporal PageRank. However, 
 there still is some notion of transitivity. In particular, the score of each agent
-is the sum of the stationary probabilities on the interaction. In the compuation, 
+is the sum of the stationary probabilities on the interaction. In the computation, 
 the jump probability is $1$. When another interaction occurs, $1-\beta$ of these
 transitions become diverted to the new interactions. Suppose agent $a$ interacts
 with agent $b$, and $b$ then interacts with a new agent $c$, where $b$ is the only
@@ -1687,7 +1696,7 @@ this system has been brought up to production level and released in an experimen
 version 6.6.0\footnote{https://github.com/Tribler/tribler/releases/tag/v6.6.0-exp1}. This experimental
 release was ran by people with a close interest in Tribler. It was announced on the forums and could
 also be found through above GitHub page. A crawler was deployed to request MultiChain blocks from throughout
-the network. A database dump from this crawler has been acquired on the 31th of August. The software
+the network. A database dump from this crawler has been acquired on the 31st of August. The software
 was released on the 26th of July. This means that the data has been generated by users during a period
 that lasted a little over a month. During this period 917 identities have been observed in the network.
 These identities are not necessarily unique users, since technically savvy users may purposefully 
@@ -2017,7 +2026,7 @@ in which this research can be placed.
 
 Both the mechanisms presented have areas where improvement can be obtained. In the case of
 temporal PageRank, a more precise study could be done towards its fairness. Furthermore,
-since its resistance against is not quite as strong as NetFlows, more research could be done
+since its resistance against sybil attacks is not quite as strong as NetFlows, more research could be done
 into hardening the theoretical resistance against sybil attacks, or to study what sybil
 attacks are possible and determine the risks involved.
 

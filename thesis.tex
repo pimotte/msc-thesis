@@ -186,9 +186,6 @@ data from a real-world distributed system: Tribler, an anonymous peer-to-peer do
 system. Finally, taking both the theoretical and practical results, the broader implications
 of these mechanisms and future possiblities are explored.
 
-\musthave{Actually write abstract}
-\musthave{Page numbers are in weird/inconsistent places.}
-
 \clearpage
 \tableofcontents
 \chapter{Introduction}
@@ -445,7 +442,7 @@ engages in a new interaction. Then the following would be an indication of a fai
         done historically, their score might not change.
 \end{itemize}
 
-\musthave{This is pretty unclear.}
+\nicetohave{This is pretty unclear.}
 
 \section{Resistance to manipulation}
 
@@ -453,9 +450,11 @@ While fairness says something about the score in relation to the actions within
 the system, resistance to manipulation concerns actions that are not ``normal''
 in the system. In particular, lying of any sort, creating extra or new identities
 and any other actions than participating in the network should not lead to an
-increase in score. 
+increase in score. Attacks that involve non-existant identities are referred to
+as sybil attacks in broader literature. \nicetohave{Reference}
+These kinds of attacks can be particularly problematic in systems where
+there is no control on or cost associated with the creation of a new identity.
 
-\musthave{A little about Sybil attacks}
 
 \section{Efficiency of computation}
 

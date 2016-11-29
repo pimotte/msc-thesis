@@ -5,7 +5,7 @@
 %
 \usepackage[dvipsnames]{xcolor}
 \usepackage{amsmath,amsthm,amsfonts,mathrsfs,anysize,fancyhdr,epsfig,svg}
-
+\usepackage{subfig}
 \usepackage[section]{placeins}
 \usepackage{tikz}
 \usepackage[normalem]{ulem}
@@ -170,7 +170,7 @@ $\;$ & \\
 
 \chapter*{\centering \begin{normalsize}Abstract\end{normalsize}}
 
-In this thesis, the problem of estimating trust in a distributed systems is considered.
+In this thesis, the problem of estimating trust in distributed systems is considered.
 Distributed systems can be virtual or real-world systems in which multiple agents interact.
 One of the biggest problems in distributed systems is that they only function well if
 everyone contributes some resources. If agents do not participate, or try to pretend they
@@ -207,8 +207,7 @@ the following on the matter in a report~\cite{larue2011report}:
 \end{quote}
 
 This leaves little doubt that the availability of the internet is protected by Article 19 of
-the Universal Declaration of Human Rights ``Freedom of Opinion and Information''. \nicetohave{Reference to this Article
-19?}
+the Universal Declaration of Human Rights ``freedom of opinion and expression''\cite{assembly1948universal}.
 
 A more controversial issue has been going on for longer than it is known to the general public.
 In 2013, Edward Snowden disclosed the first of several pieces of information that
@@ -252,7 +251,7 @@ A prime example of using a distributed system to increase availibility is the
 BitTorrent protocol~\cite{cohen2008BitTorrent}. This protocol enables the technique
 called peer-to-peer filesharing.
 In this paradigm, many computers are in possession of (part of) a file. Computers
-that do not possess the enitre file can request little pieces of it from other
+that do not possess the entire file can request little pieces of it from other
 computers (also known as peers). This protocol ensures the availibility of this
 file. If any peer stops functioning, the rest of
 the network can continue to exist as is, as long as all active peers have the
@@ -311,7 +310,7 @@ has is extraordinarily small. So small, that most people reason that their behav
 does not impact the world, so they will just continue living as they always have. 
 This problem is known as the Tragedy of the Commons. Everyone would win if everyone
 participated, but one person can not make the difference. 
-This concept has been studied at length in the past decades, we refer to
+This concept has been studied at length in the past decades. We refer to
 Hardin~\cite{hardin2009tragedy} for a view of this problem in broader society.
 In Tribler, this concept exists in the following form: Everyone would like to use 
 the network to download data. However, in order to do so, there needs to be at least
@@ -338,6 +337,8 @@ exist by claim of another, including fictional interactions with the real agent.
 should therefore be able to deal with such attacks. The theoretical resistance to attacks,
 and the performance in practice are the subjects of this thesis.
 
+\musthave{Something about reputation. Link with trust. Make introduction more matching to RQ}
+
 The concrete contributions of this thesis are as follows: Chapter~\ref{chap:research_questions} contains
 the research question about the existance of a reputation system for distributed systems.
 Additionally, it contains a division of this question into several parts representing different aspects of the problem.
@@ -349,12 +350,7 @@ in which Temporal PageRank, a mechanism that uses the order of interactions in t
 Again, some theoretical properties are highlighted. Chapter~\ref{chap:exp} shows the performance and properties
 of above mechanisms in practice. This is done by applying the mechanisms to a dataset obtained through
 a real-world deployment of Tribler with its brand new MultiChain data structure. Finally, Chapter~\ref{chap:conclusion}
-concludes the research and discusses cave-ats and potential for future research.
-
-
-\suggestion{Also mention the main research questions + contributions here? Mathijs gave me the following general lay-out
-for an introduction: Probeer de volgende opbouw aan te houden:  1. motivatie en algemeen doel 2. stand van zaken 3. open
-uitdaging 4. jouw bijdrage Ik denk dat je dit daarna nog een keer wil doen voor de deelvragen.}
+concludes the research and discusses caveats and potential for future research.
 
 
 \chapter{Research question}
@@ -367,7 +363,6 @@ function. This can easily lead to a tragedy of the commons, where everyone is sl
 but the result would be better if everyone pitched in a small amount of effort.
 
 The focus of this thesis is the following research question:
-%\suggestion{Maybe explictly label it as "Research Question" in bold?}
 \begin{center}
     \emph{Can agents in a distributed network use confirmed information about
     interations and their order to judge the reputation of other agents
@@ -388,7 +383,8 @@ evaluation will be done using Tribler.
 In this context, a system that assigns a score
 to agents given information about their interactions has been dubbed an 
 ``accounting mechanism'' by Seuken~and~Parkes~\cite{seuken2010accounting}. This
-work will adhere to this terminology.
+work will adhere to this terminology. The exact definition of an accounting mechanism
+will follow in Chapter~\ref{chap:netflow}. 
 
 To restrict the scope of this research, only accounting mechanisms are considered as a method
 of using the information about the order of interactions. This reduces the main research question
@@ -404,8 +400,6 @@ to the following:
     \item The accounting mechanism is manipulation-resistant.
     \item The accounting mechanism is efficiently computable.
 \end{itemize}
-
-\suggestion{As a new reader I would still be unsure what an accounting mechanism is exactly}
 
 These properties are far from well-defined in this context, so let us consider each of them.
 
@@ -442,7 +436,7 @@ engages in a new interaction. Then the following would be an indication of a fai
         done historically, their score might not change.
 \end{itemize}
 
-\nicetohave{This is pretty unclear.}
+\nicetohave{This is pretty unclear. Use Tribler-specific information to defend these}
 
 \section{Resistance to manipulation}
 
@@ -464,6 +458,8 @@ theorethical worst-case performance is useable. It might be that some
 theoretically slow mechanisms turn out to be fast in practice, or that the
 instance sizes are small enough to allow a higher-order algorithm. Hence,
 in addition to big-$O$ notation, the efficiency will be studied in practice.
+
+\nicetohave{Some sort of practical bounds}
 
 %\nicetohave{Balance the sections a bit. The second and third are far shorter}
 %\musthave{Maybe formulate subresearchquestions that you answer throughout the thesis? 
@@ -504,11 +500,12 @@ Hence, applications that fit the following model will be explored.
         \item $w: I \times P \to \bb{R}_{\geq0}$, a function which describes the contribution of an agent in an interaction
     \end{itemize}
 
+    \suggestion{Domain of $w$ is larger than necessary}
+
     Agents represent entities that can interact with each other.
     An interaction involves two different agents, one or both performing
     work for each other. 
    
-    %\nicetohave{Make the following sentence easier to grasp first try ;)}
     Furthermore, for each $p \in P$, the following set must be completely ordered.
     \begin{equation*}
         I_p = \{i \in I : p \in a(i)\}
@@ -552,8 +549,8 @@ definitions that will depend on this, let us consider a running example. This ex
 \end{table}
 
 In Table~\ref{tab:interactions}, the attributes of the interactions are specified. For each interaction the
-agents involved are listed, along with their respective contributions, the amount of data uploaded
-to the other. In addition, the sequence number (``Seq'') is listed. Recall that the set of interactions of each agent must
+agents involved are listed, along with their respective contributions.
+In addition, the sequence number (``Seq'') is listed. Recall that the set of interactions of each agent must
 be completely ordered. The sequence number is
 simply the numbering of this set as prescribed by the ordering. This also gives an easy way to uniquely
 identify an interaction, namely by concatenating the agents with their sequence numbers. This is listed
@@ -626,6 +623,8 @@ an ordered interaction model.
         w_G(a) := w(i, q)
     \end{equation*}
 \end{definition}
+
+\musthave{Fix latex breaking up definition}
 
 \begin{example}
     In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has a similar structure
@@ -763,7 +762,7 @@ that will be proposed, but is something that should be kept in mind and these pr
 give way to attacks on the systems. 
 
 
-\chapter{Accounting mechanisms and sybil-proofness}
+\chapter{Alccounting mechanisms and sybil-proofness}
 \label{chap:netflow}
 
 The first reputation system that was introduced in Tribler was BarterCast~\cite{meulpolder2009bartercast}.
@@ -1479,7 +1478,7 @@ evidence suggests that this is the desired size of a distributed network that ca
 provide enough resources to provide value to all participants. The number of pairs of agents
 that have interacted is the number of edges. Past measurements have shown that the number
 of edges in a distributed network of this sort generally observes a power law. 
-\nicetohave{Big O of number of edges}
+This would result in a number of edges that is $m=O(n)$. 
 
 
 
@@ -1698,6 +1697,11 @@ In particular, the matter under consideration will be the properties of these me
 harder to prove theoretically. Furthermore, this experiment can be used to get a feel of the behavior
 of these accounting mechanisms.
 
+The code to run any of these experiments is available through 
+GitHub~\footnote{https://github.com/pimotte/msc-experimental-code/tree/9e4eab5ea1027bb671971fab4d137c40c1c77f83}.
+This code has been run on a dataset collected as below. This dataset is available upon request.
+
+
 \section{Data collection}
 
 Prior work by Norberhuis~\cite{norberhuis2015multichain} includes
@@ -1717,12 +1721,10 @@ delete their identity or users may have installed the software on multiple machi
 Firstly, let us consider the NetFlow mechanism. One of the first considerations will be what the influence
 of the parameter $\alpha$ is and how informative the mechanism is.
 
-Figures \ref{fig:nf_alpha_comparison_1} and \ref{fig:nf_alpha_comparison_2}
-show the NetFlow scoring mechanism for four peers, for three
+Figure \ref{fig:nf_alpha_comparison_1} 
+shows the NetFlow scoring mechanism for four peers, for three
 different values of $\alpha$. 
-\musthave{Numbering of these figures suggests they represent different things. Make clear they are the
-same for different parameters. } 
-\nicetohave{Make figures black-white compatible}
+same for different parameters.  
 These peers have been selected by sorting the list of peers by their total
 amount of uploaded data, and taking the peers at the 70th, 80th, 90th and 100th percentile.
 The peer whose point of view is taken for the computation is marked red. Each bubble is a peer whose
@@ -1746,32 +1748,42 @@ peer might still have a non-zero score if they have contribute about the same or
 in absolute terms.
 
 \begin{figure}[ht]
-    \begin{tabular}[ht]{cc}
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_7} &
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_8} \\
+    \centering
+    \subfloat{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_7}}
+    \subfloat{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_8}}\\
+    \addtocounter{subfigure}{-1}
+    \addtocounter{subfigure}{-1}
 
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_7} &
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_8} \\
+    \subfloat{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_7}}
+    \subfloat{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_8}}\\
 
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_7} &
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_8} \\
-    \end{tabular}
-    \caption{NetFlow scores from the perspective of several nodes}
+    \addtocounter{subfigure}{-1}
+    \addtocounter{subfigure}{-1}
+
+    \subfloat[][]{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_7}}
+    \subfloat[][]{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_8}}\\
+    \caption{NetFlow scores from the perspective of several nodes, continues on next page\dots}
     \label{fig:nf_alpha_comparison_1}
 \end{figure}
 
 \begin{figure}[ht]
-    \begin{tabular}[ht]{cc}
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_9} &
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_10} \\
+    \ContinuedFloat
+    \centering
+        \subfloat{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_9}}
+        \subfloat{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow0_10}} \\
 
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_9} &
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_10} \\
+        \subfloat{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_9}} 
+        \subfloat{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow1_10}} \\
 
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_9} &
-        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_10} \\
-    \end{tabular}
-    \caption{NetFlow scores from the perspective of several nodes}
+        \addtocounter{subfigure}{-1}
+        \addtocounter{subfigure}{-1}
+        \addtocounter{subfigure}{-1}
+        \addtocounter{subfigure}{-1}
+
+        \subfloat[][]{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_9}} 
+        \subfloat[][]{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_10}} \\
+
+    \caption{NetFlow scores from the perspective of several nodes, continued.}
     \label{fig:nf_alpha_comparison_2}
 \end{figure}
 
@@ -1819,11 +1831,12 @@ Netflow, but including some of the lower quantile representants.
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_5} &
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_6} \\
     \end{tabular}
-    \caption{Temporal PageRank computed by several peers}
+    \caption{Temporal PageRank computed by several peers, continues on next page\ldots}
     \label{fig:tpr_per_peer_1}
 \end{figure}
 
 \begin{figure}[ht]
+    \ContinuedFloat
     \centering
     \begin{tabular}[ht]{cc}
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_7} & 
@@ -1833,12 +1846,12 @@ Netflow, but including some of the lower quantile representants.
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_10} \\
 
     \end{tabular}
-    \caption{Temporal PageRank computed by several peers}
+    \caption{Temporal PageRank computed by several peers, continued}
     \label{fig:tpr_per_peer_2}
 \end{figure}
 
 
-Looking at Figures~\ref{fig:tpr_per_peer_1}~and~\ref{fig:tpr_per_peer_2} leads to several insights. Firstly, note that
+Looking at Figure~\ref{fig:tpr_per_peer_1} leads to several insights. Firstly, note that
 in contrast with NetFlow, these figures are all on the same scale, and that with the
 exception of a few nodes, most nodes are assigned somewhat the same score, regardless
 of the performance of the computing node. The general pattern is that nodes with both
@@ -1967,7 +1980,7 @@ upload/download ratio. In the context of a system like Tribler, this is not per 
 measure of contribution, because the act of relaying would need to be rewarded. When elaborating on
 the research question, fairness was described as a vague concept. However, with the results
 presented in Chapter \ref{chap:exp}, in particular 
-Figures~\ref{fig:nf_alpha_comparison_1},~\ref{fig:nf_alpha_comparison_2},~Figures~\ref{fig:tpr_per_peer_1}~and~\ref{fig:tpr_per_peer_2},
+Figures~\ref{fig:nf_alpha_comparison_1}~and~\ref{fig:tpr_per_peer_1},
 this notion becomes a lot more clear. 
 
 Using NetFlow with $\alpha=1$ is decidedly unfair. 
@@ -2059,8 +2072,6 @@ systems. Depending on the exact properties of said system, one of them could be
 applied with little alteration, but in other cases it might require non-trivial
 customizations.
 
-
-\musthave{Publish dataset somewhere. Reference to code.}
 
 
 

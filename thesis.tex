@@ -184,7 +184,7 @@ a robust mechanism to determine reputation. Theoretical guarantees about several
 of these algorithms are provided. Furthermore, these mechanisms are tested on
 data from a real-world distributed system: Tribler, an anonymous peer-to-peer downloading
 system. Finally, taking both the theoretical and practical results, the broader implications
-of these mechanisms and future possiblities are explored.
+of these mechanisms and future possibilities are explored.
 
 \clearpage
 \tableofcontents
@@ -247,17 +247,17 @@ extremely hard to take down. The disadvantage of a distributed systems is that t
 be difficulties in the distribution, in particular if the system is actually physically
 distributed. 
 
-A prime example of using a distributed system to increase availibility is the 
+A prime example of using a distributed system to increase availability is the 
 BitTorrent protocol~\cite{cohen2008BitTorrent}. This protocol enables the technique
 called peer-to-peer filesharing.
 In this paradigm, many computers are in possession of (part of) a file. Computers
 that do not possess the entire file can request little pieces of it from other
-computers (also known as peers). This protocol ensures the availibility of this
+computers (also known as peers). This protocol ensures the availability of this
 file. If any peer stops functioning, the rest of
 the network can continue to exist as is, as long as all active peers have the
 entire file amongst themselves. 
 
-An example of a distributed system that ensures both availibility and privacy is
+An example of a distributed system that ensures both availability and privacy is
 Tor~\cite{dingledine2004tor}. Tor is a so-called onion routing protocol. 
 The concept of onion routing is as follows. One obtains a list of peers in the
 network, at least one of which needs to be available as ``exit node''. If one
@@ -300,13 +300,13 @@ wiretap specific to a person or computer, are not prevented by Tribler. What is
 prevented is the style of mass surveillance uncovered by the Snowden revelations. 
 
 Distributed systems seem to be all sunshine and no rain. Protecting human rights 
-and ensuring availibility of services. However, the decentralization does pose certain 
+and ensuring availability of services. However, the decentralization does pose certain 
 problems. One problem in particular is resource management. A decentralized system
 like Tribler has many of the same properties as the climate change problem. Most of the
-world is aware climate is changing and that a change in their behavior would help to
-mitigate this problem. In fact, if the world as a whole does not alter their behavior,
+world is aware climate is changing and that a change in their behaviour would help to
+mitigate this problem. In fact, if the world as a whole does not alter their behaviour,
 there might be catastrophic consequences. However, the impact a single person or household
-has is extraordinarily small. So small, that most people reason that their behavior
+has is extraordinarily small. So small, that most people reason that their behaviour
 does not impact the world, so they will just continue living as they always have. 
 This problem is known as the Tragedy of the Commons. Everyone would win if everyone
 participated, but one person can not make the difference. 
@@ -317,7 +317,7 @@ the network to download data. However, in order to do so, there needs to be at l
 one agent to relay this data, and then another one to request it from the internet.
 This means that if enough agents fulfill these functions out of their free will,
 and everyone does a little bit, the load will be spread and the network will
-fuction. However, it is much more enticing to not contribute and only consume.
+function. However, it is much more enticing to not contribute and only consume.
 
 Traditionally, in BitTorrent networks, this problem has been solved for public torrents
 by simply relying on altruistic agents, who contribute based on nothing more than
@@ -329,7 +329,7 @@ Recently, a movement has started to bring some sort of trust system to Tribler. 
 if an agent considers another one to be trustworthy, in the sense that they have contributed
 a lot to the network, the former would give the latter priority in requests for resources.
 
-The problem here is that since the system itself needs to maintain anonimity, the task of
+The problem here is that since the system itself needs to maintain anonymity, the task of
 finding out if an agent is contributing suddenly becomes a lot harder. In particular, 
 it becomes very hard to determine whether an agent is real, and has had interactions with
 others, if one can not have an interaction with this agent themselves. An agent could simply
@@ -340,7 +340,7 @@ and the performance in practice are the subjects of this thesis.
 \musthave{Something about reputation. Link with trust. Make introduction more matching to RQ}
 
 The concrete contributions of this thesis are as follows: Chapter~\ref{chap:research_questions} contains
-the research question about the existance of a reputation system for distributed systems.
+the research question about the existence of a reputation system for distributed systems.
 Additionally, it contains a division of this question into several parts representing different aspects of the problem.
 Chapter~\ref{chap:base_model} presents the base model for interactions in distributed systems, which will
 be used in the rest of the thesis to study systems that are candidates for fulfilling the research question.
@@ -365,7 +365,7 @@ but the result would be better if everyone pitched in a small amount of effort.
 The focus of this thesis is the following research question:
 \begin{center}
     \emph{Can agents in a distributed network use confirmed information about
-    interations and their order to judge the reputation of other agents
+    interactions and their order to judge the reputation of other agents
 in a fair and efficient way?}
 \end{center}
 
@@ -411,18 +411,18 @@ vary for different application domains. For example, in the context of a social
 network where interactions are friendships, interactions are positive for both sides.
 In a system like Tribler, interactions will be positive for at least one side, but
 might have a negative impact on the reputation. In a distributed system like Bitcoin,
-we might interpret the amount of money an agent posesses as a score assigned. In
+we might interpret the amount of money an agent possesses as a score assigned. In
 this case, the transfer of money is the interaction, and it will be positive for one
 agent and negative for the other.
 
 For purposes of this thesis we will zoom in on fairness in the context of Tribler.
 This notion would hold up for other distributed systems in case that each node
 can contribute or consume resources, where contributing is positive, consuming
-is negative, and contributing and consuming the same amount is explicitly seen as postive.
+is negative, and contributing and consuming the same amount is explicitly seen as positive.
 Generally, in BitTorrent networks, the ratio between upload and download is seen
 as a fair measure of contribution. However, since in Tribler, relaying data for onion
 routing is a service that the network provides, uploading and downloading the same
-amount is seen as a postive thing. This is not reflected in the ratio, which
+amount is seen as a positive thing. This is not reflected in the ratio, which
 means that we cannot take it as an accurate representation of a fair accounting mechanism.
 
 To at least get some notion of what constitutes fair, let us consider an agent that
@@ -444,7 +444,7 @@ While fairness says something about the score in relation to the actions within
 the system, resistance to manipulation concerns actions that are not ``normal''
 in the system. In particular, lying of any sort, creating extra or new identities
 and any other actions than participating in the network should not lead to an
-increase in score. Attacks that involve non-existant identities are referred to
+increase in score. Attacks that involve non-existent identities are referred to
 as sybil attacks in broader literature. \nicetohave{Reference}
 These kinds of attacks can be particularly problematic in systems where
 there is no control on or cost associated with the creation of a new identity.
@@ -454,7 +454,7 @@ there is no control on or cost associated with the creation of a new identity.
 
 As well known, the efficiency of algorithms can be compared with big-$O$ notation.
 It might vary per application domain if an accounting mechanism with a certain
-theorethical worst-case performance is useable. It might be that some
+theoretical worst-case performance is useable. It might be that some
 theoretically slow mechanisms turn out to be fast in practice, or that the
 instance sizes are small enough to allow a higher-order algorithm. Hence,
 in addition to big-$O$ notation, the efficiency will be studied in practice.
@@ -486,7 +486,7 @@ relevant in the particular case of Tribler.
 
 \section{Base model}
 
-In order to incorporate temporal information in sybil defense mechanisms,
+In order to incorporate temporal information in sybil defence mechanisms,
 there will be some assumptions needed about the information which is available.
 Hence, applications that fit the following model will be explored.
 
@@ -575,7 +575,7 @@ an ordered interaction model.
     Figure~\ref{fig:ex_oig} depicts the ordered interaction graph derived from the data in Table~\ref{tab:interactions}.
     Note that some numbers present in the table are not in the graph, as the contributions in an interaction are
     weights on the arcs to the successors of that interaction. If that successor does not exist yet, those
-    contributions have no representant in the graph. The ordered interaction graph functions mainly as a 
+    contributions have no representative in the graph. The ordered interaction graph functions mainly as a 
     structure to consider, as the name says, the order of interactions. Note that if the ordering of the $I_p$ represents
     a temporal relationship and there are no disparities between the time an agent records an interaction, 
     the ordered interaction graph is an acyclic graph that corresponds to the natural partial order that
@@ -734,7 +734,7 @@ but a single real world entity could have multiple agents. In Tribler an interac
 consists of two agents uploading data to each other. The amount of work $w_p$ performed
 by an agent $p$ is the amount of megabytes uploaded to their peer ($q$), in MB.
 
-In Tribler, these interactions are recorded in a distributed datastructure, called the MultiChain.
+In Tribler, these interactions are recorded in a distributed data structure, called the MultiChain.
 Every client saves and signs their interactions, marked with a sequence number. They will then request
 a digital signature from their peer, who will mark the interaction with their own sequence number.
 These sequence numbers induce a partial ordering, where $i < j$, if and only if there exists
@@ -751,7 +751,7 @@ view into this structure, we refer to this work.
 There are two main properties of MultiChain that are exploited in the mechanisms this work builds upon.
 Firstly, there is the fact that a record of an interaction can only exist if both parties agree that it
 is accurate. Secondly, the MultiChain is built such that there is eventual detection of lying. In particular,
-if an agent spreads inconsistent interations to different agents, this will be detected. In terms of the model,
+if an agent spreads inconsistent interactions to different agents, this will be detected. In terms of the model,
 if an agent spreads interactions such that his set of interactions has no total order, the network will
 be able to detect and prove this. 
 
@@ -762,7 +762,7 @@ that will be proposed, but is something that should be kept in mind and these pr
 give way to attacks on the systems. 
 
 
-\chapter{Alccounting mechanisms and sybil-proofness}
+\chapter{Accounting mechanisms and sybil-proofness}
 \label{chap:netflow}
 
 The first reputation system that was introduced in Tribler was BarterCast~\cite{meulpolder2009bartercast}.
@@ -797,7 +797,7 @@ the case. This is a major weakness in the protocol and a solution has been sugge
 Parkes~\cite{seuken2010accounting}. The solution involves dropping the reports by any agents
 which are currently under consideration for receiving services.
 
-In addition to the reporting disincentive, there is a more fundamental problem. Bartercast is built
+In addition to the reporting disincentive, there is a more fundamental problem. BarterCast is built
 to transitively propagate uploads to you. In some sense, agents are more trusted if they uploaded
 more to you. This is a perfectly valid construction. However, the reverse also holds. If an agent
 has downloaded a lot, all agents that downloaded from them are transitively punished. While
@@ -847,7 +847,7 @@ stops requesting work, the choice set just changes with this one agent.
 
 Following this work, Seuken and Parkes \cite{seuken2014sybil} formulated a framework that considers sybil attacks as well. 
 A sybil attack is defined as constructing a set of identities and interactions between that set and the sybils real identity.
-Benificial sybil attacks are then defined as sybil attacks that increase the sybils score, either their real or one of
+Beneficial sybil attacks are then defined as sybil attacks that increase the sybils score, either their real or one of
 their false identities, or decrease the score of another  agent, such that one of the sybils identities
 is given priority over other agents. Because of the relevance of the results in this paper, a brief summary
 and commentary will be provided below. All definitions are due to Seuken and Parkes~\cite{seuken2014sybil}.
@@ -872,7 +872,7 @@ information and subjective work are considered.
 \begin{definition}[Subjective Work Graph]
    A subjective work graph from agent i's perspective, $G_i = (V_i, E_i, w_i)$, is a set of vertices
    $V_i \subseteq V$ and directed edges $E_i$. Each edge $(j, k) \in E_i$ for which $i \notin \{j, k\}$,
-   is labeled with one, or both, of weights $w^j_i(j, k), w_i^k(j, k)$ as known to $i$. For edges $(i,j)$
+   is labelled with one, or both, of weights $w^j_i(j, k), w_i^k(j, k)$ as known to $i$. For edges $(i,j)$
    and $(j,i)$ the associated weight is $w_i^i(i,j) = w(i,j)$ and $w_i^i(j, i) = w(j,i)$ respectively.
 \end{definition}
 
@@ -892,7 +892,7 @@ to simply make negative reports about other parties without their consent.
     \label{def:choice_set}
 \end{definition}
 
-Definition~\ref{def:choice_set} is as Seuken~and~Parkes origially formulated it. For compatibility reason,
+Definition~\ref{def:choice_set} is as Seuken~and~Parkes originally formulated it. For compatibility reason,
 we adhere to their definition. However, we note that it is possible to take $C_i \subseteq V_i \setminus \{i\}$
 to obtain the same result if one assumes agents that are not in $V_i$ are added to the subjective work graph,
 as their existence is then known.
@@ -905,14 +905,14 @@ as their existence is then known.
 \end{definition}
 
 Note that definitions \ref{def:choice_set} and \ref{def:acc_mech} consider highly decentralized mechanisms.
-Both are centered around a single agent, who will then compute possibly subjective scores. Because each
+Both are centred around a single agent, who will then compute possibly subjective scores. Because each
 agent should be able to do this, accounting mechanisms that are to be deployed in real world systems need
 to be efficiently computable. 
 
 \begin{definition}[Allocation Policy]
     Given $G_i$, choice set $C_i$ and an accounting mechanism $M$, an allocation policy $A$
     is a function that maps these to an agent $j \in C_i$. This choice is denoted
-    by $A(S^M(G_i, C_i))$. This agent is chosen to recieve a unit of work from $i$.
+    by $A(S^M(G_i, C_i))$. This agent is chosen to receive a unit of work from $i$.
     \label{def:all_pol}
 \end{definition}
 
@@ -1004,7 +1004,7 @@ was helped by agent C, then A will value C's contribution.
 Seuken and Parkes also consider a property called ``misreport-proofness''. This property
 states that no advantage can be obtained by reporting interactions that did not happen,
 or wrongly reporting transactions that did. This property is not relevant because
-the multichain externalizes this problem. 
+the MultiChain externalizes this problem. 
 
 \subsection{Defining sybil attacks}
 
@@ -1019,7 +1019,7 @@ collapses to the one used by Seuken and Parkes if $|J|=1$.
 
 \begin{definition}[Sybil attack]
     Given a subjective work graph $G_i = (V_i, E_i, w_i)$.
-    A sybil atttack by agents $J \subseteq V_i$ is a tuple $\sigma_J = (V_s, E_s, w_s)$
+    A sybil attack by agents $J \subseteq V_i$ is a tuple $\sigma_J = (V_s, E_s, w_s)$
     where $V_s = \{ s_{J_1}, s_{J_2}, \ldots\}$ is a set of sybils, 
     $E_s = \{(x, y) : x, y \in S \cup J\}$, and $w_s$ are the edge weights for
     the edges in $E_s$. Applying the sybil attack to agent $i$'s subjective work graph
@@ -1054,10 +1054,10 @@ view of possible attacks.
     If this supremum is infinite, the sybil attack is strongly beneficial.
 
     If the supremum exists and is strictly larger than 1, the sybil attack is 
-    profitably weakly benificial.
+    profitably weakly beneficial.
 
     If the supremum exists and is smaller than or equal to 1, the sybil attack
-    is unprofitably weakly benificial. This case is also known as ``contributing to the network''.
+    is unprofitably weakly beneficial. This case is also known as ``contributing to the network''.
     \label{def:sybil_profit}
 \end{definition}
 
@@ -1067,16 +1067,16 @@ literature.
 Definition \ref{def:sybil_profit} provides a certain amount of backwards compatibility with the work
 of Seuken and Parkes, while still being more distinctive with respect to the different impacts
 sybil attacks can have on the network. In addition, note that the gap between profitably weakly
-benificial and strongly beneficial may appear to be quite small. In particular, profitibly weakly beneficial
+beneficial and strongly beneficial may appear to be quite small. In particular, profitably weakly beneficial
 attacks can be repeated by new identities for infinite profit. The difference lies in that
-this infinite profit then requires infinte contribution as well. This means that for practical systems
-allowing profitibly weakly benificial sybil attacks may be good enough, but for most systems a 
+this infinite profit then requires infinite contribution as well. This means that for practical systems
+allowing profitably weakly beneficial sybil attacks may be good enough, but for most systems a 
 strongly beneficial sybil attack would be detrimental.
 
 \section{Bounding sybil attack profit}
 
 The following section describes how an accounting mechanism can be constructed which is partially
-resistant to sybil attacks, in the sense that they can be profitably weakly benificial, with bounded
+resistant to sybil attacks, in the sense that they can be profitably weakly beneficial, with bounded
 profit.
 
 \begin{definition}[Strict Winner-Takes-All]
@@ -1086,7 +1086,7 @@ profit.
    when all agents have the same score.
 \end{definition}
 
-Definition~\ref{def:SWTA} defines a policy to choose an agent to recieve resources given scores
+Definition~\ref{def:SWTA} defines a policy to choose an agent to receive resources given scores
 on resources. This is a policy which will likely not be used in practice, but is very useful
 for proofs. The consequence of this is that in real world systems a little bit of good will
 is necessary to bootstrap a system based on trust. All results must therefore be considered
@@ -1115,7 +1115,7 @@ This construction still preserves some amount of transitivity in trust, but also
 from being abused like in Example~\ref{ex:bc_sybil}.
 
 \begin{example}
- In order to provide some insight in the behavior of the NetFlow mechanism, let us consider a
+ In order to provide some insight in the behaviour of the NetFlow mechanism, let us consider a
 small example. Figure~\ref{fig:ex_ig_for_nf} depicts the interaction graph for which a computation
 will be done. The computation will be done from the perspective of agent R.
 
@@ -1226,7 +1226,7 @@ interaction graph, this is not the case.
 \begin{theorem}[Properties and robustness of NetFlow]
     NetFlow as accounting mechanism with a complete work graph, with SWTA as allocation policy
     satisfies IDA, ANON, weak transitive trust and is robust against
-    profitably weakly benificial sybil attacks.
+    profitably weakly beneficial sybil attacks.
 
     \label{thm:prop-rob-NetFlow}
 \end{theorem}
@@ -1240,7 +1240,7 @@ interaction graph, this is not the case.
     $M := \max_{j \in C_i}\{S^M_j(G_i, C_i)\}$ be the largest amount of reputation in the system.
     Then using $W_j = M+1$ and $W_k = M+1$ satisfies the requirements of weak transitive trust.
 
-    This leaves robustness against profitably weakly benificial sybil attacks. Consider the amount of
+    This leaves robustness against profitably weakly beneficial sybil attacks. Consider the amount of
     work performed by the agents in $J$ after $n$ steps of the sybil attack,  $\omega^n_-$. For each
     unit of work that is contributed to an agent in $J$ during the sybil attack, the capacity
     of some agent in $J$ that has directly contributed to the network must drop by 1 unit, possibly more
@@ -1255,8 +1255,8 @@ interaction graph, this is not the case.
 \end{proof}
 
 Note that this result does not contradict those of Seuken and Parkes. The NetFlow mechanism is
-still vulnerable to weakly-benificial sybil attacks, since those are defined quite widely and
-a weakly-benificial sybil attack does not necessarily have to be detrimental to the network,
+still vulnerable to weakly-beneficial sybil attacks, since those are defined quite widely and
+a weakly-beneficial sybil attack does not necessarily have to be detrimental to the network,
 in particular if a network only cares about work contribution and consumption, and
 not about possible other external factors. Furthermore, in contrast to Drop-Edge, NetFlow
 is choice set independent, which implies there is less computation for varying choice sets.
@@ -1268,7 +1268,7 @@ these flows will run for up to $O(n^4)$ time, which is quite harsh.
 Furthermore, this mechanism is quite strict. There is the SWTA policy involved. However,
 this is mainly for the benefit of the proof. One could quite easily enable the WTA policy instead.
 In this case implication of the theorem is that sybil attack cannot yield a profit, with the exception
-of those built on receiving resources by identities with a $0$ score. This is an inconvience,
+of those built on receiving resources by identities with a $0$ score. This is an inconvenience,
 but not a particularly big problem. 
 
 Another problem is informativeness. In this mechanism,
@@ -1307,13 +1307,13 @@ work, which is equivalent to rating all other work higher.
 \end{definition}
 
 \begin{theorem}[Robustness of $\alpha$-NetFlow]
-    $\alpha$-NetFlow with SWTA is robust against weakly benificial sybil attacks with
+    $\alpha$-NetFlow with SWTA is robust against weakly beneficial sybil attacks with
     profit more than $\alpha$.
     \label{thm:sybil-anf}
 \end{theorem}
 
 \begin{proof}
-    Since NetFlow is robust against weakly benificial sybil attacks with profit at most
+    Since NetFlow is robust against weakly beneficial sybil attacks with profit at most
     1 by Theorem~\ref{thm:prop-rob-NetFlow}  and the only difference between the two systems is that the contributions of
     agent $i$ are decreased by a factor $\alpha$, it must be the case that the profit
     of a sybil attack can be at most $\alpha$. After all, all altered interactions

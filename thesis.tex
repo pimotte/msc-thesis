@@ -1272,7 +1272,6 @@ no direct interactions with $R$ this is a defensible result.
 \end{theorem}
 
 
-\musthave{Continue spellcheck}
 
 
 \begin{proof}
@@ -2030,18 +2029,18 @@ to manipulation and computability of these mechanisms.
 \section{Fairness}
 
 As mentioned, the contribution of peers to a BitTorrent system have traditionally been judged by their
-upload/download ratio. In the context of a system like Tribler, this is not per se an accurate
+upload/download ratio. In the context of a system like Tribler, this is not an accurate
 measure of contribution, because the act of relaying would need to be rewarded. When elaborating on
-the research question, fairness was described as a vague concept. However, with the results
+the research question, fairness kept vague. However, with the results
 presented in Chapter \ref{chap:exp}, in particular 
 Figures~\ref{fig:nf_alpha_comparison_1}~and~\ref{fig:tpr_per_peer_1},
-this notion becomes a lot more clear. 
+this notion becomes a little more clear. 
 
 Using NetFlow with $\alpha=1$ is decidedly unfair. 
-Agents that are not the biggest contributers and contributors assign scores with an unlogical pattern and
-agents that have contributed and consumed more, but still have a net postive ratio are often assigned
+Agents that are not the biggest contributers scores with an unlogical pattern.
+Agents that have contributed and consumed more, but still have a net postive ratio are often assigned
 zero valued scores. For higher $\alpha$, a clear pattern emerges, where agents that contribute
-and consume more or a similar amount are assigned the highest scores in a system. For agents
+and consume more or similar amounts are assigned the highest scores in a system. For agents
 that contribute less, there is a clearly visisble pattern that matches with the concept of 
 contributing more giving a higher score. In addition, peers with significantly lower absolute contribution
 and an upload/download ratio below 1 are assigned a zero score. These patterns are consistent with a fair
@@ -2049,14 +2048,14 @@ ranking.
 
 Likewise, temporal PageRank provides a somewhat fair ranking. While the patterns here may not be as
 monotonous as for NetFlow, but the general trend of contributing more resulting in a higher score
-is still present. What is very much different from NetFlow is that for temporal PageRank, the overal
+is still present. What is different from NetFlow is that for temporal PageRank, the overal
 scoring of the agents is the same, with the exception of up to some 10 peers. The agents that are
 the exception have a higher than average score, likely because they have had direct interaction with
 the calclating agent. Also note that as the calculating peer contributes more, this effect is spread
 over more agents, and the magnitude of the difference drops. 
 
-In conclusion, both NetFlow and temporal PageRank provide reasonably fair mechanisms, with the
-exception of Net-Flow with $\alpha=1$, which does not.
+In conclusion, both NetFlow for $\alpha=2$, $\alpha=4$ and temporal PageRank provide fair mechanisms, whereas
+Net-Flow with $\alpha=1$ does not.
 
 \section{Resistance to Manipulation}
 
@@ -2072,21 +2071,23 @@ first attack edge are considered.
 
 \section{Performance}
 
-In Figure~\ref{fig:performance} the performance of both NetFlow and temporal PageRank has been 
-graphed. Recall the theoretical analysis, in which the NetFlow has been shown to have
+In Figure~\ref{fig:performance} the performance of both NetFlow and temporal PageRank are
+shown. Recall the theoretical analysis, in which the NetFlow is shown to have
 worst case computational cost of $O(n^3m)$ and temporal PageRank $O(m\log\frac1\eps)$. For
-a constant error in the PageRank computation, this comes down to a difference of $O(n^3)$.
+a constant error in the PageRank computation, this comes down to a difference of factor of $n^3$.
 This certainly shows in the performance. For temporal PageRank, the time to build the data structure
 is in fact comparable to the actual computation time, whereas in the case of NetFlow, the computation
 time quickly eclipses the time to build the data structure. In comparison, temporal PageRank is much 
 more feasible to compute. It might depend on the actual system whether these algorithms are fast enough.
+
+\musthave{Relate to Tribler}
 
 \section{General conclusion}
 
 The research question asked if an accounting mechanism could use confirmed information about
 interactions and their order allow the design of a fair, manipulation-resistant and efficient
 reputation system. The answer these two mechanisms and their study leads to is a tentative
-``yes''. Temporal PageRank is reasonably fair, and without question performant. It also
+``yes''. Temporal PageRank is fair, and without question performant. It also
 has some desirable manipulation-resistant properties. NetFlow, with $\alpha>1$ looks to
 yield a fair accounting mechanism. Furthermore, it has some of the strongest Sybil-resistant
 properties of known accounting mechanisms. However, the fact that a state-of-the-art implementation
@@ -2095,22 +2096,22 @@ would still take $O(nm^2)$ makes it not performant enough for some applications.
 
 \section{Discussion}
 
-In this discussion, we will consider two topics that came to mind when looking back at this
-research. One is the possibility of future research, the other is the broader perspective
-in which this research can be placed. 
+In this discussion, we consider two directions of future work.
+One is the possibility of future research on the mechanisms themselves, the other is the broader perspective
+in which this research can be placed, including other application areas. 
 
 \subsection{Future Research}
 
 Both the mechanisms presented have areas where improvement can be obtained. In the case of
-temporal PageRank, a more precise study could be done towards its fairness. Furthermore,
-since its resistance against Sybil attacks is not quite as strong as NetFlows, more research could be done
+temporal PageRank, a more precise study should be done towards its fairness. Furthermore,
+since its resistance against Sybil attacks is not quite as strong as NetFlows, more research should be done
 into hardening the theoretical resistance against Sybil attacks, or to study what Sybil
 attacks are possible and determine the risks involved.
 
-As for NetFlow, most of the improvement could be gained in performance. A smart way
+As for NetFlow, most of the improvement is to be gained in performance. A smart way
 to compute more flows in one go, or a slightly different mechanism that is
-easier to computer, but has the same theoretical resistance against Sybil-attacks 
-would be desirable. The reference implementation could also be improved to see if
+easier to compute, but has the same theoretical resistance against Sybil-attacks 
+is desirable. The reference implementation can also be improved to see if
 programming more efficiently would make this method suitable for more systems.
 
 \subsection{This Research in Broader Context}
@@ -2126,6 +2127,8 @@ systems. Depending on the exact properties of said system, one of them could be
 applied with little alteration, but in other cases it might require non-trivial
 customizations.
 
+\musthave{More specific examples}
+
 
 
 
@@ -2138,6 +2141,8 @@ customizations.
 
 \appendix
 
+
+\musthave{Continue spellcheck}
 \chapter{Timeline Inference}
 
 The information below is one of the initial ideas what could be done with MultiChain. It did not end up being

@@ -2143,72 +2143,8 @@ customizations.
 
 
 \musthave{Continue spellcheck}
-\chapter{Timeline Inference}
 
-The information below is one of the initial ideas what could be done with MultiChain. It did not end up being
-used in the accounting mechanisms, but could be used in methods that do studies with adversaries and need
-to model them in some way.
-    
-With oredered interaction models, the ordering information of interactions is largely preserved. However, for some
-applications it will be useful to be able to associate timestamps with interactions. To
-this point, we introduce the concept of timeline inference.
-
-\begin{definition}[Timeline inference for ordered interaction models]
-    Let $M = (P, I)$ be an ordered interaction model. 
-
-    $f$ is a \emph{timeline information function} if:
-    \begin{itemize}
-        \item $J \subseteq I$ 
-        \item $f : J \to \bb{R}$
-        \item $f$ is increasing with respect to the partial ordering on $I$. That is:
-            for $i,j \in J$, if $i \leq j$, then $f(i) \leq f(j)$. 
-    \end{itemize}
-
-    By $f[J]$ we denote the range of $f$.
-    This allows to define the timeline inference function $T_f$:
-
-    \begin{itemize}
-        \item $T_f : I \to f[J] \times f[J]$
-        \item $T_f(i) := (\max \{f(j): j \in I, j \leq i\}, \min \{f(j) : j \in I, i \geq j\})$
-    \end{itemize}
-    
-    In addition, we define $\ov{T_f} : I \to \bb{R}$ by $\ov{T_f}(i)$ being the average of the
-    two values $T_f(i)$.
-\end{definition}
-
-
-If $f$ represents some sort of temporal information about the interactions in $J$, 
-then the timeline inference function gives interval of minimal size containing valid choices for extrapolating
-$f$ beyond elements in $J$. In addition, for every $j \in J$, $T_f(j) = (f(j), f(j))$.
-
-\section{Time-discounted interaction effort}
-
-In order to model the effort needed to interact, we consider the fact that commitment to
-a system takes some effort. To this end, we introduce the concept of time-discounted effort.
-
-\begin{definition}[Time-discounted effort]
-    Let $M = (P, I)$ be an ordered interaction model, let $f$ be a timeline information function.
-    Let $d: \bb{R} \to \bb{R}^+$ be a decreasing function. The time-discounted interaction
-    effort is defined as:
-    \begin{align*}
-        e: & P \times I \to \bb{R} \\
-        e(p, i) &= w_p(i)*d(\ov{T_f}(i)) \\
-    \end{align*}
-\end{definition}
-
-This definition implies that an interaction in the past is regarded as having taken more effort.
-
-\subsection{Timeline inference for the base model}
-
-
-In Tribler, timeline information inference can be done by each agent $p$, if they
-keep a local record of the time at which they participated in interaction $i$. In this
-case the timeline information function will be $f : I_p \to \bb{R}$, where $f(i)$ is
-the timestamp of interaction $i$.
-
-
-
-
+\musthave{Fix consistency of bibliography}
 
 \bibliography{thesis}{}
 \bibliographystyle{plain}

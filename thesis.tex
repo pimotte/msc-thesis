@@ -29,7 +29,7 @@
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newtheorem{conjecture}{Conjecture}
-\newtheorem*{example}{Example}
+\newtheorem{example}{Example}
 \newtheorem{algorithm}{Algorithm}
 \newtheorem{policy}{Policy}
 
@@ -190,7 +190,7 @@ of these mechanisms and future possibilities are explored.
 \clearpage
 \chapter*{\centering \begin{normalsize}Preface\end{normalsize}}
 
-This thesis is my capstone to the master Applied Mathematics at TU Delft.
+This thesis is the capstone to my master Applied Mathematics at TU Delft.
 As this final project comes to an end, I am very satisfied with
 the work that follows. While I do not feel this is necessarily my best
 mathematical work in the pure sense, I am happy to have been able to apply
@@ -216,6 +216,8 @@ supported and encouraged me throughout the entirety of the journey that has
 lead me to this point. They have shown interest and encouraged me to think
 critically. 
 
+Pim Otte
+
 
 
 
@@ -223,8 +225,6 @@ critically.
 
 \clearpage
 \tableofcontents
-
-\musthave{acknowledgement}
 
 \chapter{Introduction}
     
@@ -312,12 +312,20 @@ that each peer in the network knows the previous and next link in this chain,
 but no one except the originator knows the entirety. The exit node is the last
 hop, and they will send this on to the recipient on the internet. Hence, they
 know everything that is not encrypted about this request and response, which includes at
-least the recipient. 
+least the recipient. See Figure~\ref{fig:htw2} for a visual representation.
 The aim of using an onion protocol is to hide the identity of the browsing party. Indeed,
 their identity can only be revealed if too many of the peers in the chain are controlled
 by the same party. This protocol can be applied to any sort of web traffic, including
 BitTorrent traffic. 
-\nicetohave{An image to visualize this}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plots_all/htw2}
+    \caption{How Tor works. The Tor Project, Inc.\protect\footnotemark~is the owner of this image. 
+    Used under the Creative Commons Attribution 3.0 United States License\protect\footnotemark }
+    \label{fig:htw2}
+
+\end{figure}
 
 The techniques of BitTorrent and Tor have both been incorporated into another piece
 of software: Tribler. Since both of these techniques are quintessentially distributed,
@@ -361,6 +369,12 @@ one agent to relay this data, and then another one to request it from the intern
 This means that if enough agents fulfill these functions out of their free will,
 and everyone does a little bit, the load will be spread and the network will
 function. However, it is much more enticing to not contribute and only consume.
+
+\addtocounter{footnote}{-1}
+\footnotetext{https://www.torproject.org/about/overview.html.en}
+\addtocounter{footnote}{1}
+\footnotetext{https://creativecommons.org/licenses/by/3.0/us/}
+
 
 The problem here is that since the system itself needs to maintain anonymity, the task of
 finding out if an agent is contributing suddenly becomes a lot harder. In particular, 
@@ -643,8 +657,7 @@ an ordered interaction model.
 \end{definition}
 
 
-\begin{example}
-
+\begin{example}[Ordered interaction graph]
     Figure~\ref{fig:ex_oig} depicts the ordered interaction graph derived from the data in Table~\ref{tab:interactions}.
     Note that some numbers present in the table are not in the graph, as the contributions in an interaction are
     weights on the arcs to the successors of that interaction. If that successor does not exist yet, those
@@ -700,7 +713,7 @@ an ordered interaction model.
 
 \musthave{Fix latex breaking up definition}
 
-\begin{example}
+\begin{example}[Block graph]
     In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has a similar structure
     as the ordered interaction graph, except that each interaction is split into the two parts belonging to each respective
     party. This representation yields a different view on the ordered interaction model.
@@ -748,7 +761,7 @@ an ordered interaction model.
 \end{example}
 
 
-\begin{definition}[Interaction Graph]
+\begin{definition}[Interaction graph]
     Let $M =  \langle P, I, a, w \rangle$ be an ordered interaction model. The interaction graph $G^I_M$ is defined as follows:
 
     \begin{itemize}
@@ -763,7 +776,7 @@ an ordered interaction model.
     \end{equation*}
 \end{definition}
 
-\begin{example}
+\begin{example}[Interaction graph]
 Figure~\ref{fig:ex_ig} shows the interaction graph. Traditionally, this is the graph
 that is used in literature. However, when considering an ordered interaction model, this
 graph is the one that might be less obvious at first glance. The structure of the graph
@@ -883,14 +896,104 @@ this seems philosophical at first, there is a Sybil
 attack that exploits this property.
 
 \begin{example}[Sybil attack on BarterCast]
-     Let $i, j$ be agents. Let $j$ upload 1MB to $i$. Hence, the flow from $j$ to $i$ is 1, the flow
-    from $i$ to $j$ is 0. Let $j$ create a Sybil, $s_1$ and claim that $s_1$ uploaded 1MB to $j$.
-    Now the flow from $i$ to $s_1$ is $0$, the flow from $s_1$ to $i$ is 1. Now $s_1$ asks
-    for data from $i$, and $i$ obliges and uploads 1MB. Now the flow between $i$ and the others is
-    1 in either direction. Now let $j$ create another Sybil $s_2$ and claim it uploaded 1MB to $j$. 
-    Now the flow from $i$ to $s_2$ is 0, but the flow from $s_2$ to $i$ is 1. 
-    So when $s_2$ asks for data, $i$ is likely to oblige. This process can be repeated for an unbounded
-    number of Sybils, obtaining an unbounded amount of work from $i$. \musthave{Picture}
+    Let $p, s$ be agents. Let $s$ contribute 1 unit of work to $i$. 
+    Let $s$ create $n$ Sybils, $s_1, s_2, \ldots, s_n$ and claim that each uploaded 1MB to $s$.
+    Hence, the flow from $s$ to $p$ is 1, the flow
+    from $p$ to $s$ is 0. Now the flow from each Sybil to $s_1$ is $0$, the flow from each Sybil to $p$ is 1.
+    This situation is depicted in Figure~\ref{fig:ex_sybil_bc}.
+
+
+
+\begin{figure}[h]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (i) {$p$} ;
+        \node [main node] (j) [right = 2cm of i] {$s$};
+        \node [main node] (s1) [above right = 2cm and 2cm of j] {$s_1$};
+        \node [main node] (s2) [above right = 1cm and 2cm of j] {$s_2$};
+        \node [main node] (sn) [below right = 1cm and 2cm of j] {$s_n$};
+        \path (s2) -- (sn) node[midway, main node](si)  {$s_k$};
+
+        \node [red] [right = 0.1 cm of s1] {1};
+        \node [red] [right = 0.1 cm of s2] {1};
+        \node [red] [right = 0.1 cm of si] {1};
+        \node [red] [right = 0.1 cm of sn] {1};
+        \node [red] [above = 0.1 cm of j] {1};
+
+
+        \path[draw, thick]
+        (j) edge node [above] {1} (i)
+        (s1) edge node [above] {1} (j)
+        (s2) edge node [above] {1} (j)
+        (sn) edge node [above] {1} (j)
+        ;
+
+        \path[-,dotted]
+        (sn) edge (si)
+        (s2) edge (si)
+        ;
+        \path[dashed]
+        (si) edge node [above] {1} (j)
+        ;
+     \end{tikzpicture}
+     \caption{Sybil attack on BarterCast. BarterCast scores displayed in red.}
+     \label{fig:ex_sybil_bc}
+\end{figure}
+
+    Now $s_1$ asks
+    for a contribution from $p$, and $i$ obliges and contributes 1 unit of work. This is
+    shown in Figure~\ref{fig:ex_sybil_bc_2}
+    Now the flow between $p$ and both $s$ and $s_1$  is
+    1 in either direction. 
+    However, the flow from $p$ to all other Sybils is 0 and the flow from each other Sybil to $p$ is 1. 
+    So when any of them ask for a contribution, $p$ is likely to oblige. 
+
+
+
+\begin{figure}[h]
+    \centering
+     \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+        inner sep=0pt, minimum width=20pt} 
+        ]
+
+        \node [main node] (i) {$i$} ;
+        \node [main node] (j) [right = 2cm of i] {$j$};
+        \node [main node] (s1) [above right = 2cm and 2cm of j] {$s_1$};
+        \node [main node] (s2) [above right = 1cm and 2cm of j] {$s_2$};
+        \node [main node] (sn) [below right = 1cm and 2cm of j] {$s_n$};
+        \path (s2) -- (sn) node[midway, main node](si)  {$s_k$};
+
+        \node [red] [right = 0.1 cm of s1] {0};
+        \node [red] [right = 0.1 cm of s2] {1};
+        \node [red] [right = 0.1 cm of si] {1};
+        \node [red] [right = 0.1 cm of sn] {1};
+        \node [red] [above = 0.1 cm of j] {0};
+
+
+        \path[draw, thick]
+        (j) edge node [above] {1} (i)
+        (s1) edge node [above] {1} (j)
+        (s2) edge node [above] {1} (j)
+        (sn) edge node [above] {1} (j)
+        (i) edge [bend left=20] node [above] {1} (s1)
+        ;
+
+        \path[-,dotted]
+        (sn) edge (si)
+        (s2) edge (si)
+        ;
+        \path[dashed]
+        (si) edge node [above] {1} (j)
+        ;
+     \end{tikzpicture}
+     \caption{Sybil attack on BarterCast. BarterCast scores displayed in red.}
+     \label{fig:ex_sybil_bc_2}
+\end{figure}
+
+
     \label{ex:bc_Sybil}
 \end{example}
 
@@ -1187,7 +1290,7 @@ of the agents on the paths between the agent whose score is computed and the com
 This construction still preserves some amount of transitivity in trust, but also prevents it
 from being abused like in Example~\ref{ex:bc_Sybil}.
 
-\begin{example}
+\begin{example}[NetFlow computation]
  In order to provide some insight in the behaviour of the NetFlow mechanism, let us consider a
 small example. Figure~\ref{fig:ex_ig_for_nf} depicts the interaction graph for which a computation
 will be done. The computation is done from the perspective of agent R.
@@ -1421,17 +1524,52 @@ max-flow from that node to $i$.
 
 There are more desirable properties of $\alpha$-NetFlow. While on the surface, it seems to
 be about ratio's and relative usage, there actually is a subtle way in which
-this accounting mechanism cares about absolute amounts of work performed. 
-In particular, consider three agents. The first has performed and received
-100 units worth of work, the second 70 units and the third 1 unit. The second and third
-agent have only interacted with the first. If the first computes scores
-in 1-NetFlow, then both the second and third agent are assigned a score of 0 units.
-However, in the case of 2-NetFlow, the second agent will have a score of 20 units,
-whereas the third will have a score of 0 units still. This is because the scaling
-of the upload of the first agent could only have an effect on agents which
-have downloaded more than the total upload of the first agent, divided
-by $\alpha$. 
-\musthave{Graph depicting this situation}
+this accounting mechanism cares about absolute amounts of work performed. This
+is illustrated by Example~\ref{ex:scaling_goodness}
+
+\begin{example}[Secondary effects of scaling]
+    In particular, consider three agents, $p, q, r$. Agent $p$ has performed 100 units of
+    work for $q$ and $q$ has done the same in return. In addition, $p$ and $r$ have performed
+    2 units of work for each other.
+
+    If agent $p$ computes scores
+    in 1-NetFlow, then both agents $q$ and $r$ are assigned a score of 0 units.
+    However, in the case of 2-NetFlow, agent $q$ will have a score of 50 units,
+    whereas agent $r$ will have a score of 1 unit.
+      
+    \begin{figure}[h]
+        \centering
+         \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+            inner sep=0pt, minimum width=20pt} 
+            ]
+
+        \node [main node] (p) {p} ;
+        \node [main node] (q) [below right = 3.46cm and 2cm] {q} ;
+        \node [main node] (r) [below left = 3.46cm and 2cm] {r} ;
+
+        \node [red] [below left = 0.1cm and 0.1cm of q] {100-100=0} ;
+        \node [red] [below left = 0.1cm and 0.1cm of r] {2-2=0} ;
+        \node [blue] [below right = 0.1cm and 0.1cm of r] {2-1=1} ;
+        \node [blue] [below right = 0.1cm and 0.1cm of q] {100-50=50} ;
+
+        \path[draw, thick]
+        (p) edge [bend right=20] node [right] {100} (q)
+        (q) edge [bend right=20] node [right] {100} (p)
+        (p) edge [bend right=20] node [left] {2} (r)
+        (r) edge [bend right=20] node [left] {2} (p)
+        ;
+
+        \end{tikzpicture}
+         \caption{Effects of scaling NetFlow. 1-NetFlow scores in red, 2-NetFlow scores in blue.}
+         \label{fig:ex_scaling_goodness}
+    \end{figure}
+    
+    This example illustrates that using scaling does not only increase informativeness, but also
+    values total volume in addition to the difference between contribution and consumption. 
+ 
+    \label{ex:scaling_goodness}
+\end{example}
+
 
 In a broad sense, this means that choosing a higher $\alpha$ will increase the score 
 of agents which have been around longer than yourself, or slightly shorter. This
@@ -1442,12 +1580,11 @@ to the lower levels. As a huge influx of users results in an increase in the low
 levels, the higher levels will not be impacted, and it is mainly the
 lower levels that help each other.
 
-%\nicetohave{What would happen if scaling Flows}
-
 
 \section{Attacks on Net-Flow}
+\label{sec:att_netflow}
 
-Theorem \ref{thm:Sybil-anf} suggests an almost absolute defense against Sybil attacks. However,
+Theorem \ref{thm:Sybil-anf} suggests an almost absolute defence against Sybil attacks. However,
 due to the formulation of the model, and the properties of the underlying MultiChain data structure,
 there are possible angles of attack.
 
@@ -1481,7 +1618,7 @@ the other victim, then the attacker could exploit this and request resources fro
 
 This is a more difficult attack to prevent. The main hurdles for actually executing it appear to be
 the fact that it requires a very specific network topology. Furthermore, the attacker would need to
-know the view of the network that potential victims have. A possible defense against this attack is
+know the view of the network that potential victims have. A possible defence against this attack is
 to incorporate randomness in which interactions to keep, or which agents to keep track of.
 
 \subsection{Collusion attack}
@@ -1545,7 +1682,7 @@ order $O(nm\log_{\frac{m}{n\log(n)}}n)$. In combination with work by Orlin~\cite
 this results in an $O(nm)$ algorithm for max-flow. This is the current state-of-the-art
 when considering single source-sink max-flow.
 
-When we consider all-pairs max-flow, one might think a speedup is possible. 
+When we consider all-pairs max-flow, one might think a speed-up is possible. 
 Building a Gomory-Hu tree~\cite{gomory1961multi} yields a method
 for which $n-1$ max-flow computations suffice. However, this method only works for undirected graphs.
 According to Ahuja, Magnati and Orlin~\cite{ahuja1993network}, no method is known for all-pairs max-flow
@@ -1810,12 +1947,11 @@ of the parameter $\alpha$ is and how informative the mechanism is.
 Figure \ref{fig:nf_alpha_comparison_1} 
 shows the NetFlow scoring mechanism for four peers, for three
 different values of $\alpha$. 
-same for different parameters.  
 These peers have been selected by sorting the list of peers by their total
 amount of uploaded data, and taking the peers at the 70th, 80th, 90th and 100th percentile.
 The peer whose point of view is taken for the computation is marked red. Each bubble is a peer whose
 score is computed. Note that the scale of the bubbles is different between the different pictures. 
-This is due to the fact that absolute sizing would result in indiscernable bubbles for computations
+This is due to the fact that absolute sizing would result in indiscernible bubbles for computations
 from the perspective of peers with lower absolute upload and download amounts. 
 
 Upon inspection of these figures, several macro level observations come to light. The first
@@ -1846,9 +1982,10 @@ in absolute terms.
     \addtocounter{subfigure}{-1}
     \addtocounter{subfigure}{-1}
 
-    \subfloat[][]{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_7}}
-    \subfloat[][]{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_8}}\\
-    \caption{NetFlow scores from the perspective of several nodes, continues on next page\dots}
+    \subfloat[][Computing agent has upload and download \\ around 120MB, for $\alpha \in \{1,2,4\}$]{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_7}}
+    \subfloat[][Computing agent has upload and download \\ around 1050MB, for $\alpha \in \{1,2,4\}$]{\includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_8}}\\
+    \caption{NetFlow scores from the perspective of several nodes, continues on next page\dots \\
+             Sizes of bubbles indicate scores (different scales). Red bubble is the computing agent.}
     \label{fig:nf_alpha_comparison_1}
 \end{figure}
 
@@ -1866,14 +2003,15 @@ in absolute terms.
         \addtocounter{subfigure}{-1}
         \addtocounter{subfigure}{-1}
 
-        \subfloat[][]{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_9}} 
-        \subfloat[][]{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_10}} \\
+        \subfloat[][Computing agent has upload and download \\ around 1400MB, for $\alpha \in \{1,2,4\}$]{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_9}} 
+        \subfloat[][Computing agent has upload and download \\ around 100GB, for $\alpha \in \{1,2,4\}$]{        \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_flow2_10}} \\
 
-    \caption{NetFlow scores from the perspective of several nodes, continued.}
+    \caption{NetFlow scores from the perspective of several nodes, continued.\\
+             Sizes of bubbles indicate scores (different scales). Red bubble is the computing agent.}
+
     \label{fig:nf_alpha_comparison_2}
 \end{figure}
 
-\musthave{Fix title, explain things in caption}
 Let us now consider the informativeness of this mechanism. As described in Chapter~\ref{chap:netflow},
 one of the issues suspected was the lack of non-zero scores for nodes. If too many nodes are assigned
 a zero score, the mechanism does not actually yield a ranking. 
@@ -1905,7 +2043,7 @@ $0$ informativeness to around $0.7$.
 
 Let us turn our attention to Temporal PageRank, starting with several examples of results of
 score computations from the perspective of a variety of peers, selected in the same way as for
-Netflow, but including some of the lower quantile representatives.
+NetFlow, but including some of the lower quantile representatives.
 
 \begin{figure}[ht]
     \centering
@@ -1918,7 +2056,8 @@ Netflow, but including some of the lower quantile representatives.
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_5} &
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_6} \\
     \end{tabular}
-    \caption{Temporal PageRank computed by several peers, continues on next page\ldots}
+    \caption{Temporal PageRank computed by several peers, continues on next page\ldots \\
+        Size of bubbles indicate scores. The scale is the same for all graphs. Red bubble is the computing agent.}
     \label{fig:tpr_per_peer_1}
 \end{figure}
 
@@ -1933,7 +2072,8 @@ Netflow, but including some of the lower quantile representatives.
         \includesvg[width=0.47\textwidth]{plots_all/plot_up_down_size_tpr_10} \\
 
     \end{tabular}
-    \caption{Temporal PageRank computed by several peers, continued}
+    \caption{Temporal PageRank computed by several peers, continued. \\
+        Size of bubbles indicate scores. The scale is the same for all graphs. Red bubble is the computing agent.}
     \label{fig:tpr_per_peer_2}
 \end{figure}
 
@@ -1962,7 +2102,7 @@ NetFlow and Temporal PageRank in order to see if they approximate each other wel
 \end{figure}
 
 Figure~\ref{fig:box_bc_netflow} shows the following: On the x-axis, we have the part
-of the ranking that is under consideration. For example, 0.1 means we compare the
+of the ranking that is under consideration. For example, 10 means we compare the
 top 10\% for both accounting mechanisms. The corresponding box plot then depicts
 the data set obtained if this comparison is done for every calculating peer. It shows
 the fraction in common between the two ranking methods. A simple calculation results
@@ -2028,14 +2168,14 @@ distribution after jumping.
 In Figure~\ref{fig:performance} the computation times are shown. For both NetFlow and temporal PageRank,
 consider the times with the number of agents and the number of interactions on the x-axis. Also note
 that for each we have split the times into build time, which is the construction of the data structure
-on which the algorithm is excecuted and the computation time of the algorithm itself. Note the sharp
-increase in computation time for netflow as a function of the number of interactions. This can be
+on which the algorithm is executed and the computation time of the algorithm itself. Note the sharp
+increase in computation time for NetFlow as a function of the number of interactions. This can be
 explained by the fact that around that moment in time, there was a sharp jump in the number of agents,
 see Figure~\ref{fig:evolution}. Note that both implementations use the Networkx library, but 
 Temporal PageRank is one library call, whereas the NetFlow algorithm involves $O(n)$ calls to
 a max-flow subroutine. This leads to the suspicion that not only algorithmic optimizations might
 be possible for NetFlow, as mentioned at the end of Chapter~\ref{chap:netflow}, but there is also
-room for programmatical optimzation, in particular in the reuse of data structures. That
+room for programmatic optimization, in particular in the reuse of data structures. That
 being said, it is clear that Temporal PageRank is much easier to compute than NetFlow for 
 the testing data, which matches the theoretical worst-case analysis.
 
@@ -2071,21 +2211,21 @@ Figures~\ref{fig:nf_alpha_comparison_1}~and~\ref{fig:tpr_per_peer_1},
 this notion becomes a little more clear. 
 
 Using NetFlow with $\alpha=1$ is decidedly unfair. 
-Agents that are not the biggest contributers scores with an unlogical pattern.
-Agents that have contributed and consumed more, but still have a net postive ratio are often assigned
+Agents that are not the biggest contributors scores with an unlogical pattern.
+Agents that have contributed and consumed more, but still have a net positive ratio are often assigned
 zero valued scores. For higher $\alpha$, a clear pattern emerges, where agents that contribute
 and consume more or similar amounts are assigned the highest scores in a system. For agents
-that contribute less, there is a clearly visisble pattern that matches with the concept of 
+that contribute less, there is a clearly visible pattern that matches with the concept of 
 contributing more giving a higher score. In addition, peers with significantly lower absolute contribution
 and an upload/download ratio below 1 are assigned a zero score. These patterns are consistent with a fair
 ranking.
 
 Likewise, temporal PageRank provides a somewhat fair ranking. While the patterns here may not be as
 monotonous as for NetFlow, but the general trend of contributing more resulting in a higher score
-is still present. What is different from NetFlow is that for temporal PageRank, the overal
+is still present. What is different from NetFlow is that for temporal PageRank, the overall
 scoring of the agents is the same, with the exception of up to some 10 peers. The agents that are
 the exception have a higher than average score, likely because they have had direct interaction with
-the calclating agent. Also note that as the calculating peer contributes more, this effect is spread
+the calculating agent. Also note that as the calculating peer contributes more, this effect is spread
 over more agents, and the magnitude of the difference drops. 
 
 In conclusion, both NetFlow for $\alpha=2$, $\alpha=4$ and temporal PageRank provide fair mechanisms, whereas
@@ -2114,7 +2254,17 @@ is in fact comparable to the actual computation time, whereas in the case of Net
 time quickly eclipses the time to build the data structure. In comparison, temporal PageRank is much 
 more feasible to compute. It might depend on the actual system whether these algorithms are fast enough.
 
-\musthave{Relate to Tribler}
+In the case of Tribler, the performance of temporal PageRank for the size of the test set is good enough
+for the applications since it is at most 12 seconds, where 30 seconds is the established boundary. 
+For actual application it is not quite performant enough still, 
+since it is desirable for the network to be able to scale more. The test set contained
+a little over 900 agents, where scaling to 10.000 would be the goal. Also note that the
+complexity depends on the number of interactions, which will always keep growing over
+time, even if the number of agents is stable.
+NetFlow can take over 6 minutes, which is too long for practical application in Tribler.
+Computational tricks would be needed to ensure temporal PageRank scales to the desired
+levels. In case of NetFlow, just computational tricks are unlikely to make it fast enough
+for practical application in Tribler and the algorithm itself needs reconsideration.
 
 \section{General conclusion}
 
@@ -2149,8 +2299,8 @@ is desirable. The reference implementation can also be improved to see if
 programming more efficiently would make this method suitable for more systems.
 
 \subsection{This Research in Broader Context}
-The accounting mechanisms presented here have been designed with the usecase of
-Tribler in mind. In this case, a resource is exhanged (data), but it is not of extreme
+The accounting mechanisms presented here have been designed with the use case of
+Tribler in mind. In this case, a resource is exchanged (data), but it is not of extreme
 importance that there is an exact balance. In other distributed systems, a currency
 might be involved. In this case, there is still a resource involved, but the balance
 is important. In other applications, like social networks, there is no resource involved
@@ -2159,9 +2309,9 @@ at all, and ``trusting someone'' is often a symmetric relationship.
 Systems like NetFlow and temporal PageRank could be applicable in other distributed
 systems. Depending on the exact properties of said system, one of them could be
 applied with little alteration, but in other cases it might require non-trivial
-customizations.
-
-\musthave{More specific examples}
+customizations. One example is the application to a peer-to-peer lending system.
+If the interactions represent real money, the attacks on NetFlow from Section~\ref{sec:att_netflow}
+present a very real risk.
 
 
 
@@ -2176,9 +2326,6 @@ customizations.
 \appendix
 
 
-\musthave{Continue spellcheck}
-
-\musthave{Fix consistency of bibliography}
 
 \bibliography{thesis}{}
 \bibliographystyle{plain}

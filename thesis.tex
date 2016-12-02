@@ -696,11 +696,16 @@ an ordered interaction model.
 \end{example}
 
 \begin{definition}[Block Graph]
-    Let $M = \langle P, I, a, w \rangle$ be an ordered interaction model. The block graph $G^B_{M}$ is defined as follows:
+    Let $M = \langle P, I, a, w \rangle$ be an ordered interaction model. 
+
+    We define $I' := I \cup \{i^f_p : p \in P\}$, where $i_p \leq i^f_p \forall i_p \in I_p$ and $a(i^f_p) = (p,p)$.
+    Basically, we extend $I$ with the next interaction for each agent, which only involves $p$.
+    
+    The block graph $G^B_{M}$ is defined as follows:
 
     \begin{itemize}
-        \item $V := \{ v_{p, i} : i \in I, p \in a(i) \}$\\
-        \item $A := \{ (v_{p,i}, v_{q,j}) : i, j \in I, p \in a(i), q \in a(j), (i \preceq_p j \vee i \preceq_q j) \}$\\
+        \item $V := \{ v_{p, i} : i \in I', p \in a(i) \}$\\
+        \item $A := \{ (v_{p,i}, v_{q,j}) : i, j \in I', p \in a(i), q \in a(j), (i \preceq_p j \vee i \preceq_q j) \}$\\
     \end{itemize}
 
     This graph can be weighted. Let $(v_{p,i}, v_{q, j}) \in A$, then the weight of $(v_{p,i}, v_{q, j})$ in
@@ -709,18 +714,20 @@ an ordered interaction model.
     \begin{equation*}
         w_G((v_{p,i}, v_{q, j})) := w(i, q)
     \end{equation*}
+    \label{def:block_graph}
 \end{definition}
 
-\musthave{Fix latex breaking up definition}
-
 \begin{example}[Block graph]
-    In Figure~\ref{fig:ex_block} an example of a block graph can be found. This graph has a similar structure
-    as the ordered interaction graph, except that each interaction is split into the two parts belonging to each respective
-    party. This representation yields a different view on the ordered interaction model.
+    In Figure~\ref{fig:ex_block} an example of a block graph can be found. 
+    This representation yields a another view on the ordered interaction model.
     In this graph, the fact that each agent has their own sequence of interactions
     is stressed, with additional arcs indicating the other party involved.
-    Again, the lack of representation of the last interactions can be seen. This graph will be used
+    In the ordered interaction graph, there were some issues with certain contributions
+    not being reflected in the graph. This issue is not present in this graph, at the
+    cost of a less elegant definition. The reason for this is that
+    this graph will be used
     in Chapter~\ref{chap:temporal_pr} to serve as the basis for Temporal PageRank.
+    It would be undesirable to throw the last interactions away on a pseudo-arbitrary basis.
 
 
  \begin{figure}[ht]
@@ -731,12 +738,17 @@ an ordered interaction model.
 
         \node [main node] (p1) {P1} ;
         \node [main node] (p2) [below = 1.5cm of p1] {P2} ;
-        \node [main node] (q1) [left = 1.5cm of p1] {Q1} ;
+        \node [main node] (q1) [right = 3cm of p1] {Q1} ;
         \node [main node] (r1) [right = 1.5cm of p2]  {R1} ;
         \node [main node] (r2) [below = 1.5cm of r1] {R2} ;
         \node [main node] (q2) [below = 1.5cm of q1] {Q2} ;
         \node [main node] (r3) [below = 1.5cm of r2] {R3} ;
         \node [main node] (p3) [below = 1.5cm of p2] {P3} ;
+        \node [main node] (r4) [below = 1.5cm of r3] {R4} ;
+        \node [main node] (p4) [below = 1.5cm of p3] {P4} ;
+        \node [main node] (q3) [below = 1.5cm of q2] {Q3} ;
+
+
 
         \path[draw, thick]
         (p1) edge node [right] {5} (p2)
@@ -744,11 +756,17 @@ an ordered interaction model.
         (q1) edge node [left] {3} (q2)
         (r1) edge node [right] {1} (r2)
         (r2) edge node [right] {8} (r3)
-        (p1) edge node [above left, pos=0.1] {3} (q2)
-        (q1) edge node [above right, pos=0.1] {5} (p2)
+        (p1) edge node [above right, pos=0.1] {3} (q2)
+        (q1) edge node [above left, pos=0.1] {5} (p2)
         (p2) edge node [above right, pos=0.1] {1} (r2)
         (r1) edge node [above left, pos=0.1] {7} (p3)
-        (q2) edge [bend right] node [left] {8} (r3)
+        (q2) edge [bend left=60] node [right] {8} (r3)
+        (p3) edge node [left] {2} (p4)
+        (r3) edge node [above, pos=0.1] {2} (p4)
+        (r3) edge node [left] {3} (r4)
+        (p3) edge node [right, pos=0.1] {3} (r4)
+        (q2) edge node [left] {3} (q3)
+        (r2) edge node [above] {3} (q3)
 
 
         ;
@@ -1887,6 +1905,41 @@ known as Transitive Trust.
 
     \musthave{Picture}
 \end{proof}
+
+\begin{example}
+ 
+     \begin{figure}[ht]
+        \centering
+         \begin{tikzpicture}[->,thick,scale=0.8,main node/.style={circle, draw, fill=white,
+            inner sep=0pt, minimum width=20pt} 
+            ]
+
+            \node [main node] (p1) {P1} ;
+            \node [main node] (p2) [below = 1.5cm of p1] {P2} ;
+            \node [main node] (q1) [left = 1.5cm of p1] {Q1} ;
+            \node [main node] (r1) [right = 1.5cm of p2]  {R1} ;
+            \node [main node] (r2) [below = 1.5cm of r1] {R2} ;
+            \node [main node] (q2) [below = 1.5cm of q1] {Q2} ;
+            \node [main node] (p3) [below = 1.5cm of p2] {P3} ;
+
+            \path[draw, thick]
+            (p1) edge node [right] {0} (p2)
+            (p2) edge node [left] {0} (p3)
+            (q1) edge node [left] {1} (q2)
+            (r1) edge node [right] {1} (r2)
+            (p1) edge node [above left, pos=0.1] {1} (q2)
+            (q1) edge node [above right, pos=0.1] {0} (p2)
+            (p2) edge node [above right, pos=0.1] {0} (r2)
+            (r1) edge node [above left, pos=0.1] {0} (p3)
+
+
+            ;
+         \end{tikzpicture}
+         \caption{Example 1}
+         \label{fig:ex_no_tt}
+    \end{figure}
+       
+\end{example}
 
 Theorem~\ref{thm:no_trans_trust} seems to be a bad sign for Temporal PageRank. However, 
 there still is some notion of transitivity. In particular, the score of each agent

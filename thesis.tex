@@ -95,7 +95,7 @@ by}
 \vspace*{\stretch{2}}
 
 \textbf{Delft, the Netherlands \\
-August 2016} \\
+December 2016} \\
 
 \vspace{1cm}
 
@@ -158,7 +158,7 @@ $\;$ & \\
 $\;$ & \\
 \phantom{niets} & \phantom{niets} \\
 $\;$ & \\
-\large{August 2016} & \large{Delft, the Netherlands}
+\large{December 2016} & \large{Delft, the Netherlands}
 \end{tabular}
 \end{center}
 \newpage
@@ -650,7 +650,7 @@ an ordered interaction model.
 
     The weight of an arc in $G_M$ is as follows:
     \begin{equation*}
-        w_{G_M}(e) := w(j, p), \mbox{ where } p \in a(i) \cap a(j), e = (v_{i}, v_{j}) \in A:w
+        w_{G_M}(e) := w(i, p), \mbox{ where } p \in a(i) \cap a(j), e = (v_{i}, v_{j}) \in A:w
     \end{equation*}
 
     
@@ -1218,7 +1218,7 @@ collapses to the one used by Seuken and Parkes if $|J|=1$.
     Given a subjective work graph $G_i = (V_i, E_i, w_i)$.
     A Sybil attack by agents $J \subseteq V_i$ is a tuple $\sigma_J = (V_s, E_s, w_s)$
     where $V_s = \{ s_{J_1}, s_{J_2}, \ldots\}$ is a set of Sybils, 
-    $E_s = \{(x, y) : x, y \in V_i \cup J\}$, and $w_s$ are the edge weights for
+    $E_s = \{(x, y) : x, y \in V_s \cup J\}$, and $w_s$ are the edge weights for
     the edges in $E_s$. Applying the Sybil attack to agent $i$'s subjective work graph
     $G_i = (V_i, E_i, w_i)$ results in a modified graph 
     $G_i \downarrow \sigma_J = G_i' = (V_i \cup V_s, E_i \cup E_s, w')$, where
@@ -1231,6 +1231,8 @@ allowing a set of agents to perform an attack. This does not seem to add much to
 After all, an attacker can already create an arbitrary number of identities. However, their definition of a
 Sybil attack only allows a single point where Sybils can interact with the rest of the network, which is a pretty limited
 view of possible attacks. This definition does allow that, and allows for a wider range of Sybil attacks. 
+Note that $E_s$ may include edges to identities not controlled by Sybils. In order to include these edges,
+the work actually has to be performed. For edges within $V_s$,
 
 \begin{definition}[Sybil attack profit]
     Let $G_i$ be a subjective work graph. For all $j \in \bb{N}$, let $(\sigma_J)_j$ be a Sybil attack
@@ -1239,10 +1241,10 @@ view of possible attacks. This definition does allow that, and allows for a wide
     $A(S^M( (G_i)_{j-1} \downarrow (\sigma_J)_j, C_i))$.
 
     Let $\omega^n_-$ be the sum of the amount of the work agents in $J$ have performed for
-    the network after $n$ steps (including before the start of the Sybil attack.
-    Let $\omega^n_+$ be the amount of work that agents in $J$ of any of their
-    Sybils obtain from the network. It is assumed that no work is obtained before the start of the
-    Sybil attack.
+    the network after $n$ steps, including work performed before the start of the Sybil attack.
+    Let $\omega^n_+$ be the amount of work that agents in $J$ or any of their
+    Sybils obtain from the network. Any work obtained before the start of the Sybil attack is
+    disregarded.
 
     The profit of this sequence of Sybil attacks is:
     \begin{equation*}
@@ -1397,7 +1399,7 @@ no direct interactions with $R$ this is a defensible result.
         \node [main node,fill=gray] (r) [below left = 3.46cm and 2cm] {R} ;
         \node [main node] (t) [right = 3.46cm of p] {T};
 
-        \node [ForestGreen] [above = 0.3 cm of p] {$5\mbox{ }( \mbox{cap: } 5)$};
+        \node [ForestGreen] [above = 0.3 cm of p] {$3\mbox{ }( \mbox{cap: } 3)$};
         \node [red] [below = 0.3 cm of q] {$0\mbox{ }(\mbox{cap: } 0)$};
         \node [ForestGreen] [right = 0.3 cm of t] {$2\mbox{ }(\mbox{cap: } 4)$};
 
